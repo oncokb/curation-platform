@@ -1,0 +1,15 @@
+.idea
+.tmp
+app/components
+app/_components
+node_modules
+node
+.sass-cache
+app/data
+target
+dist
+*.iml
+
+
+.DS_Store
+
