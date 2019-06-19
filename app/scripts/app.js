@@ -43,6 +43,7 @@ var oncokbApp = angular.module('oncokbApp', [
     .constant('Levenshtein', window.Levenshtein)
     .constant('PDF', window.jsPDF)
     .constant('UUIDjs', window.UUIDjs)
+    .constant('onLocalhost', location.hostname === 'localhost' || location.hostname === '127.0.0.1')
     .config(function($provide, $locationProvider, $routeProvider, $sceProvider, dialogsProvider, $animateProvider, x2jsProvider, $httpProvider) {
 
         $routeProvider

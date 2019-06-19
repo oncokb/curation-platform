@@ -13,6 +13,7 @@ angular.module('oncokbApp')
         'DriveOncokbInfo',
         'DriveAnnotation',
         'SendEmail',
+        'onLocalhost',
         'DataSummary',
         'Drugs',
         'Cache',
@@ -32,6 +33,7 @@ angular.module('oncokbApp')
                  DriveOncokbInfo,
                  DriveAnnotation,
                  SendEmail,
+                 onLocalhost,
                  DataSummary,
                  Drugs,
                  Cache,
@@ -43,7 +45,7 @@ angular.module('oncokbApp')
             var numOfLocks = {};
             var data = {};
             var testing = OncoKB.config.testing || false;
-            var inProduction = OncoKB.config.production || false;
+            var inProduction = (OncoKB.config.production && !onLocalhost) || false;
 
             function searchNCITDrugs(keyword) {
                 var deferred = $q.defer();
