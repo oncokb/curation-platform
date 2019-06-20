@@ -29,24 +29,30 @@
         <button type="button" class="btn btn-default" ng-click="generatePDF()">Download PDF</button>
       </span>
     </h2>
-    <div ng-if="meta.gene" class="subtitle subtitle-1">
-      <span class="entrezGene" ng-if="meta.gene.entrezGeneId > 0">Entrez Gene: {{::meta.gene.entrezGeneId}}
-        <a target="_blank" ng-href="https://www.ncbi.nlm.nih.gov/gene/?term={{::meta.gene.entrezGeneId}}">
+    <div ng-if="status.geneReleased === 'yes'" style="display: flex;">
+      <span ng-if="meta.gene.entrezGeneId > 0" style="margin-right: 10px;">Entrez Gene: {{::meta.gene.entrezGeneId}}
+        <a target="_blank" ng-href="https://www.ncbi.nlm.nih.gov/gene/{{::meta.gene.entrezGeneId}}">
           <i class="fa fa-external-link"></i>
         </a>
       </span>
       <div ng-if="meta.gene.geneAliases && meta.gene.geneAliases.length > 0">
-        <span class="header">Also known as</span>
-        <span ng-repeat="alias in meta.gene.geneAliases" class="alias-item">{{::alias}}
+        <span>Also known as: </span>
+        <span ng-repeat="alias in meta.gene.geneAliases">{{::alias}}
           <a target="_blank" ng-href="https://www.ncbi.nlm.nih.gov/pubmed/?term={{::alias}}">
             <i class="fa fa-external-link"></i>
           </a>
-          <span ng-if="!$last" class="comma">,</span>
         </span>
       </div>
     </div>
-    <div ng-show="!reviewMode" class="subtitle subtitle-2">Transcript: {{::gene.isoform_override}}, {{::gene.dmp_refseq_id}}
-    </div>
+      <div ng-show="!reviewMode">
+        <span ng-if="::gene.isoform_override" style="margin-right: 10px">Isoform: {{::gene.isoform_override}}<a
+                href="https://www.ensembl.org/id/{{gene.curatedIsoform}}" target="_blank"><i
+                class="fa fa-external-link"></i></a></span>
+          <span ng-if="::gene.dmp_refseq_id">RefSeq: {{::gene.dmp_refseq_id}}<a
+                  href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id}}" target="_blank"><i
+                  class="fa fa-external-link"></i></a></span>
+
+      </div>
     <div ng-if="reviewMode">
       <br/>
       <br/>
