@@ -116,30 +116,8 @@ table.colorHeader thead tr{
 }
 
 #gene {
-    .subtitle {
-        width: 60%;
-        display: inline-block;
-        .fa.fa-external-link {
-            margin-left: 3px;
-        }
-    }
-    .subtitle.subtitle-1 {
-        font-weight: bold;
-        .entrezGene {
-            float: left;
-            margin-right: 10px
-        }
-        .header {
-            float: left;
-            color: grey;
-            margin-right: 10px
-        }
-        .alias-item {
-            float: left;
-            .comma {
-                margin-right: 5px
-            }
-        }
+    .fa.fa-external-link {
+      margin-left: 3px;
     }
     .top-tools-menu {
         .dropdown-menu {
