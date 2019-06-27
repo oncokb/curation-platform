@@ -8,7 +8,6 @@ We use Google Firebase Realtime Database to store all information curators gener
 1. Install npm & bower & yo & grunt-cli (globally)
 2. npm install
 3. bower install
-4. cp -r app/data-EXAMPLE app/data
 
 ## config.json setting
 File is located under app/data
