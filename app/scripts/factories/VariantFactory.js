@@ -150,10 +150,6 @@ angular.module('oncokbApp').config(function($httpProvider) {
         });
     }
 
-    function annotationFromFile() {
-        return $http.get('data/annotation.xml');
-    }
-
     function lookupVariants(body) {
         return $http.post(OncoKB.config.publicApiLink + 'variants/lookup', body);
     }
@@ -161,7 +157,6 @@ angular.module('oncokbApp').config(function($httpProvider) {
     return {
         getAnnotation: getAnnotation,
         postAnnotation: postAnnotation,
-        annotationFromFile: annotationFromFile,
         lookupVariants: lookupVariants
     };
 }]);
