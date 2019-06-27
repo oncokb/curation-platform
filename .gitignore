@@ -5,7 +5,7 @@ app/_components
 node_modules
 node
 .sass-cache
-app/data
+app/data/config.json
 target
 dist
 *.iml
