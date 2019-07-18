@@ -207,6 +207,12 @@ angular.module('oncokbApp')
                 label: 'Prognostic Summary',
                 value: 'prognosticSummary'
             }, {
+                label: 'Diagnostic Implication',
+                value: 'diagnosticImplication'
+            }, {
+                label: 'Prognostic Implication',
+                value: 'prognosticImplication'
+            }, {
                 label: 'Tumor Type Summary + Therapeutics',
                 value: 'ttsDrugs'
             }, {
@@ -252,16 +258,30 @@ angular.module('oncokbApp')
                 diagnosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Diagnostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'diagnosticSummary'],
+                    keys: ['gene', 'mutation', 'tumorType', 'summary'],
                     fileName: 'DiagnosticSummary.xls',
                     evidenceTypes: 'DIAGNOSTIC_SUMMARY'
                 },
                 prognosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Prognostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'prognosticSummary'],
+                    keys: ['gene', 'mutation', 'tumorType', 'summary'],
                     fileName: 'PrognosticSummary.xls',
                     evidenceTypes: 'PROGNOSTIC_SUMMARY'
+                },
+                diagnosticImplication: {
+                    header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
+                    body: [],
+                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    fileName: 'DiagnosticImplication.xls',
+                    evidenceTypes: 'DIAGNOSTIC_IMPLICATION'
+                },
+                prognosticImplication: {
+                    header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
+                    body: [],
+                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    fileName: 'PrognosticImplication.xls',
+                    evidenceTypes: 'PROGNOSTIC_IMPLICATION'
                 },
                 ttsDrugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary', 'Drugs', 'Level'],
@@ -471,6 +491,35 @@ angular.module('oncokbApp')
                                             $scope.reviewedData.ttsDrugs.body.push(tempObj);
                                         }
                                     }
+                                });
+                            } else if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary') {
+                                _.each(response.data, function (item) {
+                                    var tempObj =  {
+                                        gene: item.gene.hugoSymbol,
+                                        mutation: getAlterations(item.alterations),
+                                        summary: item.description
+                                    };
+                                    if (item.subtype) {
+                                        tempObj.tumorType = subtypeMapping[item.subtype];
+                                    } else {
+                                        tempObj.tumorType = item.cancerType;
+                                    }
+                                    $scope.reviewedData[$scope.data.evidenceType].body.push(tempObj);
+                                });
+                            } else if ($scope.data.evidenceType === 'diagnosticImplication' || $scope.data.evidenceType === 'prognosticImplication') {
+                                _.each(response.data, function (item) {
+                                    var tempObj =  {
+                                        gene: item.gene.hugoSymbol,
+                                        mutation: getAlterations(item.alterations),
+                                        level: item.levelOfEvidence,
+                                        description: item.description
+                                    };
+                                    if (item.subtype) {
+                                        tempObj.tumorType = subtypeMapping[item.subtype];
+                                    } else {
+                                        tempObj.tumorType = item.cancerType;
+                                    }
+                                    $scope.reviewedData[$scope.data.evidenceType].body.push(tempObj);
                                 });
                             }
                             finishLoadingReviewedData();
