@@ -492,28 +492,19 @@ angular.module('oncokbApp')
                                         }
                                     }
                                 });
-                            } else if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary') {
+                            } else if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary'
+                                || $scope.data.evidenceType === 'diagnosticImplication' || $scope.data.evidenceType === 'prognosticImplication') {
                                 _.each(response.data, function (item) {
                                     var tempObj =  {
                                         gene: item.gene.hugoSymbol,
-                                        mutation: getAlterations(item.alterations),
-                                        summary: item.description
+                                        mutation: getAlterations(item.alterations)
                                     };
-                                    if (item.subtype) {
-                                        tempObj.tumorType = subtypeMapping[item.subtype];
+                                    if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary') {
+                                        tempObj.summary = item.description;
                                     } else {
-                                        tempObj.tumorType = item.cancerType;
+                                        tempObj.level = item.levelOfEvidence;
+                                        tempObj.description = item.description
                                     }
-                                    $scope.reviewedData[$scope.data.evidenceType].body.push(tempObj);
-                                });
-                            } else if ($scope.data.evidenceType === 'diagnosticImplication' || $scope.data.evidenceType === 'prognosticImplication') {
-                                _.each(response.data, function (item) {
-                                    var tempObj =  {
-                                        gene: item.gene.hugoSymbol,
-                                        mutation: getAlterations(item.alterations),
-                                        level: item.levelOfEvidence,
-                                        description: item.description
-                                    };
                                     if (item.subtype) {
                                         tempObj.tumorType = subtypeMapping[item.subtype];
                                     } else {
