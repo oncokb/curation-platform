@@ -53,18 +53,6 @@ angular.module('oncokbApp')
                         });
                     }
                     scope.$watch('data[key]', function (n, o) {
-                        if (!_.isUndefined(n)) {
-                            var nCopy = n;
-                            if (n.indexOf('&') > -1) {
-                                n = mainUtils.decodeHTMLEntities(n);
-                            }
-                            if (!_.isUndefined(o) && o.indexOf('&') > -1) {
-                                o = mainUtils.decodeHTMLEntities(o);
-                            }
-                            if (n === o && n !== nCopy) {
-                                scope.data[scope.key] = mainUtils.decodeHTMLEntities(scope.data[scope.key]);
-                            }
-                        }
                         // 1) Do not run the function when no data change(n===o).
                         // 2) Do not run the function when there is no new content(_.isUndefined(n)).
                         // 3) Do not run the function when just click panel without any change(_.isEmpty(n) && _.isUndefined(o)).
@@ -79,10 +67,6 @@ angular.module('oncokbApp')
                                 var isRejected = mainUtils.processedInReview('reject', scope.uuid);
                                 if (!$rootScope.reviewMode || !isRejected) {
                                     mainUtils.updateLastModified();
-                                    if (scope.pasting === true) {
-                                        scope.data[scope.key] = mainUtils.getString(scope.data[scope.key]);
-                                        scope.pasting = false;
-                                    }
                                     scope.pContent = scope.data[scope.key];
                                     if (scope.t === 'treatment-select' && scope.key === 'level') {
                                         scope.changePropagation();
@@ -352,9 +336,6 @@ angular.module('oncokbApp')
                     $scope.indicateTumorContentInGene({
                         tumor: tumor
                     });
-                };
-                $scope.trimCSS = function() {
-                    $scope.pasting = true;
                 };
                 $scope.isChangedByOthers = function(oldContent) {
                     var changedByOthers = false;

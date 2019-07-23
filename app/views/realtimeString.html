@@ -1,43 +1,33 @@
-<div>
+<div class="realtime-string">
     <div ng-switch on="inReviewMode()">
         <div ng-switch-when="false">
             <div ng-switch on="t">
                 <div ng-switch-when="p">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p contenteditable="{{fe}}"
-                        ng-class="getInputClass()"
-                        ng-model="data[key]"
-                        ng-paste="trimCSS()"
-                        ng-model-options="{ debounce: 500 }">
-                     </p>
-                    <pub-iframe
-                            ng-model="pContent">
-                    </pub-iframe>
+                    <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
+                    <textarea ng-disabled="!fe"
+                              ng-class="getInputClass()"
+                              ng-model="data[key]"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"
+                    ></textarea>
+                    <pub-iframe ng-model="pContent"></pub-iframe>
                 </div>
                 <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
                     <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">
                 -->
                 <div ng-switch-when="MUTATION_NAME">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p contenteditable="{{fe}}"
-                        ng-class="getInputClass()"
-                        ng-model="data[key]"
-                        ng-click="setTrackSignal()"
-                        ng-paste="trimCSS()"
-                        ng-model-options="{ debounce: 500 }"
-                        class="editEmpty">
-                    </p>
-                    <!-- <span style="color:red">{{getDuplicationMessage()}}</span> -->
-                    <!-- <br/> -->
+                    <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
+                    <input type="text" class="editEmpty input-name"
+                           ng-disabled="!fe"
+                           ng-style="{ 'width': (data[key].length * 11) + 'px' }"
+                           ng-model="data[key]"
+                           ng-click="setTrackSignal()"
+                           ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
                 </div>
                 <div ng-switch-when="TREATMENT_NAME">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p ng-class="getInputClass()"
-                       ng-click="setTrackSignal()"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 0 } }"
-                       class="editEmpty" style="height:auto;">{{uuidtoName(data[key])}}
-                    </p>
+                    <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
+                    <p class="editEmpty treatment-name"
+                       ng-disabled="!fe"
+                       ng-click="setTrackSignal()">{{uuidtoName(data[key])}}</p>
                 </div>
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
                     <div style="margin-top:10px;margin-bottom:10px">
@@ -94,30 +84,26 @@
             <div ng-switch on="t">
                 <div ng-switch-when="p">
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
+                    <textarea ng-disabled="!reviewContentEditable('regular')"
                        ng-class="getInputClass()"
                        ng-model="data[key]"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ debounce: 500 }">
-                    </p>
+                       ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
                     <div ng-if="reviewLayout('regular')">
                         <h4>Difference comparing to the old content:</h4>
                         <p ng-bind-html="diffHTML"></p>
                     </div>
-                    <pub-iframe
-                            ng-model="data[key]">
-                    </pub-iframe>
+                    <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
                 <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
                   <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">-->
                 <div ng-switch-when="MUTATION_NAME">
                     <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
-                          ng-class="editableBox"
-                          ng-paste="trimCSS()"
-                          ng-model-options="{ debounce: 500 }"
-                          class="editEmpty">{{getMutationName(data[key], data[key+'_review'].lastReviewed, uuid)}}
-                    </p>
+                    <input type="text" ng-disabled="!reviewContentEditable('regular')" ng-style="{ 'width': (pureContent.text.length * 11) + 'px' }"
+                           ng-model="data[key]"
+                           ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"
+                           class="editEmpty input-name">
+                    </input>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
                         <h4>Old Content:</h4>
                         <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</p>
@@ -125,12 +111,7 @@
                 </div>
                 <div ng-switch-when="TREATMENT_NAME">
                     <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
-                       ng-class="editableBox"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 0 } }"
-                       class="editEmpty" style="height:auto;">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}
-                    </p>
+                    <p class="editEmpty treatment-name">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}</p>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
                         <h4>Old Content:</h4>
                         <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::uuidtoName(data[key+'_review'].lastReviewed)}}</p>
@@ -197,8 +178,6 @@
                                     ng-options="opt.value as opt.label for opt in o">
                                 <option value="NA"></option>
                             </select>
-
-                            <!-- <p ng-class="unEditableBox" contenteditable="false">{{}}</p> -->
                         </div>
                     </div>
                 </div>
@@ -212,7 +191,7 @@
                     </select>
                     <div ng-if="reviewLayout('regular')">
                         <h4>Old Content:</h4>
-                        <p ng-class="unEditableBox" contenteditable="false">{{::reviewObj.lastReviewed}}</p>
+                        <p class="unEditableBox">{{::reviewObj.lastReviewed}}</p>
                     </div>
                 </div>
                 <div ng-switch-when="checkbox">

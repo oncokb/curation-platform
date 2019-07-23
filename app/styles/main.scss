@@ -179,12 +179,6 @@ input.editableBox {
   border: 0;
   width:80%;
 }
-p.editableBox {
-  min-height: 20px;
-}
-p.editableBox.doubleH {
-  min-height: 40px;
-}
 .reviewed {
     color: #82E452;
 }
@@ -1067,7 +1061,6 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 .longMutationName {
     height: 100px;
-    display:inline-block;
 }
 
 .longMutationNameReview {
@@ -1117,5 +1110,26 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 .label-old {
     color: #000000;
     background-color: #ccc;
+}
+.realtime-string {
+  textarea {
+    width: stretch;
+    overflow-wrap: break-word;
+    min-height: 100px;
+    border: none;
+  }
+  .input-name {
+    background: unset;
+    border: unset;
+  }
+  .editing-message {
+    font-style:italic;
+    margin-top:-30px;
+    margin-left:30%;
+    color:orange
+  }
+  .treatment-name {
+    height:auto;
+  }
 }
 

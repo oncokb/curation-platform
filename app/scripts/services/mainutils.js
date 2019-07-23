@@ -663,7 +663,7 @@ angular.module('oncokbApp')
             }
             var tmp = window.document.createElement('DIV');
             var processdStr = string.replace(/(\r\n|\n|\r)/gm, '');
-            var processdStr = processdStr.replace(/<style>.*<\/style>/i, '');
+            processdStr = processdStr.replace(/<style>.*<\/style>/i, '');
             tmp.innerHTML = processdStr;
             /* eslint new-cap: 0*/
             var _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
@@ -674,7 +674,7 @@ angular.module('oncokbApp')
             var tmp = window.document.createElement('DIV');
             tmp.innerHTML = string;
 
-            var _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
+            _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
             string = S(_string).decodeHTMLEntities().s;
             string = S(_string).collapseWhitespace().s;
 
