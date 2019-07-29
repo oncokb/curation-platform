@@ -2747,7 +2747,6 @@ angular.module('oncokbApp')
                 }
             };
             $scope.startMoving = function(sectionType, path, uuid, index) {
-                mainUtils.updateMovingFlag(true);
                 $scope.movingInfo.preMoving = !$scope.movingInfo.preMoving;
                 if ($scope.movingInfo.uuid) {
                     delete $scope.movingInfo[$scope.movingInfo.uuid];
@@ -3319,7 +3318,7 @@ angular.module('oncokbApp')
                     deferred1.reject(error);
                 });
                 var deferred2 = $q.defer();
-                loadFiles.load(['reviewMeta', 'movingSection'], $routeParams.geneName).then(function() {
+                loadFiles.load(['reviewMeta'], $routeParams.geneName).then(function() {
                     deferred2.resolve('success');
                 }, function(error) {
                     deferred2.reject(error);

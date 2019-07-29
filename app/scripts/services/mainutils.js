@@ -463,11 +463,6 @@ angular.module('oncokbApp')
                 lastSavedAt: new Date().getTime()
             });
         }
-        function updateMovingFlag(flag) {
-            firebase.database().ref('Meta/' + $routeParams.geneName).update({
-                movingSection: flag
-            });
-        }
         function setUUIDInReview(uuid) {
             var tempObj = {};
             tempObj[uuid] = true;
@@ -714,7 +709,6 @@ angular.module('oncokbApp')
             getHistoryData: getHistoryData,
             setUUIDInReview: setUUIDInReview,
             deleteUUID: deleteUUID,
-            updateMovingFlag: updateMovingFlag,
             processData: processData,
             shouldExclude: shouldExclude,
             getTimeStamp: getTimeStamp,
