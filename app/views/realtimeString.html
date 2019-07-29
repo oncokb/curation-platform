@@ -1,10 +1,11 @@
-<div class="realtime-string">
-    <div ng-switch on="inReviewMode()">
-        <div ng-switch-when="false">
-            <div ng-switch on="t">
-                <div ng-switch-when="p">
+<div class="realtime-string" style="display: flex; flex-direction: column; flex-grow: 1">
+    <div ng-switch on="inReviewMode()" class="flex-column">
+        <div ng-switch-when="false" class="flex-column">
+            <div ng-switch on="t" class="flex-column">
+                <div ng-switch-when="p" class="content-wrapper flex-column">
                     <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
-                    <textarea ng-disabled="!fe"
+                    <textarea msd-elastic
+                            ng-disabled="!fe"
                               ng-class="getInputClass()"
                               ng-init="oldValue=''"
                               ng-focus="oldValue=pureContent.text"
@@ -18,17 +19,21 @@
                 <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
                     <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">
                 -->
-                <div ng-switch-when="MUTATION_NAME">
+                <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
                     <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
-                    <input type="text" class="editEmpty input-name"
+                    <textarea msd-elastic
+                            class="title"
+                              autofocus
+                          ng-if="focused"
                            ng-disabled="!fe"
-                           ng-style="{ 'width': (pureContent.text.length * 11) + 'px' }"
                            ng-init="oldValue=''"
                            ng-focus="oldValue=pureContent.text"
                            ng-model="pureContent.text"
                            ng-blur="data[key]=pureContent.text"
                            ng-change="updateContent(pureContent.text, oldValue)"
                            ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
+                    <span ng-if="!focused" style="padding: 2px;">{{data[key]}}</span>
                 </div>
                 <div ng-switch-when="TREATMENT_NAME">
                     <p type="text" class="editEmpty treatment-name">{{uuidtoName(data[key])}}</p>
@@ -105,7 +110,7 @@
             <div ng-switch on="t">
                 <div ng-switch-when="p">
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
-                    <textarea ng-disabled="!reviewContentEditable('regular')"
+                    <textarea msd-elastic ng-disabled="!reviewContentEditable('regular')"
                               ng-class="getInputClass()"
                               ng-init="oldValue=''"
                               ng-focus="oldValue=pureContent.text"
@@ -140,7 +145,7 @@
                 </div>
                 <div ng-switch-when="TREATMENT_NAME">
                     <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p class="editEmpty treatment-name">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}</p>
+                    <p class="treatment-name">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}</p>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
                         <h4>Old Content:</h4>
                         <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::uuidtoName(data[key+'_review'].lastReviewed)}}</p>
