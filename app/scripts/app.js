@@ -31,6 +31,7 @@ var oncokbApp = angular.module('oncokbApp', [
     'ui.sortable',
     'firebase',
     'daterangepicker',
+    'monospaced.elastic',
     'ngTagsInput'
 ])
     .value('OncoKB', OncoKB)

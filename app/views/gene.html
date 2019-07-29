@@ -113,34 +113,31 @@
   <div id="mutations">
     <div ng-repeat="mutation in mutations" ng-init="path=getObservePath({type: 'mutation', index: $index});" ng-show="displayCheck(mutation.name_uuid, mutation.name_review)">
       <div class="sectionStyle">
-        <div ng-style="movingInfo[mutation.name_uuid]" ng-class="getMutationPanelClass(mutation.name)">
-          <div ng-click="toggleSection(mutation.name_uuid); setSectionOpenStatus('open', [mutation.mutation_effect_uuid])">
-            <i ng-class="getAngleClass(mutation.name_uuid)"></i> Mutation:</div>
-          <div style="margin-top:-42px;margin-left:100px">
-            <div ng-style="getNameStyle('mutation')"><realtime-string t="'MUTATION_NAME'" key="'name'" path="path" uuid="getUUID({type: 'mutation', key: 'name', path: path})"></realtime-string></div>
-            <div style="float:left;" ng-class="mutation.name.length > 80 ? 'levelWithLongName' : 'levelWithoutLongName'" ng-show="!reviewMode">
-              <comments-dict key="'name'" path="path"></comments-dict>
-              <span style="margin-right:10px" ng-bind-html="mutationContent[mutation.name_uuid].result"></span>
-                <span class="curationNoEntry" ng-if="isEmptySection(mutation, 'mutation')">No Entry</span>
+        <div ng-style="movingInfo[mutation.name_uuid]" style="display: flex;" class="direct-descendants-margin headerLevel1">
+          <div ng-click="toggleSection(mutation.name_uuid); setSectionOpenStatus('open', [mutation.mutation_effect_uuid])" class="flex-row direct-descendants-margin">
+            <i ng-class="getAngleClass(mutation.name_uuid)"></i>
+              <span>Mutation:</span>
+          </div>
+            <div ng-style="getNameStyle('mutation')" style="flex-grow: 1;" class="flex-row">
+                <realtime-string t="'MUTATION_NAME'" key="'name'" path="path" uuid="getUUID({type: 'mutation', key: 'name', path: path})"></realtime-string>
+                <div ng-show="!reviewMode" class="direct-descendants-margin flex-row">
+                    <span ng-if="mutationContent[mutation.name_uuid].result" ng-bind-html="mutationContent[mutation.name_uuid].result"></span>
+                    <span class="curationNoEntry" ng-if="isEmptySection(mutation, 'mutation')">No Entry</span>
+                    <comments-dict key="'name'" path="path"></comments-dict>
+                </div>
             </div>
-            <div ng-show="!reviewMode" style="margin-top:-30px">
-              <span style="float:right">
+            <div ng-show="!reviewMode" class="direct-descendants-margin flex-row">
                   <span ng-show="!reviewMode && me.admin && fileEditable">
-                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}" ng-show="displayMoveIcon('mutation', 'initial', mutation.name_uuid)" style="margin-right:10px;" ng-style="movingInfo.style" ng-click="startMoving('mutation', path, mutation.name_uuid, $index)"></i>
+                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}" ng-show="displayMoveIcon('mutation', 'initial', mutation.name_uuid)" ng-style="movingInfo.style" ng-click="startMoving('mutation', path, mutation.name_uuid, $index)"></i>
                       <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="Click to put above this mutation" ng-show="displayMoveIcon('mutation', 'up', mutation.name_uuid, $index)" style="margin-right:10px;color:green" ng-click="endMoving(path, 'up')"></i>
                   </span>
                   <span ng-show="!reviewMode && fileEditable">
                       <i ng-click="remove('mutation', path)" class="fa fa-trash-o"></i>
                   </span>
-              </span>
             </div>
-            <div style="margin-top:-20px;margin-bottom:20px">
-                <review-panel hugo-symbol="gene.name" uuid="mutation.name_uuid" review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation" get-evidence="getEvidence(type, mutation)" model-update="modelUpdate(type, mutation)"
+             <review-panel hugo-symbol="gene.name" uuid="mutation.name_uuid" review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation" get-evidence="getEvidence(type, mutation)" model-update="modelUpdate(type, mutation)"
                               accept-added="acceptAdded(type, mutation, tumor, ti, treatment, updatedBy)" reject-added="rejectAdded(type, mutation, tumor, ti, treatment, updatedBy)"
                               confirm-delete="confirmDelete(type, mutation, tumor, ti, treatment, updatedBy)" cancel-delete="cancelDelete(type, mutation, tumor, ti, treatment, updatedBy)" get-refs="getRefs(mutation)"></review-panel>
-            </div>
-
-          </div>
         </div>
         <div class="panelContent" ng-if="initialOpen[mutation.name_uuid]" id="{{mutation.name_uuid}}">
           <div class="sectionStyle" ng-init="bindTumors({uuid: mutation.name_uuid, path: path});getTumorContent(mutation);effectPath=getObservePath({type: 'mutation_effect', path: path});" ng-show="displayCheck(mutation.mutation_effect_uuid, mutation.name_review)">
