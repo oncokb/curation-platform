@@ -7,7 +7,7 @@
  * # driveRealtimeString
  */
 angular.module('oncokbApp')
-    .directive('realtimeString', function ($timeout, _, $rootScope, mainUtils, ReviewResource, $firebaseObject, checkNameChange, drugMapUtils) {
+    .directive('realtimeString', function ($timeout, _, $rootScope, mainUtils, ReviewResource, $firebaseObject) {
         return {
             templateUrl: 'views/realtimeString.html',
             restrict: 'AE',
@@ -53,7 +53,7 @@ angular.module('oncokbApp')
                         });
                     }
                     $rootScope.$watch('fileEditable', function(n, o) {
-                        if (n !== o) {
+                        if (n !== o && scope.fe !== n) {
                             scope.fe = n;
                             scope.editingMessage = '';
                         }
@@ -96,6 +96,7 @@ angular.module('oncokbApp')
                             scope.data[key + '_review'].updatedBy = $rootScope.me.name;
                             scope.data[key + '_review'].updateTime = new Date().getTime();
                         }
+                        // If the content is not approved before, do not store it into lastReviewed object.
                         if ((!$rootScope.reviewMeta[uuid] || _.isUndefined(scope.data[key + '_review'].lastReviewed)) && !_.isUndefined(o)) {
                             scope.data[key + '_review'].lastReviewed = o;
                             mainUtils.setUUIDInReview(uuid);
@@ -107,6 +108,10 @@ angular.module('oncokbApp')
                             if ($rootScope.reviewMode) {
                                 ReviewResource.rollback.push(uuid);
                             }
+                        }
+                        // Assign new value to scope.data[scope.key] to update content to gene page when multiple editing at the same time.
+                        if (scope.data[scope.key] !== scope.pureContent.text && !isPropagation) {
+                            scope.data[scope.key] = scope.pureContent.text;
                         }
                     }
                 }
@@ -133,13 +138,6 @@ angular.module('oncokbApp')
                     '4': {
                         name: 'Level 4',
                         value: '4'
-                    }
-                };
-                $scope.uuidtoName = function(key, oldKey, uuid){
-                    if(mainUtils.processedInReview('remove', uuid) && oldKey){
-                        return drugMapUtils.drugUuidtoName(oldKey, $rootScope.drugList);
-                    } else {
-                        return drugMapUtils.drugUuidtoName(key, $rootScope.drugList);
                     }
                 };
                 $scope.getMutationName = function(key, oldKey, uuid){
@@ -173,7 +171,7 @@ angular.module('oncokbApp')
                         mainUtils.deleteUUID($scope.data.propagation_uuid);
                     }
                     var _propagationOpts = [];
-                    if ($scope.data[$scope.key] === '1' || $scope.data[$scope.key] === '2A') {
+                    if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2A') {
                         _propagationOpts = [
                             $scope.propagationOpts.no,
                             $scope.propagationOpts['2B'],
@@ -182,7 +180,7 @@ angular.module('oncokbApp')
                         if (!initial && !$scope.data.propagation) {
                             $scope.data.propagation = '2B';
                         }
-                    } else if ($scope.data[$scope.key] === '3A') {
+                    } else if ($scope.pureContent.text === '3A') {
                         _propagationOpts = [
                             $scope.propagationOpts.no,
                             $scope.propagationOpts['3B'],
@@ -191,7 +189,7 @@ angular.module('oncokbApp')
                         if (!initial && !$scope.data.propagation) {
                             $scope.data.propagation = '3B';
                         }
-                    } else if ($scope.data[$scope.key] === '4') {
+                    } else if ($scope.pureContent.text === '4') {
                         _propagationOpts = [
                             $scope.propagationOpts.no,
                             $scope.propagationOpts['4']
@@ -212,20 +210,16 @@ angular.module('oncokbApp')
                         $scope.diffHTML = mainUtils.calculateDiff($scope.data[$scope.key + '_review'].lastReviewed, $scope.data[$scope.key]);
                     }
                 };
-                $scope.toggleCheckbox = function (event) {
-                    console.log(event, $scope.oldValue, $scope.pureContent.text, $scope.data[$scope.key]);
-                    if (event.target.checked) {
-                        $scope.pureContent.text
-                    }
-                    if ($scope.preStringO === $scope.pureContent.text && $scope.preStringO !== '') {
+                $scope.toggleCheckbox = function () {
+                    if ($scope.data[$scope.key] === $scope.pureContent.text && $scope.data[$scope.key] !== '') {
                         $scope.pureContent.text = '';
                     }
-                    $scope.preStringO = $scope.pureContent.text;
+                    $scope.updateContent($scope.pureContent.text, $scope.data[$scope.key]);
                 };
                 $scope.getInputClass = function () {
                     var contentEditable = $rootScope.reviewMode ? (!mainUtils.processedInReview('accept', $scope.uuid) && !mainUtils.processedInReview('reject', $scope.uuid)) : $scope.fe;
                     var classResult = '' ;
-                    if (['MUTATION_NAME', 'TREATMENT_NAME'].indexOf($scope.t) === -1) {
+                    if (!['MUTATION_NAME'].includes($scope.t)) {
                         classResult = contentEditable ? 'editableBox' : 'unEditableBox';
                     }
                     return classResult;
@@ -233,9 +227,9 @@ angular.module('oncokbApp')
                 $scope.getInputStyle = function(type) {
                     if ($scope.key === 'ocg' && $scope.reviewLayout('regular')) {
                         if (type === 'new') {
-                            return {'margin-top': "-85px"};
+                            return {'margin-top': "-53px"};
                         } else if (type === 'old') {
-                            return {'margin-top': "35px"};
+                            return {'margin-top': "28px"};
                         }
                     }
                 };
@@ -289,9 +283,6 @@ angular.module('oncokbApp')
                         tumor: tumor
                     });
                 };
-                $scope.checkboxBlur = function() {
-                    $scope.data[$scope.key]=$scope.pureContent.text;
-                };
                 $scope.updateContent = function (n, o) {
                     // 1) Do not run the function when no data change(n===o).
                     // 2) Do not run the function when there is no new content(_.isUndefined(n)).
@@ -316,9 +307,6 @@ angular.module('oncokbApp')
                                     $scope.indicateMutationContent($scope.mutation);
                                     $scope.indicateTumorContent($scope.tumor);
                                 }, 500);
-                            }
-                            if ($scope.t === 'checkbox') { // ng-blur doesn't work for checkboxes.
-                                $scope.data[$scope.key] = $scope.pureContent.text;
                             }
                         }
                         if ($scope.t === 'p' || $scope.t === 'short') {

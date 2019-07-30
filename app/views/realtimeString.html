@@ -5,48 +5,33 @@
                 <div ng-switch-when="p" class="content-wrapper flex-column">
                     <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
                     <textarea msd-elastic
-                            ng-disabled="!fe"
+                              ng-disabled="!fe"
                               ng-class="getInputClass()"
-                              ng-init="oldValue=''"
-                              ng-focus="oldValue=pureContent.text"
                               ng-model="pureContent.text"
-                              ng-blur="data[key]=pureContent.text"
-                              ng-change="updateContent(pureContent.text, oldValue)"
+                              ng-change="updateContent(pureContent.text, data[key])"
                               ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"
                     ></textarea>
                     <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
-                <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
-                    <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">
-                -->
                 <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
                     <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
                     <textarea msd-elastic
-                            class="title"
+                              class="title"
                               autofocus
-                          ng-if="focused"
-                           ng-disabled="!fe"
-                           ng-init="oldValue=''"
-                           ng-focus="oldValue=pureContent.text"
-                           ng-model="pureContent.text"
-                           ng-blur="data[key]=pureContent.text"
-                           ng-change="updateContent(pureContent.text, oldValue)"
-                           ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                              ng-if="focused"
+                              ng-disabled="!fe"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
                     </textarea>
                     <span ng-if="!focused" style="padding: 2px;">{{data[key]}}</span>
-                </div>
-                <div ng-switch-when="TREATMENT_NAME">
-                    <p type="text" class="editEmpty treatment-name">{{uuidtoName(data[key])}}</p>
                 </div>
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
                     <div style="margin-top:10px;margin-bottom:10px">
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
-                                ng-init="oldValue=''"
-                                ng-focus="oldValue=pureContent.text"
-                                ng-blur="data[key]=pureContent.text"
                                 ng-model="pureContent.text"
-                                ng-change="updateContent(pureContent.text, oldValue)"
+                                ng-change="updateContent(pureContent.text, data[key])"
                                 ng-options="opt.value as opt.label for opt in o">
                             <option value="NA"></option>
                         </select>
@@ -56,9 +41,6 @@
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
                                 ng-model="data.propagation"
-                                ng-init="oldValue=''"
-                                ng-focus="oldValue=data.propagation"
-                                ng-change="updateContent(data.propagation, oldValue)"
                                 ng-options="opt.value as opt.name for opt in content.propagationOpts">
                             <option value="NA"></option>
                         </select>
@@ -67,11 +49,8 @@
                 <div ng-switch-when="implication" class="chosen-full-width">
                     <select ng-disabled="!fe"
                             chosen allow-single-deselect="true"
-                            ng-init="oldValue=''"
-                            ng-focus="oldValue=pureContent.text"
-                            ng-blur="data[key]=pureContent.text"
                             ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, oldValue)"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt.value as opt.label for opt in o">
                         <option disabled></option>
                     </select>
@@ -79,11 +58,8 @@
                 <div ng-switch-when="select-chosen" class="chosen-full-width">
                     <select ng-disabled="!fe"
                             chosen allow-single-deselect="true"
-                            ng-init="oldValue=''"
-                            ng-focus="oldValue=pureContent.text"
-                            ng-blur="data[key]=pureContent.text"
                             ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, oldValue)"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt for opt in o">
                         <option value="NA"></option>
                     </select>
@@ -95,10 +71,8 @@
                                    type="radio"
                                    ng-value="checkbox"
                                    ng-disabled="!fe"
-                                   ng-init="oldValue=''"
-                                   ng-focus="oldValue=pureContent.text"
                                    ng-model="pureContent.text"
-                                   ng-click="toggleCheckbox($event)">
+                                   ng-click="toggleCheckbox(event)">
                             <label for="::{{uuid+$index}}">{{checkbox}}</label>
                         </span>
                     </div>
@@ -106,61 +80,46 @@
                 <div ng-switch-default></div>
             </div>
         </div>
-        <div ng-switch-when="true">
-            <div ng-switch on="t">
-                <div ng-switch-when="p">
+        <div ng-switch-when="true" class="flex-column">
+            <div ng-switch on="t" class="flex-column">
+                <div ng-switch-when="p" class="content-wrapper flex-column">
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
                     <textarea msd-elastic ng-disabled="!reviewContentEditable('regular')"
                               ng-class="getInputClass()"
-                              ng-init="oldValue=''"
-                              ng-focus="oldValue=pureContent.text"
                               ng-model="pureContent.text"
-                              ng-blur="data[key]=pureContent.text"
-                              ng-change="updateContent(pureContent.text, oldValue)"
+                              ng-change="updateContent(pureContent.text, data[key])"
                               ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
                     </textarea>
                     <div ng-if="reviewLayout('regular')">
                         <h4>Difference comparing to the old content:</h4>
                         <p ng-bind-html="diffHTML"></p>
+                        <p ng-if="!diffHTML"> No old content.</p>
                     </div>
                     <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
-                <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
-                  <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">-->
-                <div ng-switch-when="MUTATION_NAME">
+                <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
                     <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <input type="text" ng-disabled="!reviewContentEditable('regular')" ng-style="{ 'width': (pureContent.text.length * 11) + 'px' }"
-                           ng-init="oldValue=''"
-                           ng-focus="oldValue=pureContent.text"
-                           ng-model="pureContent.text"
-                           ng-blur="data[key]=pureContent.text"
-                           ng-change="updateContent(pureContent.text, oldValue)"
-                           ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"
-                           class="editEmpty input-name">
-                    </input>
+                    <textarea msd-elastic
+                              class="title"
+                              autofocus
+                              ng-if="focused"
+                              ng-disabled="!reviewContentEditable('regular')"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
+                    <span ng-if="!focused" style="padding: 2px;">{{pureContent.text}}</span>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
                         <h4>Old Content:</h4>
                         <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</p>
                     </div>
                 </div>
-                <div ng-switch-when="TREATMENT_NAME">
-                    <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p class="treatment-name">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}</p>
-                    <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
-                        <h4>Old Content:</h4>
-                        <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::uuidtoName(data[key+'_review'].lastReviewed)}}</p>
-                    </div>
-                </div>
-
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
                     <h4 ng-if="reviewLayout('regular') && data[key+'_review'].lastReviewed">New Content:</h4>
                     <select ng-disabled="!reviewContentEditable('regular')"
                             chosen allow-single-deselect="true"
-                            ng-init="oldValue=''"
-                            ng-focus="oldValue=pureContent.text"
-                            ng-blur="data[key]=pureContent.text"
                             ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, oldValue)"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt.value as opt.label for opt in o">
                         <option value="NA"></option>
                     </select>
@@ -180,9 +139,6 @@
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
                                     ng-model="data.propagation"
-                                    ng-init="oldValue=''"
-                                    ng-focus="oldValue=data.propagation"
-                                    ng-change="updateContent(data.propagation, oldValue)"
                                     ng-options="opt.value as opt.name for opt in content.propagationOpts">
                                 <option value="NA"></option>
                             </select>
@@ -206,11 +162,8 @@
                         <div>
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
-                                    ng-init="oldValue=''"
-                                    ng-focus="oldValue=pureContent.text"
-                                    ng-blur="data[key]=pureContent.text"
                                     ng-model="pureContent.text"
-                                    ng-change="updateContent(pureContent.text, oldValue)"
+                                    ng-change="updateContent(pureContent.text, data[key])"
                                     ng-options="opt.value as opt.label for opt in o">
                                 <option value="NA"></option>
                             </select>
@@ -230,11 +183,8 @@
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
                     <select ng-disabled="!reviewContentEditable('regular')"
                             chosen allow-single-deselect="true"
-                            ng-init="oldValue=''"
-                            ng-focus="oldValue=pureContent.text"
-                            ng-blur="data[key]=pureContent.text"
                             ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, oldValue)"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt for opt in o">
                         <option value="NA"></option>
                     </select>
@@ -244,23 +194,17 @@
                     </div>
                 </div>
                 <div ng-switch-when="checkbox">
-                    <div>
-                        <div ng-if="key !== 'ocg' && reviewLayout('regular')"><br/><h4>New Content:</h4></div>
-                        <div ng-style="getInputStyle('new')">
-                            <span ng-repeat="checkbox in checkboxes">
-                              <input id="::{{uuid+$index}}"
-                                     type="radio"
-                                     ng-value="checkbox"
-                                     ng-disabled="!reviewContentEditable('regular')"
-                                     ng-init="oldValue=''"
-                                     ng-focus="oldValue=pureContent.text"
-                                     ng-blur="data[key]=pureContent.text"
-                                     ng-model="pureContent.text"
-                                     ng-change="updateContent(pureContent.text, oldValue)"
-                                     ng-click="uncheck($event)">
-                              <label for="::{{uuid+$index}}">{{checkbox}}</label>
-                            </span>
-                        </div>
+                    <div ng-if="key !== 'ocg' && reviewLayout('regular')"><h4>New Content:</h4></div>
+                    <div ng-style="getInputStyle('new')">
+                        <span ng-repeat="checkbox in checkboxes">
+                          <input id="::{{uuid+$index}}"
+                                 type="radio"
+                                 ng-value="checkbox"
+                                 ng-disabled="!reviewContentEditable('regular')"
+                                 ng-model="pureContent.text"
+                                 ng-click="toggleCheckbox(event)">
+                          <label for="::{{uuid+$index}}">{{checkbox}}</label>
+                        </span>
                     </div>
                     <div ng-if="reviewLayout('regular')">
                         <h4 ng-if="key !== 'ocg'">Old Content:</h4>
@@ -273,7 +217,6 @@
                               <label for="::{{uuid+$index+'_review'}}">{{checkbox}}</label>
                             </span>
                         </div>
-
                     </div>
                 </div>
                 <div ng-switch-default></div>

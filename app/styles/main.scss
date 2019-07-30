@@ -319,6 +319,10 @@ input.editableBox {
 }
 .geneMainDiv {
   margin-bottom: 70px;
+  i {
+    margin-left: 2px !important;
+    margin-right: 2px;
+  }
 }
 .accordionMarginTop {
   margin-top: 5px;
@@ -789,7 +793,6 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 
 .reviewPanel {
     float:right;
-    margin-top:-20px;
     .updateText {
         font-size:15px;
         float:left;
@@ -802,7 +805,10 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
         margin-right:10px
     }
     .panelMargin {
-      margin-top:20px;
+      margin-top:10px;
+    }
+    .updatedMargin {
+      margin-top: -20px;
     }
 }
 .seperationLine {
@@ -1118,6 +1124,9 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
     resize: none;
     border: none;
   }
+  h4 {
+    margin-top: 0;
+  }
   .title {
     background: none;
   }
@@ -1130,5 +1139,8 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
   .treatment-name {
     height:auto;
   }
+}
+.summary-bottom {
+  margin-bottom: 10px;
 }
 

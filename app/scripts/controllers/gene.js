@@ -432,8 +432,6 @@ angular.module('oncokbApp')
             $scope.getNameStyle = function(type) {
                 if (!$scope.reviewMode) {
                     return {float: 'left'};
-                } else if (type === 'mutation') {
-                    return {'margin-top': '20px'};
                 }
             };
             /**
@@ -3464,6 +3462,13 @@ angular.module('oncokbApp')
                 }, function(error) {
                 });
             }
+            $scope.treatmentUuidsToName = function(key, oldKey, uuid) {
+                if(mainUtils.processedInReview('remove', uuid) && oldKey){
+                    return drugMapUtils.drugUuidtoName(oldKey, $rootScope.drugList);
+                } else {
+                    return drugMapUtils.drugUuidtoName(key, $rootScope.drugList);
+                }
+            };
         }]
     )
 

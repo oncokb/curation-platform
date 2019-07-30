@@ -192,7 +192,7 @@ angular.module('oncokbApp')
                         if ($scope.panelType !== 'update' || isTreatmentType()) {
                             return 'panelMargin';
                         } else {
-                            return '';
+                            return 'updatedMargin';
                         }
                     }
                 };
