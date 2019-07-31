@@ -41,6 +41,7 @@
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
                                 ng-model="data.propagation"
+                                ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
                                 ng-options="opt.value as opt.name for opt in content.propagationOpts">
                             <option value="NA"></option>
                         </select>
@@ -98,7 +99,7 @@
                     <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
                 <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
-                    <h4 ng-if="reviewLayout('name')">New Content:</h4>
+                    <p ng-if="reviewLayout('name')" class="margin-bottom-0">New Content:</p>
                     <textarea msd-elastic
                               class="title"
                               autofocus
@@ -110,8 +111,8 @@
                     </textarea>
                     <span ng-if="!focused" style="padding: 2px;">{{pureContent.text}}</span>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
-                        <h4>Old Content:</h4>
-                        <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</p>
+                        <p class="margin-bottom-0">Old Content:</p>
+                        <span ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</span>
                     </div>
                 </div>
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
@@ -139,6 +140,7 @@
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
                                     ng-model="data.propagation"
+                                    ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
                                     ng-options="opt.value as opt.name for opt in content.propagationOpts">
                                 <option value="NA"></option>
                             </select>
