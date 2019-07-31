@@ -469,7 +469,14 @@ angular.module('oncokbApp')
                 return '';
             };
             function isChangedSection(uuids) {
-                return _.intersection(uuids, _.keys($scope.geneMeta.review)).length > 0;
+                var result = false;
+                _.some(uuids, function (uuid) {
+                    if (uuid && $scope.geneMeta.review[uuid]) {
+                        result = true;
+                        return true;
+                    }
+                });
+                return result;
             }
             var userNames = [];
             function getReviewInfo() {

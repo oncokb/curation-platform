@@ -308,7 +308,7 @@ angular.module('oncokbApp')
                             $scope.timeoutRef = $timeout(function() {
                                 delete $scope.data[$scope.key+'_editing'];
                                 $scope.initializeFE();
-                            }, 10*1000);
+                            }, 5*1000);
                         }
                         // Check difference when user edits content in review mode.
                         if ($rootScope.reviewMode) {
