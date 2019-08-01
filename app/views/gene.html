@@ -1,4 +1,4 @@
-<div class="geneMainDiv" ng-if="!status.rendering" ng-style="geneMainDivStyle">
+<div class="geneMainDiv" ng-if="!status.rendering">
   <div id="gene" style="margin-bottom:50px">
     <h2>
       <span>Gene: {{::gene.name}}</span>
@@ -64,7 +64,7 @@
           ng-repeat="x in namesWithChanges" ng-bind-html="getButtonContent(x)"></button>
       </span>
     </div>
-    <div ng-show="displayPrecisely(gene.summary_uuid)">
+    <div ng-show="displayPrecisely(gene.summary_uuid)" class="summary-bottom">
       <h3>Summary:
         <span ng-show="!reviewMode"><comments-dict key="'summary'" path="getObservePath({type: 'gene'})"></comments-dict></span>
         <review-panel hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)" model-update="modelUpdate(type)"
@@ -113,34 +113,31 @@
   <div id="mutations">
     <div ng-repeat="mutation in mutations" ng-init="path=getObservePath({type: 'mutation', index: $index});" ng-show="displayCheck(mutation.name_uuid, mutation.name_review)">
       <div class="sectionStyle">
-        <div ng-style="movingInfo[mutation.name_uuid]" ng-class="getMutationPanelClass(mutation.name)">
-          <div ng-click="toggleSection(mutation.name_uuid); setSectionOpenStatus('open', [mutation.mutation_effect_uuid])">
-            <i ng-class="getAngleClass(mutation.name_uuid)"></i> Mutation:</div>
-          <div style="margin-top:-42px;margin-left:100px">
-            <div ng-style="getNameStyle('mutation')"><realtime-string t="'MUTATION_NAME'" key="'name'" path="path" uuid="getUUID({type: 'mutation', key: 'name', path: path})"></realtime-string></div>
-            <div style="float:left;" ng-class="mutation.name.length > 80 ? 'levelWithLongName' : 'levelWithoutLongName'" ng-show="!reviewMode">
-              <comments-dict key="'name'" path="path"></comments-dict>
-              <span style="margin-right:10px" ng-bind-html="mutationContent[mutation.name_uuid].result"></span>
-                <span class="curationNoEntry" ng-if="isEmptySection(mutation, 'mutation')">No Entry</span>
+        <div ng-style="movingInfo[mutation.name_uuid]" style="display: flex;" class="direct-descendants-margin headerLevel1">
+          <div ng-click="toggleSection(mutation.name_uuid); setSectionOpenStatus('open', [mutation.mutation_effect_uuid])" class="flex-row direct-descendants-margin">
+            <i ng-class="getAngleClass(mutation.name_uuid)"></i>
+              <span>Mutation:</span>
+          </div>
+            <div ng-style="getNameStyle('mutation')" style="flex-grow: 1;" class="flex-row">
+                <realtime-string t="'MUTATION_NAME'" key="'name'" path="path" uuid="getUUID({type: 'mutation', key: 'name', path: path})"></realtime-string>
+                <div ng-show="!reviewMode" class="direct-descendants-margin flex-row">
+                    <span ng-if="mutationContent[mutation.name_uuid].result" ng-bind-html="mutationContent[mutation.name_uuid].result"></span>
+                    <span class="curationNoEntry" ng-if="isEmptySection(mutation, 'mutation')">No Entry</span>
+                    <comments-dict key="'name'" path="path"></comments-dict>
+                </div>
             </div>
-            <div ng-show="!reviewMode" style="margin-top:-30px">
-              <span style="float:right">
+            <div ng-show="!reviewMode" class="direct-descendants-margin flex-row">
                   <span ng-show="!reviewMode && me.admin && fileEditable">
-                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}" ng-show="displayMoveIcon('mutation', 'initial', mutation.name_uuid)" style="margin-right:10px;" ng-style="movingInfo.style" ng-click="startMoving('mutation', path, mutation.name_uuid, $index)"></i>
+                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}" ng-show="displayMoveIcon('mutation', 'initial', mutation.name_uuid)" ng-style="movingInfo.style" ng-click="startMoving('mutation', path, mutation.name_uuid, $index)"></i>
                       <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="Click to put above this mutation" ng-show="displayMoveIcon('mutation', 'up', mutation.name_uuid, $index)" style="margin-right:10px;color:green" ng-click="endMoving(path, 'up')"></i>
                   </span>
                   <span ng-show="!reviewMode && fileEditable">
                       <i ng-click="remove('mutation', path)" class="fa fa-trash-o"></i>
                   </span>
-              </span>
             </div>
-            <div style="margin-top:-20px;margin-bottom:20px">
-                <review-panel hugo-symbol="gene.name" uuid="mutation.name_uuid" review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation" get-evidence="getEvidence(type, mutation)" model-update="modelUpdate(type, mutation)"
+             <review-panel hugo-symbol="gene.name" uuid="mutation.name_uuid" review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation" get-evidence="getEvidence(type, mutation)" model-update="modelUpdate(type, mutation)"
                               accept-added="acceptAdded(type, mutation, tumor, ti, treatment, updatedBy)" reject-added="rejectAdded(type, mutation, tumor, ti, treatment, updatedBy)"
                               confirm-delete="confirmDelete(type, mutation, tumor, ti, treatment, updatedBy)" cancel-delete="cancelDelete(type, mutation, tumor, ti, treatment, updatedBy)" get-refs="getRefs(mutation)"></review-panel>
-            </div>
-
-          </div>
         </div>
         <div class="panelContent" ng-if="initialOpen[mutation.name_uuid]" id="{{mutation.name_uuid}}">
           <div class="sectionStyle" ng-init="bindTumors({uuid: mutation.name_uuid, path: path});getTumorContent(mutation);effectPath=getObservePath({type: 'mutation_effect', path: path});" ng-show="displayCheck(mutation.mutation_effect_uuid, mutation.name_review)">
@@ -152,7 +149,7 @@
             </div>
             <div class="panelContent" id="{{mutation.mutation_effect_uuid}}">
               <p ng-show="displayPrecisely(mutation.mutation_effect.oncogenic_uuid)">
-                <strong style="float: left">Oncogenic:</strong>
+                <strong style="float: left; margin-right: 5px;">Oncogenic:</strong>
                 <realtime-string t="'checkbox'" key="'oncogenic'" path="effectPath" checkboxes="checkboxes['oncogenic']" uuid="getUUID({type: 'mutation_effect', key: 'oncogenic', path: path})"></realtime-string>
               </p>
               <div class="mutationEffect" ng-show="displayPrecisely(mutation.mutation_effect.effect_uuid)">
@@ -182,7 +179,7 @@
                     <span>Tumor type: </span>
                     <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
                         <br/>
-                        <p>New Content: </p>
+                        <p class="margin-bottom-0">New Content: </p>
                     </span>
                     <span>{{getCancerTypesNameInReview(tumor, tumor.cancerTypes_uuid, reviewMode)}}</span>
                 </span>
@@ -201,9 +198,9 @@
                     </span>
                 </span>
                   <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
-                        <p style="margin-top:10px;">Old Content: </p>
-                        <span>{{getLastReviewedCancerTypesName(tumor)}}</span>
-                    </span>
+                      <p class="margin-bottom-0">Old Content: </p>
+                      <span>{{getLastReviewedCancerTypesName(tumor)}}</span>
+                  </span>
                 <div style="margin-top:-20px;margin-bottom:20px">
                     <review-panel hugo-symbol="gene.name" uuid="tumor.cancerTypes_uuid" review-obj="tumor.cancerTypes_review" evidence-type="'tumor'" mutation="mutation" tumor="tumor" get-evidence="getEvidence(type, mutation, tumor)" model-update="modelUpdate(type, mutation, tumor)"
                                   confirm-delete="confirmDelete(type, mutation, tumor, ti, treatment, updatedBy)" cancel-delete="cancelDelete(type, mutation, tumor, ti, treatment, updatedBy)" get-refs="getRefs(mutation, tumor, ti, treatment)"
@@ -211,19 +208,19 @@
                 </div>
               </div>
               <div class="panelContent" ng-if="initialOpen[tumor.cancerTypes_uuid]" id="{{tumor.cancerTypes_uuid}}" ng-init="bindTIs({uuid: tumor.cancerTypes_uuid, path: path})">
-                  <div ng-show="displayPrecisely(tumor.summary_uuid)">
+                  <div class="flex-column" ng-show="displayPrecisely(tumor.summary_uuid)">
                     <h5><b>Therapeutic Summary (Optional): </b>
                         <review-panel hugo-symbol="gene.name" uuid="tumor.summary_uuid" review-obj="tumor.summary_review" evidence-type="'TUMOR_TYPE_SUMMARY'" mutation="mutation" tumor="tumor" get-evidence="getEvidence(type, mutation, tumor)" model-update="modelUpdate(type, mutation, tumor)" get-refs="getRefs(mutation, tumor)"></review-panel>
                     </h5>
                     <realtime-string t="'p'" key="'summary'" path="path" uuid="getUUID({type: 'tumor', key: 'summary', path: path})" mutation="mutation" tumor="tumor" indicate-mutation-content="indicateMutationContent(mutation)" indicate-tumor-content="indicateTumorContent(tumor)"></realtime-string>
                   </div>
-                  <div ng-show="displayPrecisely(tumor.diagnosticSummary_uuid)">
+                  <div class="flex-column" ng-show="displayPrecisely(tumor.diagnosticSummary_uuid)">
                       <h5><b>Diagnostic Summary (Optional): </b>
                           <review-panel hugo-symbol="gene.name" uuid="tumor.diagnosticSummary_uuid" review-obj="tumor.diagnosticSummary_review" evidence-type="'DIAGNOSTIC_SUMMARY'" mutation="mutation" tumor="tumor" get-evidence="getEvidence(type, mutation, tumor)" model-update="modelUpdate(type, mutation, tumor)" get-refs="getRefs(mutation, tumor)"></review-panel>
                       </h5>
                       <realtime-string t="'p'" key="'diagnosticSummary'" path="path" uuid="getUUID({type: 'tumor', key: 'diagnosticSummary', path: path})" mutation="mutation" tumor="tumor" indicate-mutation-content="indicateMutationContent(mutation)" indicate-tumor-content="indicateTumorContent(tumor)"></realtime-string>
                   </div>
-                  <div ng-show="displayPrecisely(tumor.prognosticSummary_uuid)">
+                  <div class="flex-column" ng-show="displayPrecisely(tumor.prognosticSummary_uuid)">
                       <h5><b>Prognostic Summary (Optional): </b>
                           <review-panel hugo-symbol="gene.name" uuid="tumor.prognosticSummary_uuid" review-obj="tumor.prognosticSummary_review" evidence-type="'PROGNOSTIC_SUMMARY'" mutation="mutation" tumor="tumor" get-evidence="getEvidence(type, mutation, tumor)" model-update="modelUpdate(type, mutation, tumor)" get-refs="getRefs(mutation, tumor)"></review-panel>
                       </h5>
@@ -296,28 +293,30 @@
                         <div class="sectionStyle">
                           <div ng-style="movingInfo[treatment.name_uuid]" class="headerLevel4">
                             <div ng-click="toggleSection(treatment.name_uuid)"><i ng-class="getAngleClass(treatment.name_uuid)"></i> Therapy:</div>
-                              <div style="margin-left:90px;margin-top:-22px;overflow: hidden">
+                              <div style="margin-left:95px;margin-top:-23px;">
                                   <div ng-style="getNameStyle()">
-                                      <realtime-string t="'TREATMENT_NAME'" key="'name'" path="path"
-                                                       uuid="getUUID({type: 'treatment', key: 'name', path: path})"></realtime-string>
+                                      <span ng-if="reviewContentDisplay(treatment.name_uuid, true)">
+                                          <p>New Content: </p>
+                                      </span>
+                                      <span class="treatment-name">{{treatmentUuidsToName(treatment.name)}}</span>
+                                      <span style="margin-left:10px;" ng-show="!reviewMode">
+                                          <comments-dict key="'name'" path="path"></comments-dict>
+                                          <span class="curationNoEntry" ng-if="isEmptySection(treatment, 'treatment')">No Entry</span>
+                                          <i class="fa fa-edit ng-scope" style="margin-top: 5px; margin-left: 5px" ng-show="fileEditable" ng-click="modifyTherapy(path)"></i>
+                                      </span>
                                   </div>
-                                  <span>
-                                  <div style="float:left;margin-left:10px;" ng-show="!reviewMode">
-                                      <comments-dict key="'name'" path="path"></comments-dict>
-                                      <span class="curationNoEntry" ng-if="isEmptySection(treatment, 'treatment')">No Entry</span>
-                                  </div>
-                                  <i class="fa fa-edit ng-scope" style="margin-top: 5px; margin-left: 5px"
-                                     ng-show="fileEditable" ng-click="modifyTherapy(path)"></i>
+                                  <span style="float:right" ng-show="!reviewMode && fileEditable">
+                                      <span ng-if="me.admin && internal">
+                                          <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}"  ng-show="displayMoveIcon('treatment', 'initial', treatment.name_uuid)" style="margin-right:10px;" ng-style="movingInfo.style" ng-click="startMoving('treatment', path, treatment.name_uuid, $index)"></i>
+                                          <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="Click to put above this treatment" ng-show="displayMoveIcon('treatment', 'up', treatment.name_uuid, $index)" style="margin-right:10px;color:green" ng-click="endMoving(path, 'up')"></i>
+                                      </span>
+                                      <span><i ng-click="remove('treatment', path)" class="fa fa-trash-o"></i></span>
                                   </span>
-
-                              <span style="float:right" ng-show="!reviewMode && fileEditable">
-                                  <span ng-if="me.admin && internal">
-                                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="{{movingInfo.message}}"  ng-show="displayMoveIcon('treatment', 'initial', treatment.name_uuid)" style="margin-right:10px;" ng-style="movingInfo.style" ng-click="startMoving('treatment', path, treatment.name_uuid, $index)"></i>
-                                      <i class="fa fa-arrows" uib-tooltip-placement="top" uib-tooltip="Click to put above this treatment" ng-show="displayMoveIcon('treatment', 'up', treatment.name_uuid, $index)" style="margin-right:10px;color:green" ng-click="endMoving(path, 'up')"></i>
+                                  <span ng-if="reviewContentDisplay(treatment.name_uuid, true)">
+                                      <p style="margin-top:10px;">Old Content: </p>
+                                      <span>{{::treatmentUuidsToName(treatment.name_review.lastReviewed)}}</span>
                                   </span>
-                                  <span><i ng-click="remove('treatment', path)" class="fa fa-trash-o"></i></span>
-                              </span>
-                            </div>
+                              </div>
                             <div style="margin-top:-45px;margin-bottom:45px;">
                                   <review-panel hugo-symbol="gene.name" uuid="treatment.name_uuid" review-obj="treatment.name_review" evidence-type="ti.name" mutation="mutation"
                                     tumor="tumor" therapy-category="ti" treatment="treatment" get-evidence="getEvidence(type, mutation, tumor, ti, treatment)"

@@ -64,16 +64,6 @@ angular.module('oncokbApp')
                 });
                 return reviewMetaDefer.promise;
             }
-            function loadMovingMeta(hugoSymbol) {
-                var movingSectionDefer = $q.defer();
-                firebase.database().ref('Meta/'+hugoSymbol).on('value', function(doc) {
-                    $rootScope.movingSection = doc.val().movingSection;
-                    movingSectionDefer.resolve('success');
-                }, function () {
-                    movingSectionDefer.reject('Failed to bind meta firebase object');
-                });
-                return movingSectionDefer.promise;
-            }
             function loadQueues() {
                 var queuesDefer = $q.defer();
                 var ref = firebase.database().ref('Queues');
@@ -165,9 +155,6 @@ angular.module('oncokbApp')
             }
             if (types.indexOf('reviewMeta') !== -1) {
                 apiCalls.push(loadReviewMeta(data));
-            }
-            if (types.indexOf('movingSection') !== -1) {
-                apiCalls.push(loadMovingMeta(data));
             }
             if (types.indexOf('setting') !== -1) {
                 apiCalls.push(loadSetting());

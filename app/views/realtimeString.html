@@ -1,59 +1,48 @@
-<div>
-    <div ng-switch on="inReviewMode()">
-        <div ng-switch-when="false">
-            <div ng-switch on="t">
-                <div ng-switch-when="p">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p contenteditable="{{fe}}"
-                        ng-class="getInputClass()"
-                        ng-model="data[key]"
-                        ng-paste="trimCSS()"
-                        ng-model-options="{ debounce: 500 }">
-                     </p>
-                    <pub-iframe
-                            ng-model="pContent">
-                    </pub-iframe>
+<div class="realtime-string" style="display: flex; flex-direction: column; flex-grow: 1">
+    <div ng-switch on="inReviewMode()" class="flex-column">
+        <div ng-switch-when="false" class="flex-column">
+            <div ng-switch on="t" class="flex-column">
+                <div ng-switch-when="p" class="content-wrapper flex-column">
+                    <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
+                    <textarea msd-elastic
+                              ng-disabled="!fe"
+                              ng-class="getInputClass()"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"
+                    ></textarea>
+                    <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
-                <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
-                    <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">
-                -->
-                <div ng-switch-when="MUTATION_NAME">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p contenteditable="{{fe}}"
-                        ng-class="getInputClass()"
-                        ng-model="data[key]"
-                        ng-click="setTrackSignal()"
-                        ng-paste="trimCSS()"
-                        ng-model-options="{ debounce: 500 }"
-                        class="editEmpty">
-                    </p>
-                    <!-- <span style="color:red">{{getDuplicationMessage()}}</span> -->
-                    <!-- <br/> -->
-                </div>
-                <div ng-switch-when="TREATMENT_NAME">
-                    <p ng-if="!fe && editingMessage" style="font-style:italic;margin-top:-30px;margin-left:30%;color:orange">{{editingMessage}}</p>
-                    <p ng-class="getInputClass()"
-                       ng-click="setTrackSignal()"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 0 } }"
-                       class="editEmpty" style="height:auto;">{{uuidtoName(data[key])}}
-                    </p>
+                <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
+                    <p ng-if="!fe && editingMessage" class="editing-message">{{editingMessage}}</p>
+                    <textarea msd-elastic
+                              class="title"
+                              autofocus
+                              ng-if="focused"
+                              ng-disabled="!fe"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
+                    <span ng-if="!focused" style="padding: 2px;">{{data[key]}}</span>
                 </div>
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
                     <div style="margin-top:10px;margin-bottom:10px">
                         <select ng-disabled="!fe"
-                            chosen allow-single-deselect="true"
-                            ng-model="data[key]"
-                            ng-options="opt.value as opt.label for opt in o">
+                                chosen allow-single-deselect="true"
+                                ng-model="pureContent.text"
+                                ng-change="updateContent(pureContent.text, data[key])"
+                                ng-options="opt.value as opt.label for opt in o">
                             <option value="NA"></option>
                         </select>
                     </div>
                     <div ng-if="content.propagationOpts.length > 0" style="margin-bottom:10px">
                         <span>Level of Evidence in other tumor types: </span>
                         <select ng-disabled="!fe"
-                            chosen allow-single-deselect="true"
-                            ng-model="data.propagation"
-                            ng-options="opt.value as opt.name for opt in content.propagationOpts">
+                                chosen allow-single-deselect="true"
+                                ng-model="data.propagation"
+                                ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
+                                ng-options="opt.value as opt.name for opt in content.propagationOpts">
                             <option value="NA"></option>
                         </select>
                     </div>
@@ -61,7 +50,8 @@
                 <div ng-switch-when="implication" class="chosen-full-width">
                     <select ng-disabled="!fe"
                             chosen allow-single-deselect="true"
-                            ng-model="data[key]"
+                            ng-model="pureContent.text"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt.value as opt.label for opt in o">
                         <option disabled></option>
                     </select>
@@ -69,7 +59,8 @@
                 <div ng-switch-when="select-chosen" class="chosen-full-width">
                     <select ng-disabled="!fe"
                             chosen allow-single-deselect="true"
-                            ng-model="data[key]"
+                            ng-model="pureContent.text"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt for opt in o">
                         <option value="NA"></option>
                     </select>
@@ -78,11 +69,11 @@
                     <div>
                         <span ng-repeat="checkbox in checkboxes">
                             <input id="::{{uuid+$index}}"
-                                  type="radio"
-                                  ng-model="data[key]"
-                                  ng-value="checkbox"
-                                  ng-disabled="!fe"
-                                  ng-click="uncheck($event)">
+                                   type="radio"
+                                   ng-value="checkbox"
+                                   ng-disabled="!fe"
+                                   ng-model="pureContent.text"
+                                   ng-click="toggleCheckbox(event)">
                             <label for="::{{uuid+$index}}">{{checkbox}}</label>
                         </span>
                     </div>
@@ -90,58 +81,46 @@
                 <div ng-switch-default></div>
             </div>
         </div>
-        <div ng-switch-when="true">
-            <div ng-switch on="t">
-                <div ng-switch-when="p">
+        <div ng-switch-when="true" class="flex-column">
+            <div ng-switch on="t" class="flex-column">
+                <div ng-switch-when="p" class="content-wrapper flex-column">
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
-                       ng-class="getInputClass()"
-                       ng-model="data[key]"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ debounce: 500 }">
-                    </p>
+                    <textarea msd-elastic ng-disabled="!reviewContentEditable('regular')"
+                              ng-class="getInputClass()"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
                     <div ng-if="reviewLayout('regular')">
                         <h4>Difference comparing to the old content:</h4>
                         <p ng-bind-html="diffHTML"></p>
+                        <p ng-if="!diffHTML"> No old content.</p>
                     </div>
-                    <pub-iframe
-                            ng-model="data[key]">
-                    </pub-iframe>
+                    <pub-iframe ng-model="data[key]"></pub-iframe>
                 </div>
-                <!--Seperate Mutation_Name & Treatment_Name here. We may need to recombine them in the future.
-                  <div ng-switch-when="MUTATION_NAME|TREATMENT_NAME" ng-switch-when-seperator="|">-->
-                <div ng-switch-when="MUTATION_NAME">
-                    <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
-                          ng-class="editableBox"
-                          ng-paste="trimCSS()"
-                          ng-model-options="{ debounce: 500 }"
-                          class="editEmpty">{{getMutationName(data[key], data[key+'_review'].lastReviewed, uuid)}}
-                    </p>
+                <div ng-switch-when="MUTATION_NAME" class="flex-column" ng-init="focused = false" ng-click="focused=true">
+                    <p ng-if="reviewLayout('name')" class="margin-bottom-0">New Content:</p>
+                    <textarea msd-elastic
+                              class="title"
+                              autofocus
+                              ng-if="focused"
+                              ng-disabled="!reviewContentEditable('regular')"
+                              ng-model="pureContent.text"
+                              ng-change="updateContent(pureContent.text, data[key])"
+                              ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }">
+                    </textarea>
+                    <span ng-if="!focused" style="padding: 2px;">{{pureContent.text}}</span>
                     <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
-                        <h4>Old Content:</h4>
-                        <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</p>
+                        <p class="margin-bottom-0">Old Content:</p>
+                        <span ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::data[key+'_review'].lastReviewed}}</span>
                     </div>
                 </div>
-                <div ng-switch-when="TREATMENT_NAME">
-                    <h4 ng-if="reviewLayout('name')">New Content:</h4>
-                    <p contenteditable="{{reviewContentEditable('regular')}}"
-                       ng-class="editableBox"
-                       ng-paste="trimCSS()"
-                       ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 200, 'blur': 0 } }"
-                       class="editEmpty" style="height:auto;">{{uuidtoName(data[key], data[key+'_review'].lastReviewed, uuid)}}
-                    </p>
-                    <div ng-if="reviewLayout('name')" ng-class="getOldContentDivClass(data[key])">
-                        <h4>Old Content:</h4>
-                        <p ng-class="getOldContentClass(data[key+'_review'].lastReviewed)">{{::uuidtoName(data[key+'_review'].lastReviewed)}}</p>
-                    </div>
-                </div>
-
                 <div ng-switch-when="treatment-select" class="chosen-full-width">
                     <h4 ng-if="reviewLayout('regular') && data[key+'_review'].lastReviewed">New Content:</h4>
                     <select ng-disabled="!reviewContentEditable('regular')"
                             chosen allow-single-deselect="true"
-                            ng-model="data[key]"
+                            ng-model="pureContent.text"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt.value as opt.label for opt in o">
                         <option value="NA"></option>
                     </select>
@@ -161,6 +140,7 @@
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
                                     ng-model="data.propagation"
+                                    ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
                                     ng-options="opt.value as opt.name for opt in content.propagationOpts">
                                 <option value="NA"></option>
                             </select>
@@ -184,7 +164,8 @@
                         <div>
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
-                                    ng-model="data[key]"
+                                    ng-model="pureContent.text"
+                                    ng-change="updateContent(pureContent.text, data[key])"
                                     ng-options="opt.value as opt.label for opt in o">
                                 <option value="NA"></option>
                             </select>
@@ -197,8 +178,6 @@
                                     ng-options="opt.value as opt.label for opt in o">
                                 <option value="NA"></option>
                             </select>
-
-                            <!-- <p ng-class="unEditableBox" contenteditable="false">{{}}</p> -->
                         </div>
                     </div>
                 </div>
@@ -206,42 +185,40 @@
                     <h4 ng-if="reviewLayout('regular')">New Content:</h4>
                     <select ng-disabled="!reviewContentEditable('regular')"
                             chosen allow-single-deselect="true"
-                            ng-model="data[key]"
+                            ng-model="pureContent.text"
+                            ng-change="updateContent(pureContent.text, data[key])"
                             ng-options="opt for opt in o">
                         <option value="NA"></option>
                     </select>
                     <div ng-if="reviewLayout('regular')">
                         <h4>Old Content:</h4>
-                        <p ng-class="unEditableBox" contenteditable="false">{{::reviewObj.lastReviewed}}</p>
+                        <p class="unEditableBox">{{::reviewObj.lastReviewed}}</p>
                     </div>
                 </div>
                 <div ng-switch-when="checkbox">
-                    <div>
-                        <div ng-if="key !== 'ocg' && reviewLayout('regular')"><br/><h4>New Content:</h4></div>
-                        <div ng-style="getInputStyle('new')">
-                            <span ng-repeat="checkbox in checkboxes">
-                              <input id="::{{uuid+$index}}"
-                                      type="radio"
-                                      ng-model="data[key]"
-                                      ng-value="checkbox"
-                                      ng-disabled="!reviewContentEditable('regular')"
-                                      ng-click="uncheck($event)">
-                              <label for="::{{uuid+$index}}">{{checkbox}}</label>
-                            </span>
-                        </div>
+                    <div ng-if="key !== 'ocg' && reviewLayout('regular')"><h4>New Content:</h4></div>
+                    <div ng-style="getInputStyle('new')">
+                        <span ng-repeat="checkbox in checkboxes">
+                          <input id="::{{uuid+$index}}"
+                                 type="radio"
+                                 ng-value="checkbox"
+                                 ng-disabled="!reviewContentEditable('regular')"
+                                 ng-model="pureContent.text"
+                                 ng-click="toggleCheckbox(event)">
+                          <label for="::{{uuid+$index}}">{{checkbox}}</label>
+                        </span>
                     </div>
                     <div ng-if="reviewLayout('regular')">
                         <h4 ng-if="key !== 'ocg'">Old Content:</h4>
                         <div ng-style="getInputStyle('old')">
                             <span ng-repeat="checkbox in checkboxes" class="reviewedBG">
                               <input id="::{{uuid+$index+'_review'}}"
-                                      type="radio"
-                                      ng-checked="getOldcontentChecked(checkbox)"
-                                      ng-disabled="true">
+                                     type="radio"
+                                     ng-checked="getOldContentChecked(checkbox)"
+                                     ng-disabled="true">
                               <label for="::{{uuid+$index+'_review'}}">{{checkbox}}</label>
                             </span>
                         </div>
-
                     </div>
                 </div>
                 <div ng-switch-default></div>

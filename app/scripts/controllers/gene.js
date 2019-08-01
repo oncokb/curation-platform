@@ -432,8 +432,6 @@ angular.module('oncokbApp')
             $scope.getNameStyle = function(type) {
                 if (!$scope.reviewMode) {
                     return {float: 'left'};
-                } else if (type === 'mutation') {
-                    return {'margin-top': '20px'};
                 }
             };
             /**
@@ -2747,7 +2745,6 @@ angular.module('oncokbApp')
                 }
             };
             $scope.startMoving = function(sectionType, path, uuid, index) {
-                mainUtils.updateMovingFlag(true);
                 $scope.movingInfo.preMoving = !$scope.movingInfo.preMoving;
                 if ($scope.movingInfo.uuid) {
                     delete $scope.movingInfo[$scope.movingInfo.uuid];
@@ -3270,17 +3267,6 @@ angular.module('oncokbApp')
                     }
                 });
             }
-            $scope.getMutationPanelClass = function(name) {
-                var className = 'headerLevel1';
-                if (name.length > 80) {
-                    if ($scope.reviewMode) {
-                        className += ' longMutationNameReview';
-                    } else {
-                        className += ' longMutationName';
-                    }
-                }
-                return className;
-            }
             $scope.getAngleClass = function (uuid) {
                 var result = "fa fa-angle-right";
                 if ($scope.initialOpen[uuid]) {
@@ -3319,7 +3305,7 @@ angular.module('oncokbApp')
                     deferred1.reject(error);
                 });
                 var deferred2 = $q.defer();
-                loadFiles.load(['reviewMeta', 'movingSection'], $routeParams.geneName).then(function() {
+                loadFiles.load(['reviewMeta'], $routeParams.geneName).then(function() {
                     deferred2.resolve('success');
                 }, function(error) {
                     deferred2.reject(error);
@@ -3476,6 +3462,13 @@ angular.module('oncokbApp')
                 }, function(error) {
                 });
             }
+            $scope.treatmentUuidsToName = function(key, oldKey, uuid) {
+                if(mainUtils.processedInReview('remove', uuid) && oldKey){
+                    return drugMapUtils.drugUuidtoName(oldKey, $rootScope.drugList);
+                } else {
+                    return drugMapUtils.drugUuidtoName(key, $rootScope.drugList);
+                }
+            };
         }]
     )
 
@@ -3550,12 +3543,11 @@ angular.module('oncokbApp')
                         'updatedBy' : $rootScope.me.name,
                         'updateTime':  new Date().getTime(),
                     };
-                }
-                else if (_.isUndefined($scope.treatmentRef.name_review.updatedBy) || _.isUndefined($scope.treatmentRef.name_review.updateTime)) {
+                } else {
                     $scope.treatmentRef.name_review.updatedBy = $rootScope.me.name;
                     $scope.treatmentRef.name_review.updateTime = new Date().getTime();
                 }
-                if (_.isUndefined($scope.treatmentRef.name_review.lastReviewed)&&_.isUndefined($scope.treatmentRef.name_review.added)) {
+                if (_.isUndefined($scope.treatmentRef.name_review.lastReviewed) && _.isUndefined($scope.treatmentRef.name_review.added)) {
                     $scope.treatmentRef.name_review.lastReviewed = $scope.treatmentRef.name;
                 }
                 mainUtils.setUUIDInReview(name_uuid);
@@ -3595,12 +3587,8 @@ angular.module('oncokbApp')
                 if (_.isUndefined(data.tumorRef.cancerTypes_review)) {
                     data.tumorRef.cancerTypes_review = {};
                 }
-                if (_.isUndefined(data.tumorRef.cancerTypes_review.updatedBy)) {
-                    data.tumorRef.cancerTypes_review.updatedBy = $rootScope.me.name;
-                }
-                if (_.isUndefined(data.tumorRef.cancerTypes_review.updateTime)) {
-                    data.tumorRef.cancerTypes_review.updateTime = new Date().getTime();
-                }
+                data.tumorRef.cancerTypes_review.updatedBy = $rootScope.me.name;
+                data.tumorRef.cancerTypes_review.updateTime = new Date().getTime();
                 if (_.isUndefined(data.tumorRef.cancerTypes_review.lastReviewed)) {
                     data.tumorRef.cancerTypes_review.lastReviewed = $scope.meta.cancerTypes;
                 }

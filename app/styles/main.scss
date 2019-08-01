@@ -179,12 +179,6 @@ input.editableBox {
   border: 0;
   width:80%;
 }
-p.editableBox {
-  min-height: 20px;
-}
-p.editableBox.doubleH {
-  min-height: 40px;
-}
 .reviewed {
     color: #82E452;
 }
@@ -325,6 +319,10 @@ p.editableBox.doubleH {
 }
 .geneMainDiv {
   margin-bottom: 70px;
+  i {
+    margin-left: 2px !important;
+    margin-right: 2px;
+  }
 }
 .accordionMarginTop {
   margin-top: 5px;
@@ -795,7 +793,6 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 
 .reviewPanel {
     float:right;
-    margin-top:-20px;
     .updateText {
         font-size:15px;
         float:left;
@@ -808,7 +805,10 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
         margin-right:10px
     }
     .panelMargin {
-      margin-top:20px;
+      margin-top:10px;
+    }
+    .updatedMargin {
+      margin-top: -20px;
     }
 }
 .seperationLine {
@@ -1061,31 +1061,6 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 .sectionStyle {
   border: 0.5px solid #ddd;
 }
-.editEmpty {
-    display: block;
-    height: 24px;
-}
-.longMutationName {
-    height: 100px;
-    display:inline-block;
-}
-
-.longMutationNameReview {
-    height: 200px;
-}
-
-.levelWithLongName {
-    margin-top: 15px;
-}
-.levelWithoutLongName {
-    margin-left: 10px;
-}
-.longContent {
-    height: 40px;
-}
-.longContentDivMargin {
-    margin-top: 30px;
-}
 .tage-label {
     display: inline-block;
     padding: .2em .6em .3em;
@@ -1117,5 +1092,58 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 .label-old {
     color: #000000;
     background-color: #ccc;
+}
+
+.direct-descendants-margin {
+  :first-child {
+    margin-left: 0;
+  }
+
+  :last-child {
+    margin-right: 0;
+  }
+
+  & > * {
+    margin: 0 2px;
+  }
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+.realtime-string {
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  textarea {
+    resize: none;
+    border: none;
+  }
+  h4 {
+    margin-top: 0;
+  }
+  .title {
+    background: none;
+  }
+  .editing-message {
+    font-style:italic;
+    margin-top:-30px;
+    margin-left:30%;
+    color:orange
+  }
+  .treatment-name {
+    height:auto;
+  }
+}
+.summary-bottom {
+  margin-bottom: 10px;
+}
+.margin-bottom-0 {
+  margin-bottom: 0;
 }
 

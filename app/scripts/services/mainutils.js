@@ -463,11 +463,6 @@ angular.module('oncokbApp')
                 lastSavedAt: new Date().getTime()
             });
         }
-        function updateMovingFlag(flag) {
-            firebase.database().ref('Meta/' + $routeParams.geneName).update({
-                movingSection: flag
-            });
-        }
         function setUUIDInReview(uuid) {
             var tempObj = {};
             tempObj[uuid] = true;
@@ -663,7 +658,7 @@ angular.module('oncokbApp')
             }
             var tmp = window.document.createElement('DIV');
             var processdStr = string.replace(/(\r\n|\n|\r)/gm, '');
-            var processdStr = processdStr.replace(/<style>.*<\/style>/i, '');
+            processdStr = processdStr.replace(/<style>.*<\/style>/i, '');
             tmp.innerHTML = processdStr;
             /* eslint new-cap: 0*/
             var _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
@@ -674,7 +669,7 @@ angular.module('oncokbApp')
             var tmp = window.document.createElement('DIV');
             tmp.innerHTML = string;
 
-            var _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
+            _string = tmp.textContent || tmp.innerText || S(string).stripTags().s;
             string = S(_string).decodeHTMLEntities().s;
             string = S(_string).collapseWhitespace().s;
 
@@ -714,7 +709,6 @@ angular.module('oncokbApp')
             getHistoryData: getHistoryData,
             setUUIDInReview: setUUIDInReview,
             deleteUUID: deleteUUID,
-            updateMovingFlag: updateMovingFlag,
             processData: processData,
             shouldExclude: shouldExclude,
             getTimeStamp: getTimeStamp,
