@@ -64,7 +64,7 @@
           ng-repeat="x in namesWithChanges" ng-bind-html="getButtonContent(x)"></button>
       </span>
     </div>
-    <div ng-show="displayPrecisely(gene.summary_uuid)" class="summary-bottom">
+    <div ng-if="displayPrecisely(gene.summary_uuid)" class="summary-bottom">
       <h3>Summary:
         <span ng-show="!reviewMode"><comments-dict key="'summary'" path="getObservePath({type: 'gene'})"></comments-dict></span>
         <review-panel hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)" model-update="modelUpdate(type)"
@@ -81,7 +81,7 @@
               <realtime-string key="'ocg'" path="getObservePath({type: 'geneType'})" review-obj="gene.type_review" uuid="::gene.type.ocg_uuid" fe="geneEditable" t="'checkbox'" object="gene.type" objecttype="'object'" objectkey="'ocg'" checkboxes="checkboxes['OCG']" checkboxid="'OCG'"></realtime-string>
            </div>
       </div>
-    <div ng-show="displayPrecisely(gene.background_uuid)">
+    <div ng-if="displayPrecisely(gene.background_uuid)">
       <br/>
       <br/>
       <h3>Background:

@@ -3251,6 +3251,7 @@ angular.module('oncokbApp')
                     var panel = document.getElementById(uuid);
                     if (panel.style.display === "none") {
                         panel.style.display = "block";
+                        $scope.$broadcast("elastic:adjust");
                     } else {
                         panel.style.display = "none";
                     }
