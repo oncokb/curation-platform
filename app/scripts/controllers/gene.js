@@ -416,7 +416,7 @@ angular.module('oncokbApp')
                 // Adjust textarea height
                 $timeout(function () {
                     $scope.$broadcast("elastic:adjust");
-                }, 5000, false);
+                }, 3000, false);
             };
             function resetReviewResources() {
                 ReviewResource.accepted = [];
