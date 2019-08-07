@@ -410,8 +410,13 @@ angular.module('oncokbApp')
                 // close all mutations
                 $timeout(function() {
                     $rootScope.reviewMode = false;
-                    $scope.setSectionOpenStatus('close', $scope.sectionUUIDs);
+                    // Do not close opened panels
+                    // $scope.setSectionOpenStatus('close', $scope.sectionUUIDs);
                 }, 200);
+                // Adjust textarea height
+                $timeout(function () {
+                    $scope.$broadcast("elastic:adjust");
+                }, 3000, false);
             };
             function resetReviewResources() {
                 ReviewResource.accepted = [];
