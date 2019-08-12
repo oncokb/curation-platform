@@ -566,12 +566,16 @@ angular.module('oncokbApp')
                 _.each($scope.reviewedData[$scope.data.evidenceType].body, function(item) {
                     tempArr = [];
                     _.each($scope.reviewedData[$scope.data.evidenceType].keys, function(key) {
-                        tempArr.push(item[key]);
+                        if (key === 'citations') {
+                            tempArr.push('=HYPERLINK(\"https://www.ncbi.nlm.nih.gov/pubmed/' + item[key] + '\", \"'+item[key] + '\")');
+                        } else {
+                            tempArr.push(item[key]);
+                        }
                     });
                     content.push(tempArr.join('\t'));
                 });
                 var blob = new Blob([content.join('\n')], {
-                    type: 'text/plain;charset=utf-8;',
+                    type: 'text/plain;charset=utf-8;'
                 });
                 saveAs(blob, fileName);
             };
