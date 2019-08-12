@@ -588,6 +588,8 @@ angular.module('oncokbApp')
             this.level_uuid = getUUID();
             this.propagation = '';
             this.propagation_uuid = getUUID();
+            this.propagationLiquid = '';
+            this.propagationLiquid_uuid = getUUID();
             this.indication = '';
             this.indication_uuid = getUUID();
             this.description = '';
