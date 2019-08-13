@@ -333,13 +333,33 @@ input.editableBox {
 .tumorButtonsGroup button span {
   font-weight: bold;
 }
-.geneComments .title{
-  font-weight: 400;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-.geneComments .content{
-  font-weight: 600;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.geneComments {
+  .title{
+    font-weight: 400;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 45%;
+    float: left;
+    .title-content {
+      width: 100%;
+      float: left;
+    }
+  }
+  .body{
+    width: 100%;
+    float: left;
+    margin: 5px 0;
+  }
+  .content{
+    font-weight: 600;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 100%;
+    float: left;
+    white-space: normal;
+  }
+  .button-group{
+    width: 55%;
+    float: left;
+  }
 }
 .curationNoEntry {
   font-size: 11px;
@@ -1146,4 +1166,3 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 .margin-bottom-0 {
   margin-bottom: 0;
 }
-
