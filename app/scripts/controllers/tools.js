@@ -8,6 +8,7 @@ angular.module('oncokbApp')
             $scope.init = function() {
                 $scope.newGenes = [];
                 $scope.loading = false;
+                $scope.includeUUID = false;
                 $scope.typeCheckboxes = ['update', 'name change', 'add', 'delete'];
                 $scope.selectedTypeCheckboxes = [];
                 $scope.dateRange = {startDate: null, endDate: null};
@@ -98,17 +99,53 @@ angular.module('oncokbApp')
                     if ($scope.historySearchResults.length === 0) {
                         $scope.errorMessage = 'Sorry, there are no results that match your search.';
                     } else if ($scope.historySearchResults.length > 0) {
-                        _.each($scope.historySearchResults, function(history) {
-                            _.each(history.records, function(record) {
-                                if (record.old && record.new) {
-                                    record.diffHTML = mainUtils.calculateDiff(record.old, record.new);
-                                }
+                        if ($scope.includeUUID) { // Used for developers to look gene meta data
+                            _.each($scope.historySearchResults, function(history) {
+                                _.each(history.records, function (record) {
+                                    if (record.old && record.new) {
+                                        record.diffHTML = mainUtils.calculateDiff(JSON.stringify(record.old), JSON.stringify(record.new));
+                                    }
+                                });
                             });
-                        });
+                        } else {
+                            _.each($scope.historySearchResults, function(history) {
+                                _.each(history.records, function(record) {
+                                    if (record.operation === 'add') {
+                                        record.new = filterHistoryRecord(record.new);
+                                    } else if (record.operation === 'delete') {
+                                        record.old = filterHistoryRecord(record.old);
+                                    } else if (record.old && record.new) {
+                                        if (_.isString(record.old) && _.isString(record.new)) {
+                                            record.diffHTML = mainUtils.calculateDiff(record.old, record.new);
+                                        } else if (_.isObject(record.old) && _.isObject(record.new)) {
+                                            var filteredOld = filterHistoryRecord(record.old);
+                                            var filteredNew = filterHistoryRecord(record.new);
+                                            record.diffHTML = mainUtils.calculateDiff(JSON.stringify(filteredOld), JSON.stringify(filteredNew));
+                                        } else {
+                                            record.diffHTML = mainUtils.calculateDiff(JSON.stringify(record.old), JSON.stringify(record.new));
+                                        }
+                                    }
+                                });
+                            });
+                        }
                     }
                     $scope.loading = false;
                 });
             };
+            function filterHistoryRecord(record) {
+                _.map(record, function(value, key) {
+                    if (key.match(/(_review|_uuid)+/g)) {
+                        delete record[key];
+                    } else if (Array.isArray(value)) {
+                        _.map(value, function(item) {
+                            filterHistoryRecord(item);
+                        });
+                    } else if (_.isObject(value)) {
+                        filterHistoryRecord(value);
+                    }
+                });
+                return record;
+            }
             function getHistoryByHugoSymbol(historyData, hugoSymbols) {
                 var results =[];
                 _.each(hugoSymbols, function(hugoSymbol) {
