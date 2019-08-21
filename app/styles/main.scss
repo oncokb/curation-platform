@@ -618,7 +618,14 @@ h5 {
     width: 100% !important;
 }
 .add-tumor-type-item .chosen-container-single {
-    width: 30% !important;
+  width: 30% !important;
+}
+.tumor-types-dropdowns {
+  display: flex;
+  justify-content: space-between;
+  .chosen-container-single {
+    width: 50% !important;
+  }
 }
 
 //Change bootstrap default color
@@ -743,9 +750,6 @@ h5 {
 .greyB {
   background-color: lightgray;
   font-weight: bold;
-}
-#variantCriteria>div {
-  margin-bottom: 5px;
 }
 #questHeaderSwither {
   width: 100%;

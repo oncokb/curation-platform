@@ -1,0 +1,18 @@
+<div class="tumor-types-dropdowns">
+    <select chosen
+            allow-single-deselect="true"
+            data-placeholder="Choose a main tumor type"
+            no-results-text="'Could not find any'"
+            ng-model="selectedCancerType.mainType"
+            ng-options="tt.name for tt in oncoTree.mainTypes | orderBy: 'name'">
+        <option value=""></option>
+    </select>
+    <select chosen
+            data-placeholder="Choose a tumor type"
+            no-results-text="'Could not find any'"
+            allow-single-deselect="true"
+            ng-model="selectedCancerType.subtype"
+            ng-options="tt.name for tt in selectedCancerType.oncoTreeTumorTypes | orderBy: 'name' track by tt.code">
+        <option value=""></option>
+    </select>
+</div>

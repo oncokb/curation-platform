@@ -427,8 +427,24 @@ angular.module('oncokbApp')
                 hugoSymbol + '&variant=' + variant);
         }
 
+        function getVariantAnnotation(hugoSymbol, alteration, tumorType) {
+            var params = {
+                hugoSymbol: hugoSymbol,
+                alteration: alteration,
+            };
+            if (tumorType) {
+                params.tumorType = tumorType;
+            }
+            var paramsStr = _.reduce(params, function(acc, value, key) {
+                acc.push(key + '=' +value);
+                return acc;
+            }, []).join('&');
+            return $http.get(OncoKB.config.privateApiLink + 'utils/variantAnnotation?' + paramsStr);
+        }
+
         return {
             getSuggestedVariants: getSuggestedVariants,
+            getVariantAnnotation: getVariantAnnotation,
             isHotspot: isHotspot
         };
     }]);

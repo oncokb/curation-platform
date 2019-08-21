@@ -1,0 +1,31 @@
+<div ng-repeat="key in shownSections" ng-if="evidences[key] && evidences[key].length > 0">
+    <h3>{{getEvidenceTypeName(key)}}</h3>
+    <table class="table table-striped">
+        <thead>
+        <th>Level</th>
+        <th>Alteration(s)</th>
+        <th ng-if="key.includes('THERAPEUTIC')">Drug(s)</th>
+        <th>Level-associated cancer type(s)</th>
+        <th>Citations</th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="evidence in evidences[key] | orderBy: 'levelOfEvidence'">
+            <td>
+                <level-icon level="evidence.levelOfEvidence"></level-icon>
+            </td>
+            <td>{{getAlterationsName(evidence.alterations)}}</td>
+            <td ng-if="key.includes('THERAPEUTIC')">{{getTreatmentsName(evidence.treatments)}}</td>
+            <td>{{getCancerTypeNameFromOncoTreeType(evidence.oncoTreeType)}}</td>
+            <td>
+                <span qtip type="evidence"
+                      my="center right"
+                      at="center left"
+                      content="{{evidence.description}}"
+                      abstracts="evidence.abstracts"
+                      pmids="evidence.pmids">
+                    {{evidence.articles.length}}
+                </span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
