@@ -1,0 +1,31 @@
+<div class="container">
+    <b style="display: flex">
+        <div ng-repeat="item in summaryInfo" style="display: flex">
+            <span ng-bind-html="item"></span>
+            <span ng-if="!$last" style="margin: 0 3px;">&middot;</span>
+        </div>
+    </b>
+    <h3>Summary</h3>
+    <div style="display: flex;flex-direction: column;">
+        <p ng-repeat="summary in summaries">{{summary}}</p>
+    </div>
+    <h3>{{data.query.hugoSymbol}} Background</h3>
+    <div>{{data.background}}</div>
+    <div ng-if="data.mutationEffect && data.mutationEffect.description">
+        <h3>Alteration Effect</h3>
+        <div>{{data.mutationEffect.description}}</div>
+    </div>
+
+    <uib-accordion close-others="oneAtATime" ng-if="!!!tumorType">
+        <div ng-repeat="tumorType in reportData.tumorTypes | orderBy: 'relevantTumorType' : true" uib-accordion-group
+             ng-if="shouldShowTumorType(tumorType)"
+             class="panel-default">
+            <uib-accordion-heading>
+                {{getCancerTypeNameFromOncoTreeType(tumorType.tumorType)}}
+            </uib-accordion-heading>
+            <evidence-report evidences="tumorType.evidences" shown-sections="shownSections"></evidence-report>
+        </div>
+    </uib-accordion>
+
+    <evidence-report evidences="reportData.allEvidences" ng-if="!!tumorType" shown-sections="shownSections"></evidence-report>
+</div>

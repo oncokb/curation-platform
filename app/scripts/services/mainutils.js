@@ -680,6 +680,36 @@ angular.module('oncokbApp')
             string = S(string).collapseWhitespace().s;
             return string;
         }
+
+        function getTreatmentsName(treatments) {
+            return treatments.map(function(treatment) {
+                return treatment.drugs.map(function(drug) {
+                    return drug.drugName;
+                }).sort().join(' + ');
+            }).sort().join(', ');
+        }
+
+        function getNumOfRefsClinicalAlteration(item) {
+            var numOfPmids = item.drugPmids.length +
+                item.drugAbstracts.length;
+            return numOfPmids === 0 ? '' : (numOfPmids + (numOfPmids > 1 ? ' references' : ' reference'));
+        }
+
+        function getCancerTypeNameFromOncoTreeType(oncoTreeType) {
+            return _.isObject(oncoTreeType) ?
+                (oncoTreeType.name ||
+                    (oncoTreeType.mainType &&
+                    oncoTreeType.mainType.name ?
+                        oncoTreeType.mainType.name : 'NA') ||
+                    'NA') : 'NA';
+        }
+
+        function getEvidenceTypeName(evidenceType) {
+            return evidenceType.split('_').map(function(word) {
+                return _.capitalize(word);
+            }).join(' ');
+        }
+
         return {
             setIsoFormAndGeneType: setIsoFormAndGeneType,
             getCancerTypesName: getCancerTypesName,
@@ -716,6 +746,10 @@ angular.module('oncokbApp')
             getOldGeneType: getOldGeneType,
             clearCollaboratorsByName: clearCollaboratorsByName,
             getString: getString,
+            getCancerTypeNameFromOncoTreeType: getCancerTypeNameFromOncoTreeType,
+            getTreatmentsName: getTreatmentsName,
+            getEvidenceTypeName: getEvidenceTypeName,
+            getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities
         };
     });
