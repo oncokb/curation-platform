@@ -571,6 +571,18 @@ angular.module('oncokbApp')
 
                 timeout(callback, timestamp);
             }
+
+
+            function findAlterationsByGene(gene) {
+                if (gene) {
+                    return Alteration.findByGene(gene);
+                } else {
+                    var deferred = $q.defer();
+                    deferred.reject("Need to specify gene parameter");
+                    return deferred.promise;
+                }
+            }
+
             // Public API here
             return {
                 searchNCITDrugs: searchNCITDrugs,
@@ -579,6 +591,7 @@ angular.module('oncokbApp')
                 searchAnnotation: searchVariant,
                 updateGene: updateGene,
                 updateGeneType: updateGeneType,
+                findAlterationsByGene: findAlterationsByGene,
                 removeGeneFromDB: removeGeneFromDB,
                 deleteEvidences: deleteEvidences,
                 updateVUS: updateVUS,

@@ -49,6 +49,17 @@ angular.module('oncokbApp')
                 };
             }
 
+            $scope.$watch('gene', function(newGene) {
+                if (newGene) {
+                    DatabaseConnector.findAlterationsByGene(newGene.entrezGeneId)
+                        .then(function(result) {
+                            $scope.alterations = result.data;
+                        }, function() {
+                            $scope.alterations = [];
+                        });
+                }
+            });
+
             $scope.init = function() {
                 $scope.view = {};
 
@@ -61,7 +72,7 @@ angular.module('oncokbApp')
                 if (OncoKB.global.genes && OncoKB.global.genes && OncoKB.global.tumorTypes) {
                     var separatedTumorTypes = separateTumorTypes(OncoKB.global.tumorTypes);
 
-                    $scope.genes = getUnique(angular.copy(OncoKB.global.genes), 'hugoSymbol');
+                    $scope.genes = angular.copy(OncoKB.global.genes);
                     $scope.cancerTypes = separatedTumorTypes.cancerTypes;
                     $scope.subtypes = separatedTumorTypes.subtypes;
                     $scope.view.filteredCancerTypes = angular.copy($scope.cancerTypes);
@@ -74,7 +85,7 @@ angular.module('oncokbApp')
 
                         var separatedTumorTypes = separateTumorTypes(OncoKB.global.tumorTypes);
 
-                        $scope.genes = getUnique(data.genes, 'hugoSymbol');
+                        $scope.genes = data.genes;
                         $scope.cancerTypes = separatedTumorTypes.cancerTypes;
                         $scope.subtypes = separatedTumorTypes.subtypes;
                         $scope.view.filteredCancerTypes = angular.copy($scope.cancerTypes);
@@ -106,7 +117,7 @@ angular.module('oncokbApp')
                 $scope.alteration = mainUtils.trimMutationName($scope.alteration);
                 var params = {};
                 var paramsContent = {
-                    hugoSymbol: $scope.gene || '',
+                    entrezGeneId: $scope.gene.entrezGeneId || '',
                     alteration: $scope.alteration || ''
                 };
 
@@ -129,7 +140,7 @@ angular.module('oncokbApp')
                 }
 
                 $scope.query.params = params;
-                PrivateApiUtils.getVariantAnnotation(params.hugoSymbol, params.alteration, params.tumorType)
+                PrivateApiUtils.getVariantAnnotation(params.entrezGeneId, params.alteration, params.tumorType)
                     .then(function(data) {
                         searchAnnotationCallback('success', data.data);
                     }, function() {
@@ -138,7 +149,9 @@ angular.module('oncokbApp')
             };
 
             $scope.useExample = function() {
-                $scope.gene = $scope.genes[$filter('getIndexByObjectNameInArray')($scope.genes, 'ABL1')];
+                $scope.gene = _.find($scope.genes, function(gene) {
+                    return gene.hugoSymbol === 'ABL1';
+                });
                 $scope.alteration = 'BCR-ABL1 Fusion';
                 $scope.view.selectedCancerType = {
                     name: 'B-Lymphoblastic Leukemia/Lymphoma'
