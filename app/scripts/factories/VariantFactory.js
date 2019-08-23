@@ -109,7 +109,18 @@ angular.module('oncokbApp').factory('Alteration', ['$http', 'OncoKB', function($
         return $http.get(OncoKB.config.apiLink + 'alteration.json');
     }
 
+    function findByGene(gene) {
+        var query = '';
+        if (_.isNumber(gene)) {
+            query = 'entrezGeneId=' + gene;
+        } else {
+            query = 'hugoSymbol=' + gene;
+        }
+        return $http.get(OncoKB.config.publicApiLink + '/variants/lookup?' + query);
+    }
+
     return {
+        findByGene: findByGene,
         getFromServer: getFromServer
     };
 }]);
@@ -427,9 +438,9 @@ angular.module('oncokbApp')
                 hugoSymbol + '&variant=' + variant);
         }
 
-        function getVariantAnnotation(hugoSymbol, alteration, tumorType) {
+        function getVariantAnnotation(entrezGeneId, alteration, tumorType) {
             var params = {
-                hugoSymbol: hugoSymbol,
+                entrezGeneId: entrezGeneId,
                 alteration: alteration,
             };
             if (tumorType) {
