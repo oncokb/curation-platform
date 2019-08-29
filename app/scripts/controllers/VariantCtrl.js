@@ -129,7 +129,7 @@ angular.module('oncokbApp')
                 if (hasSelectedCancerType) {
                     params.cancerType = $scope.view.selectedCancerType.name;
                     if ($scope.view.selectedSubtype && $scope.view.selectedSubtype.name) {
-                        params.tumorType = $scope.view.selectedSubtype.code;
+                        params.tumorType = $scope.view.selectedSubtype.name;
                     } else {
                         params.tumorType = params.cancerType;
                     }
@@ -156,7 +156,9 @@ angular.module('oncokbApp')
                 $scope.view.selectedCancerType = {
                     name: 'B-Lymphoblastic Leukemia/Lymphoma'
                 };
-                $scope.view.selectedSubtype = '';
+                $scope.view.selectedSubtype = {
+                    name: 'B-Lymphoblastic Leukemia/Lymphoma with t(9;22)(q34.1;q11.2);BCR-ABL1'
+                };
                 $scope.search();
             };
 
