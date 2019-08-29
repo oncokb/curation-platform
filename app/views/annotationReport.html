@@ -6,8 +6,9 @@
         </div>
     </b>
     <h3>Summary</h3>
-    <div style="display: flex;flex-direction: column;">
-        <p ng-repeat="summary in summaries">{{summary}}</p>
+    <div ng-repeat="summary in summaries">
+        <h5><small>{{summary.title}}</small></h5>
+        <p>{{summary.content}}</p>
     </div>
     <h3>{{data.query.hugoSymbol}} Background</h3>
     <div>{{data.background}}</div>

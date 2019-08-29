@@ -80,13 +80,23 @@ angular.module('oncokbApp')
                         scope.data.highestPrognosticImplicationLevel ? processLevel(scope.data.highestPrognosticImplicationLevel) : ''].filter(function(item) {
                         return !!item;
                     });
-                    scope.summaries = [
-                        scope.data.geneSummary,
-                        scope.data.variantSummary,
-                        scope.data.tumorTypeSummary,
-                        scope.data.diagnosticSummary,
-                        scope.data.prognosticSummary].filter(function(item) {
-                        return !!item;
+                    scope.summaries = [{
+                        title: 'Gene Summary',
+                        content: scope.data.geneSummary
+                    }, {
+                        title: 'Alteration Summary',
+                        content: scope.data.variantSummary
+                    }, {
+                        title: 'Tumor Type Summary',
+                        content: scope.data.tumorTypeSummary
+                    }, {
+                        title: 'Diagnostic Summary',
+                        content: scope.data.diagnosticSummary
+                    }, {
+                        title: 'Prognostic Summary',
+                        content: scope.data.prognosticSummary
+                    }].filter(function(item) {
+                        return !!item.content;
                     });
                 });
                 scope.getTreatmentsName = function(treatments) {
