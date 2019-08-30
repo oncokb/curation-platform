@@ -989,6 +989,7 @@ angular.module('oncokbApp')
                     },
                     knownEffect: null,
                     lastEdit: null,
+                    lastReview: new Date().getTime(),
                     levelOfEvidence: null,
                     subtype: null,
                     articles: [],
@@ -1406,34 +1407,50 @@ angular.module('oncokbApp')
                 switch (type) {
                     case 'GENE_SUMMARY':
                         acceptItem([{ reviewObj: $scope.gene.summary_review, uuid: $scope.gene.summary_uuid }], $scope.gene.summary_uuid);
+                        mainUtils.validateTime($scope.gene, ['summary']);
                         break;
                     case 'GENE_BACKGROUND':
                         acceptItem([{ reviewObj: $scope.gene.background_review, uuid: $scope.gene.background_uuid }], $scope.gene.background_uuid);
+                        mainUtils.validateTime($scope.gene, ['background']);
                         break;
                     case 'GENE_TYPE':
                         acceptItem([{ reviewObj: $scope.gene.type.tsg_review, uuid: $scope.gene.type.tsg_uuid }, { reviewObj: $scope.gene.type.ocg_review, uuid: $scope.gene.type.ocg_uuid }], $scope.gene.type_uuid);
+                        mainUtils.validateTime($scope.gene, ['type']);
                         break;
                     case 'MUTATION_EFFECT':
                         acceptItem([{ reviewObj: mutation.mutation_effect.oncogenic_review, uuid: mutation.mutation_effect.oncogenic_uuid },
                         { reviewObj: mutation.mutation_effect.effect_review, uuid: mutation.mutation_effect.effect_uuid },
                         { reviewObj: mutation.mutation_effect.description_review, uuid: mutation.mutation_effect.description_uuid }], mutation.mutation_effect_uuid);
+                        var keysToUpdateTimestamp = [];
+                        if (ReviewResource.precise.includes(mutation.mutation_effect.oncogenic_uuid)) keysToUpdateTimestamp.push('oncogenic');
+                        if (ReviewResource.precise.includes(mutation.mutation_effect.effect_uuid) || ReviewResource.precise.includes(mutation.mutation_effect.description_uuid)) keysToUpdateTimestamp.push('effect');
+                        if (keysToUpdateTimestamp.length > 0) mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].mutation_effect, keysToUpdateTimestamp);
                         break;
                     case 'TUMOR_TYPE_SUMMARY':
                         acceptItem([{ reviewObj: tumor.summary_review, uuid: tumor.summary_uuid }], tumor.summary_uuid);
+                        mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex], ['summary']);
                         break;
                     case 'DIAGNOSTIC_SUMMARY':
                         acceptItem([{ reviewObj: tumor.diagnosticSummary_review, uuid: tumor.diagnosticSummary_uuid }], tumor.diagnosticSummary_uuid);
+                        mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex], ['diagnosticSummary']);
                         break;
                     case 'PROGNOSTIC_SUMMARY':
                         acceptItem([{ reviewObj: tumor.prognosticSummary_review, uuid: tumor.prognosticSummary_uuid }], tumor.prognosticSummary_uuid);
+                        mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex], ['prognosticSummary']);
                         break;
                     case 'PROGNOSTIC_IMPLICATION':
                         acceptItem([{ reviewObj: tumor.prognostic.description_review, uuid: tumor.prognostic.description_uuid },
                         { reviewObj: tumor.prognostic.level_review, uuid: tumor.prognostic.level_uuid }], tumor.prognostic_uuid);
+                        if (ReviewResource.precise.includes(tumor.prognostic.description_uuid) || ReviewResource.precise.includes(tumor.prognostic.level_uuid)) {
+                            mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex], ['prognostic']);
+                        }
                         break;
                     case 'DIAGNOSTIC_IMPLICATION':
                         acceptItem([{ reviewObj: tumor.diagnostic.description_review, uuid: tumor.diagnostic.description_uuid },
                         { reviewObj: tumor.diagnostic.level_review, uuid: tumor.diagnostic.level_uuid }], tumor.diagnostic_uuid);
+                        if (ReviewResource.precise.includes(tumor.diagnostic.description_uuid) || ReviewResource.precise.includes(tumor.diagnostic.level_uuid)) {
+                            mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex], ['diagnostic']);
+                        }
                         break;
                     case 'Standard implications for sensitivity to therapy':
                     case 'Standard implications for resistance to therapy':
@@ -1442,8 +1459,13 @@ angular.module('oncokbApp')
                         acceptItem([{ reviewObj: treatment.name_review, uuid: treatment.name_uuid },
                             { reviewObj: treatment.level_review, uuid: treatment.level_uuid },
                             { reviewObj: treatment.propagation_review, uuid: treatment.propagation_uuid },
+                            { reviewObj: treatment.propagationLiquid_review, uuid: treatment.propagationLiquid_uuid },
                             { reviewObj: treatment.indication_review, uuid: treatment.indication_uuid },
                             { reviewObj: treatment.description_review, uuid: treatment.description_uuid }], treatment.name_uuid);
+                        if (ReviewResource.precise.includes(treatment.level_uuid) || ReviewResource.precise.includes(treatment.propagation_uuid) ||
+                            ReviewResource.precise.includes(treatment.indication_uuid) || ReviewResource.precise.includes(treatment.description_uuid)) {
+                            mainUtils.validateTime($scope.gene.mutations[data.mutationIndex].tumors[data.tumorIndex].TIs[data.tiIndex].treatments[data.treatmentIndex], ['name']);
+                        }
                         break;
                     case 'MUTATION_NAME_CHANGE':
                         acceptItem([{ reviewObj: mutation.name_review, uuid: mutation.name_uuid }], mutation.name_uuid);
@@ -2143,8 +2165,8 @@ angular.module('oncokbApp')
                     tumor: tumor,
                     tumorRef: tumorRef,
                     oncoTree: $scope.oncoTree
-                    }, {
-                        size: 'lg'
+                }, {
+                    size: 'lg'
                 });
             };
             $scope.modifyTherapy = function (path) {
@@ -2250,17 +2272,7 @@ angular.module('oncokbApp')
                 });
             };
             $scope.getVUSClass = function(time) {
-                var dt = new Date(time);
-                var _month = new Date().getMonth();
-                var _year = new Date().getYear();
-                var _monthDiff = (_year - dt.getYear()) * 12 + _month - dt.getMonth();
-                if (_monthDiff > 3) {
-                    return 'danger';
-                } else if (_monthDiff > 1) {
-                    return 'warning';
-                } else {
-                    return '';
-                }
+                return mainUtils.getTimestampClass(time);
             };
 
             $scope.getCancerTypesNameInReview = function(tumor, uuid, reviewMode){
@@ -2928,10 +2940,10 @@ angular.module('oncokbApp')
                                 // Something goes wrong, this needs to be stored into meta file for future update.
                                 console.log('Failed to update priority.');
                                 DatabaseConnector.sendEmail({
-                                    sendTo: 'dev.oncokb@gmail.com',
-                                    subject: 'Error when updating treatments\' priority',
-                                    content: JSON.stringify(postData)
-                                },
+                                        sendTo: 'dev.oncokb@gmail.com',
+                                        subject: 'Error when updating treatments\' priority',
+                                        content: JSON.stringify(postData)
+                                    },
                                     function (result) {
                                         deferred.rejected(error);
                                     },
@@ -3474,6 +3486,32 @@ angular.module('oncokbApp')
                 } else {
                     return drugMapUtils.drugUuidtoName(key, $rootScope.drugList);
                 }
+            };
+            $scope.getGeneTypeClass = function (reviewMode, type) {
+                if (reviewMode) {
+                    if (type === 'tsg') return '';
+                    return 'gene-type-ocg-in-review';
+                }
+                return 'gene-type';
+            };
+            $scope.disableUpdateTimestamp = function(uuids) {
+                var result = false;
+                _.some(uuids, function(uuid) {
+                    if (uuid in $scope.geneMeta.review) {
+                        result = true;
+                        return true;
+                    }
+                });
+                return result;
+            };
+            $scope.getLocation = function(type, mutationName, cancerTypes, tiName, treatmentName) {
+                var locationArr = [];
+                if (!_.isUndefined(mutationName)) locationArr.push(mutationName);
+                if (!_.isUndefined(cancerTypes)) locationArr.push(mainUtils.getCancerTypesName(cancerTypes));
+                if (!_.isUndefined(tiName)) locationArr.push(tiName);
+                if (!_.isUndefined(treatmentName)) locationArr.push(treatmentName);
+                if (type.length > 0) locationArr.push(type);
+                return locationArr.join(', ')
             };
         }]
     )

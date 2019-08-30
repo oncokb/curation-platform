@@ -76,7 +76,7 @@
                         <li class="list-group-item" ng-repeat="y in x.records track by $index">
                             <span class="tage tage-label label-primary">{{ y.location }}</span>
                             <span class="tage tage-label label-success">{{ y.operation }} </span>
-                            <span class="tage tage-label label-warning">{{ y.lastEditBy }}</span>
+                            <span ng-if="y.lastEditBy" class="tage tage-label label-warning">{{ y.lastEditBy }}</span>
                             <span ng-if="y.new" class="tage tage-label label-new">{{y.new.length > 0 ? (y.new) : (y.new | json) }}</span>
                             <span ng-if="y.old && !y.diffHTML" class="tage tage-label label-old">{{ y.old | json}}</span>
                             <span ng-if="y.diffHTML" class="tage tage-label label-old" ng-bind-html="y.diffHTML"></span>
@@ -91,32 +91,32 @@
         <h4 class="invalidResult">{{ errorMessage }}</h4>
     </div>
     <div ng-if="internal">
-    <hr/>
-    <h3>Query Reviewed Data</h3>
-    <div class="row" style="margin-top:30px; margin-bottom:30px;">
-        <div class="col-sm-2 queryLabel">Query Type:</div>
-        <div class="col-sm-4">
-            <select ng-model="data.evidenceType"
-                    ng-options="m.value as m.label for m in evidenceTypes"
-                    class="form-control"
-                    ng-change="updateReviewData()">
-            </select>
+        <hr/>
+        <h3>Query Reviewed Data</h3>
+        <div class="row" style="margin-top:30px; margin-bottom:30px;">
+            <div class="col-sm-2 queryLabel">Query Type:</div>
+            <div class="col-sm-4">
+                <select ng-model="data.evidenceType"
+                        ng-options="m.value as m.label for m in evidenceTypes"
+                        class="form-control"
+                        ng-change="updateReviewData()">
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-default" ng-click="generateEvidences()" ng-disabled="!data.evidenceType" ng-bind-html="getReviewButtonContent()"></button>
+            </div>
+            <div class="col-sm-1 date-range-column" ng-if="displayReviewedData">
+                <button type="button" class="btn btn-default" ng-click="downloadReviewedData()"> Download </button>
+            </div>
         </div>
-        <div class="col-sm-2">
-            <button type="button" class="btn btn-default" ng-click="generateEvidences()" ng-disabled="!data.evidenceType" ng-bind-html="getReviewButtonContent()"></button>
-        </div>
-        <div class="col-sm-1" ng-if="displayReviewedData">
-            <button type="button" class="btn btn-default" ng-click="downloadReviewedData()"> Download </button>
-        </div>
-    </div>
-    <div ng-if="displayReviewedData" >
-        <table datatable="ng" class="row-border hover" dt-options="reviewedDT.dtOptions">
-            <thead>
-            <tr>
-                <th ng-repeat="x in reviewedData[data.evidenceType].header">{{ x }}</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div ng-if="displayReviewedData" >
+            <table datatable="ng" class="row-border hover" dt-options="reviewedDT.dtOptions">
+                <thead>
+                <tr>
+                    <th ng-repeat="x in reviewedData[data.evidenceType].header">{{ x }}</th>
+                </tr>
+                </thead>
+                <tbody>
                 <tr ng-repeat="item in reviewedData[data.evidenceType].body">
                     <td ng-repeat="key in reviewedData[data.evidenceType].keys">
                         <div ng-switch on="key">
@@ -127,30 +127,34 @@
                                 <div class="reviewedData" ng-switch-when="mutation">{{item.mutation}}</div>
                                 <div class="reviewedData" ng-switch-when="drugs">{{item.drugs}}</div>
                             </div>
+                            <div class="timestamp" ng-switch-when="lastReview">
+                                {{ item.lastReview |  date:'yyyy-MM-dd' }}
+                                <update-timestamp type="'tools'" hugo-symbol="item.gene" obj="item" key="data.evidenceType" update-time="item.lastReview"></update-timestamp>
+                            </div>
                             <div ng-switch-default>{{ item[key] }}</div>
                         </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-    <br/><br/>
-    <hr/>
-    <h3>Are all truncating mutations curated under tumor suppressor genes? </h3>
-    <div class="validationButton">
-        <button type="button" class="btn btn-default" ng-click="validateTruncating('tmValidation')" ng-bind-html="getValidationButtonContent('tmValidation')"></button>
-    </div>
-    <h4 ng-class="{'invalidResult': !tmValidation.flag, 'validResult': tmValidation.flag}">
-        {{ tmValidation.result }}
-    </h4>
-    <hr/>
-    <h3>Do all tumor suppressor genes have truncating mutation curated? </h3>
-    <div class="validationButton">
-        <button type="button" class="btn btn-default" ng-click="validateTruncating('tsgValidation')" ng-bind-html="getValidationButtonContent('tsgValidation')"></button>
-    </div>
-    <h4 ng-class="{'invalidResult': !tsgValidation.flag, 'validResult': tsgValidation.flag}">
-        {{ tsgValidation.result }}
-    </h4>
-    <br/><br/>
+                </tbody>
+            </table>
+        </div>
+        <br/><br/>
+        <hr/>
+        <h3>Are all truncating mutations curated under tumor suppressor genes? </h3>
+        <div class="validationButton">
+            <button type="button" class="btn btn-default" ng-click="validateTruncating('tmValidation')" ng-bind-html="getValidationButtonContent('tmValidation')"></button>
+        </div>
+        <h4 ng-class="{'invalidResult': !tmValidation.flag, 'validResult': tmValidation.flag}">
+            {{ tmValidation.result }}
+        </h4>
+        <hr/>
+        <h3>Do all tumor suppressor genes have truncating mutation curated? </h3>
+        <div class="validationButton">
+            <button type="button" class="btn btn-default" ng-click="validateTruncating('tsgValidation')" ng-bind-html="getValidationButtonContent('tsgValidation')"></button>
+        </div>
+        <h4 ng-class="{'invalidResult': !tsgValidation.flag, 'validResult': tsgValidation.flag}">
+            {{ tsgValidation.result }}
+        </h4>
+        <br/><br/>
     </div>
 </div>

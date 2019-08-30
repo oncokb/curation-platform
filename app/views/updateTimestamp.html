@@ -1,0 +1,13 @@
+<span class="update-timestamp">
+    <i ng-if="type === 'tools'" class="fa fa-clock-o" ng-class="getIconClass(updateTime)" ng-show="!clicked" ng-click="validateTime()">
+        <span ng-if="errorMessage">{{errorMessage}}</span>
+    </i>
+    <span ng-if="type != 'tools'">
+        <i ng-if="disabled" class="fa fa-clock-o clock-margin" ng-class="getIconClass(updateTime)" qtip content="This section hasn't been reviewed yet. Please review it first."></i>
+        <i ng-if="!disabled" ng-show="!clicked" class="fa fa-clock-o clock-margin" qtip type="timestamp" time="updateTime" by="updatedBy"
+           ng-class="getIconClass(updateTime)" ng-click="validateTime()"></i>
+    </span>
+    <span ng-if="clicked">
+        <i class="fa fa-spinner fa-spin clock-margin"></i>
+    </span>
+</span>

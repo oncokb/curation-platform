@@ -28,17 +28,17 @@ angular.module('oncokbApp')
                     src = '<iframe width="600px" height="400px" src=\'';
                     if (attrs.type && attrs.number) {
                         switch (attrs.type) {
-                        case 'pmid':
-                            src += 'https://www.ncbi.nlm.nih.gov/pubmed/' + attrs.number;
-                            break;
-                        case 'nct':
-                            src += 'https://clinicaltrials.gov/show/' + attrs.number;
-                            break;
-                        case 'abstract':
-                            src += attrs.number;
-                            break;
-                        default:
-                            break;
+                            case 'pmid':
+                                src += 'https://www.ncbi.nlm.nih.gov/pubmed/' + attrs.number;
+                                break;
+                            case 'nct':
+                                src += 'https://clinicaltrials.gov/show/' + attrs.number;
+                                break;
+                            case 'abstract':
+                                src += attrs.number;
+                                break;
+                            default:
+                                break;
                         }
                     }
                     src += '\'></iframe>';
@@ -48,6 +48,8 @@ angular.module('oncokbApp')
                     at = 'bottom right';
                 } else if (attrs.type === 'vusItem') {
                     content = '<span>Last edit: ' + new Date(scope.time).toLocaleDateString() + '</span><br/><span>By: ' + scope.by + '</span>';
+                } else if (attrs.type === 'timestamp') {
+                    content = '<span>Last review: ' + new Date(scope.time).toLocaleDateString() + '</span><br/><span>By: ' + scope.by + '</span>';
                 } else if (attrs.type === 'map') {
                     content = attrs.content;
                 } else if (attrs.type === 'evidence') {
@@ -155,15 +157,20 @@ angular.module('oncokbApp')
                         delay: 500
                     }
                 };
-
-                if (['vusItem', 'map', 'evidence', 'level'].indexOf(attrs.type) !== -1 || (attrs.number !== undefined && attrs.number.length > 0)) {
+                if (['vusItem', 'map', 'evidence', 'level', 'timestamp'].indexOf(attrs.type) !== -1 || (attrs.number !== undefined && attrs.number.length > 0)
+                    || (attrs.content !== undefined && attrs.content.length > 0)) {
                     $(element).qtip(options);
                 }
 
                 scope.$watch('time', function(n) {
                     if (n) {
                         if ($(element).data('qtip')) {
-                            $(element).qtip('api').set('content.text', '<span>Last edit: ' + new Date(scope.time).toLocaleDateString() + '</span><br/><span>By: ' + scope.by + '</span>');
+                            var title = '';
+                            if (attrs.type === 'vusItem') title = 'Last edit';
+                            else if (attrs.type === 'timestamp') title = 'Last review';
+                            var html = '<span>' + title + ': ' + new Date(scope.time).toLocaleDateString() + '</span><br/>';
+                            if (scope.by) html += '<span>By: ' + scope.by + '</span>';
+                            $(element).qtip('api').set('content.text', html);
                         }
                     }
                 });

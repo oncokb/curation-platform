@@ -100,7 +100,7 @@ angular.module('oncokbApp')
                             }
                         }
                         // Assign new value to scope.data[scope.key] to update content to gene page when multiple editing at the same time.
-                        if (scope.data[scope.key] !== scope.pureContent.text && !isPropagation) {
+                        if (scope.data[scope.key] !== scope.pureContent.text && !propagationType) {
                             scope.data[scope.key] = scope.pureContent.text;
                         }
                     }

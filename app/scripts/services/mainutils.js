@@ -8,7 +8,7 @@
  * Service in the oncokbApp.
  */
 angular.module('oncokbApp')
-    .factory('mainUtils', function(OncoKB, _, $q, DatabaseConnector, $rootScope, ReviewResource, S, UUIDjs, $routeParams, drugMapUtils) {
+    .factory('mainUtils', function(OncoKB, _, $q, DatabaseConnector, $rootScope, ReviewResource, S, UUIDjs, $routeParams, drugMapUtils, FirebaseModel) {
         var isoforms = {};
         var oncogeneTSG = {};
 
@@ -283,7 +283,7 @@ angular.module('oncokbApp')
          * @param {string} subject The email subject
          * @param {string} content The email content
          * @return {*|h.promise|promise|r.promise|d.promise} Promise
-        * */
+         * */
         function sendEmail(sendTo, subject, content) {
             var deferred = $q.defer();
             if(sendTo && content){
@@ -427,28 +427,28 @@ angular.module('oncokbApp')
             }
             // uuid = uuid.getText();
             switch(type) {
-            case 'accept':
-                return ReviewResource.accepted.indexOf(uuid) !== -1;
-            case 'reject':
-                return ReviewResource.rejected.indexOf(uuid) !== -1;
-            case 'rollback':
-                return ReviewResource.rollback.indexOf(uuid) !== -1;
-            case 'inside':
-                return ReviewResource.inside.indexOf(uuid) !== -1;
-            case 'update':
-                return ReviewResource.updated.indexOf(uuid) !== -1;
-            case 'name':
-                return ReviewResource.nameChanged.indexOf(uuid) !== -1;
-            case 'add':
-                return ReviewResource.added.indexOf(uuid) !== -1;
-            case 'remove':
-                return ReviewResource.removed.indexOf(uuid) !== -1;
-            case 'loading':
-                return ReviewResource.loading.indexOf(uuid) !== -1;
-            case 'precise':
-                return ReviewResource.precise.indexOf(uuid) !== -1;
-            default:
-                return false;
+                case 'accept':
+                    return ReviewResource.accepted.indexOf(uuid) !== -1;
+                case 'reject':
+                    return ReviewResource.rejected.indexOf(uuid) !== -1;
+                case 'rollback':
+                    return ReviewResource.rollback.indexOf(uuid) !== -1;
+                case 'inside':
+                    return ReviewResource.inside.indexOf(uuid) !== -1;
+                case 'update':
+                    return ReviewResource.updated.indexOf(uuid) !== -1;
+                case 'name':
+                    return ReviewResource.nameChanged.indexOf(uuid) !== -1;
+                case 'add':
+                    return ReviewResource.added.indexOf(uuid) !== -1;
+                case 'remove':
+                    return ReviewResource.removed.indexOf(uuid) !== -1;
+                case 'loading':
+                    return ReviewResource.loading.indexOf(uuid) !== -1;
+                case 'precise':
+                    return ReviewResource.precise.indexOf(uuid) !== -1;
+                default:
+                    return false;
             }
         }
         function updateLastModified() {
@@ -709,7 +709,30 @@ angular.module('oncokbApp')
                 return _.capitalize(word);
             }).join(' ');
         }
-
+        function getTimestampClass(time) {
+            var dt = new Date(time);
+            var _month = new Date().getMonth();
+            var _year = new Date().getYear();
+            var _monthDiff = (_year - dt.getYear()) * 12 + _month - dt.getMonth();
+            if (_monthDiff > 3) {
+                return 'danger';
+            } else if (_monthDiff > 1) {
+                return 'warning';
+            } else {
+                return '';
+            }
+        }
+        function validateTime(obj, keys) {
+            var timestamp = new Date().getTime();
+            _.forEach(keys, function(key) {
+                if (_.isUndefined(obj[key + '_validateTime'])) {
+                    obj[key + '_validateTime'] = new FirebaseModel.Timestamp($rootScope.me.name);
+                } else {
+                    obj[key + '_validateTime'].updatedBy = $rootScope.me.name;
+                    obj[key + '_validateTime'].updateTime = timestamp;
+                }
+            });
+        }
         return {
             setIsoFormAndGeneType: setIsoFormAndGeneType,
             getCancerTypesName: getCancerTypesName,
@@ -750,6 +773,8 @@ angular.module('oncokbApp')
             getTreatmentsName: getTreatmentsName,
             getEvidenceTypeName: getEvidenceTypeName,
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
-            decodeHTMLEntities: decodeHTMLEntities
+            decodeHTMLEntities: decodeHTMLEntities,
+            getTimestampClass: getTimestampClass,
+            validateTime: validateTime
         };
     });

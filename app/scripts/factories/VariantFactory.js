@@ -298,6 +298,17 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         }
     }
 
+    function updateEvidenceLastReview(data) {
+        return $http.post(
+            OncoKB.config.apiLink + 'evidences/lastReview/update',
+            data,
+            {
+                transformResponse: function(result) {
+                    return {status: result};
+                }
+            });
+    }
+
     return {
         updateGene: updateGene,
         updateGeneType: updateGeneType,
@@ -308,7 +319,8 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         getEvidencesByUUID: getEvidencesByUUID,
         getEvidencesByUUIDs: getEvidencesByUUIDs,
         getPubMedArticle: getPubMedArticle,
-        getClinicalTrial: getClinicalTrial
+        getClinicalTrial: getClinicalTrial,
+        updateEvidenceLastReview: updateEvidenceLastReview
     };
 }]);
 
@@ -584,7 +596,7 @@ angular.module('oncokbApp')
             this.name_uuid = getUUID();
             this.level = '';
             this.level_uuid = getUUID();
-            this.propagation = '';
+            this.propagation = ''; // propagationSolid
             this.propagation_uuid = getUUID();
             this.propagationLiquid = '';
             this.propagationLiquid_uuid = getUUID();
@@ -611,12 +623,9 @@ angular.module('oncokbApp')
                 value: new Date().getTime()
             };
         }
-        function TimeStamp(userName, userEmail) {
-            this.by = {
-                name: userName,
-                email: userEmail
-            };
-            this.value = (new Date()).getTime().toString();
+        function Timestamp(userName) {
+            this.updatedBy = userName;
+            this.updateTime = new Date().getTime();
         }
         function Meta() {
             this.lastModifiedBy = $rootScope.me.name;
@@ -644,7 +653,7 @@ angular.module('oncokbApp')
             Comment: Comment,
             Cancertype: Cancertype,
             VUSItem: VUSItem,
-            TimeStamp: TimeStamp,
+            Timestamp: Timestamp,
             Meta: Meta,
             Setting: Setting,
             Drug: Drug,
