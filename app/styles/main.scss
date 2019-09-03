@@ -15,6 +15,7 @@ $success-color: rgb(92, 184, 92);
 $info-color: rgb(57, 179, 215);
 $warning-color: rgb(240, 173, 78);
 $danger-color: rgb(217, 83, 79);
+$disabled-color: #777777;
 body {
   margin-bottom: 20px;
 }
@@ -982,6 +983,9 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 
   i.warning {
     color: $warning-color;
+  }
+  i.disabled{
+    color: $disabled-color;
   }
 }
 

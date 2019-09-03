@@ -26,7 +26,8 @@ angular.module('oncokbApp')
             controller: function($scope) {
                 $scope.clicked = false;
                 $scope.getIconClass = function(time) {
-                    return mainUtils.getTimestampClass(time);
+                    if ($scope.disabled) return 'disabled';
+                    else return mainUtils.getTimestampClass(time);
                 };
                 $scope.validateTime = function () {
                     $scope.clicked = true;
