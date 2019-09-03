@@ -83,8 +83,8 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function getAllGene(callback, timestamp) {
-                Gene.getFromServer()
+            function getAllGenes(callback, timestamp) {
+                Gene.getCurationGenes()
                     .then(function(data) {
                         if (timestamp) {
                             numOfLocks[timestamp]--;
@@ -562,7 +562,7 @@ angular.module('oncokbApp')
                 numOfLocks[timestamp] = 2;
                 data[timestamp] = {};
 
-                getAllGene(function(d) {
+                getAllGenes(function(d) {
                     data[timestamp].genes = d.data;
                 }, timestamp);
                 getAllTumorType(function(d) {
@@ -611,6 +611,13 @@ angular.module('oncokbApp')
                 },
                 updateGeneCache: function(hugoSymbol) {
                     return updateGeneCache(hugoSymbol);
+                },
+                getAllGenes: function() {
+                    if ($rootScope.internal) {
+                        return Gene.getAllInternalGenes();
+                    } else {
+                        return Gene.getCurationGenes();
+                    }
                 },
                 getAllInternalGenes: getAllInternalGenes,
                 getOncoTreeTumorTypesByMainType: getOncoTreeTumorTypesByMainType,
