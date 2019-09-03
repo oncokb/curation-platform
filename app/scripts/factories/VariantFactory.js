@@ -116,7 +116,7 @@ angular.module('oncokbApp').factory('Alteration', ['$http', 'OncoKB', function($
         } else {
             query = 'hugoSymbol=' + gene;
         }
-        return $http.get(OncoKB.config.publicApiLink + '/variants/lookup?' + query);
+        return $http.get(OncoKB.config.publicApiLink + 'variants/lookup?' + query);
     }
 
     return {
