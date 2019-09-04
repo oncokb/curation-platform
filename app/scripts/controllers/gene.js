@@ -3297,15 +3297,16 @@ angular.module('oncokbApp')
                 $scope.mapScope = {};
                 var deferred1 = $q.defer();
                 $firebaseObject(firebase.database().ref("Genes/" + $routeParams.geneName)).$bindTo($scope, "gene").then(function () {
-                    DatabaseConnector.getAllInternalGenes().then(function(genes) {
+                    DatabaseConnector.getAllGenes().then(function(genes) {
                         $scope.meta.gene = _.find(genes.data, function(gene) {
                             return gene.hugoSymbol === $scope.gene.name;
                         });
                         $scope.status.geneReleased = ($scope.meta.gene === undefined) ? 'no' : 'yes';
                     }, function(reason) {
                         // nothing really needs to be done
+                    }).finally(function() {
+                        deferred1.resolve();
                     });
-                    deferred1.resolve();
                 }, function (error) {
                     deferred1.reject(error);
                 });

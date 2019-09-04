@@ -29,7 +29,7 @@ angular.module('oncokbApp').factory('TumorType', ['$http', 'OncoKB', function($h
 angular.module('oncokbApp').factory('Gene', ['$http', 'OncoKB', function($http, OncoKB) {
     'use strict';
 
-    function getFromServer() {
+    function getCurationGenes() {
         return $http.get(OncoKB.config.curationLink + 'gene.json');
     }
 
@@ -48,7 +48,7 @@ angular.module('oncokbApp').factory('Gene', ['$http', 'OncoKB', function($http, 
     }
 
     return {
-        getFromServer: getFromServer,
+        getCurationGenes: getCurationGenes,
         getAllInternalGenes: getAllInternalGenes,
         remove: remove
     };
@@ -116,7 +116,7 @@ angular.module('oncokbApp').factory('Alteration', ['$http', 'OncoKB', function($
         } else {
             query = 'hugoSymbol=' + gene;
         }
-        return $http.get(OncoKB.config.publicApiLink + '/variants/lookup?' + query);
+        return $http.get(OncoKB.config.publicApiLink + 'variants/lookup?' + query);
     }
 
     return {
@@ -425,16 +425,14 @@ angular.module('oncokbApp')
         'use strict';
 
         function getSuggestedVariants() {
-            return $http.get(OncoKB.config.privateApiLink +
-                'utils/suggestedVariants');
+            return $http.get(OncoKB.config.privateApiLink + 'utils/suggestedVariants');
         }
 
         function isHotspot(hugoSymbol, variant) {
             if (!hugoSymbol || !variant) {
                 return null;
             }
-            return $http.get(OncoKB.config.privateApiLink +
-                'utils/isHotspot?hugoSymbol=' +
+            return $http.get(OncoKB.config.privateApiLink + 'utils/isHotspot?hugoSymbol=' +
                 hugoSymbol + '&variant=' + variant);
         }
 
@@ -450,7 +448,7 @@ angular.module('oncokbApp')
                 acc.push(key + '=' +value);
                 return acc;
             }, []).join('&');
-            return $http.get(OncoKB.config.privateApiLink + 'utils/variantAnnotation?' + paramsStr);
+            return $http.get(OncoKB.config.internalPrivateApiLink + 'utils/variantAnnotation?' + paramsStr);
         }
 
         return {

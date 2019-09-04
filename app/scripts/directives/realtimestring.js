@@ -222,9 +222,17 @@ angular.module('oncokbApp')
                         $scope.diffHTML = mainUtils.calculateDiff($scope.data[$scope.key + '_review'].lastReviewed, $scope.data[$scope.key]);
                     }
                 };
-                $scope.toggleCheckbox = function () {
-                    if ($scope.data[$scope.key] === $scope.pureContent.text && $scope.data[$scope.key] !== '') {
-                        $scope.pureContent.text = '';
+                $scope.toggleCheckbox = function (e) {
+                    if ($scope.t === 'radio') {
+                        if ($scope.data[$scope.key] === e.target.value) {
+                            $scope.pureContent.text = '';
+                        }
+                    } else if ($scope.t === 'checkbox') {
+                        if (e.target.checked) {
+                            $scope.pureContent.text = e.target.value;
+                        } else {
+                            $scope.pureContent.text = '';
+                        }
                     }
                     $scope.updateContent($scope.pureContent.text, $scope.data[$scope.key]);
                 };

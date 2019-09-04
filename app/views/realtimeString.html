@@ -59,24 +59,16 @@
                         <option disabled></option>
                     </select>
                 </div>
-                <div ng-switch-when="select-chosen" class="chosen-full-width">
-                    <select ng-disabled="!fe"
-                            chosen allow-single-deselect="true"
-                            ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, data[key])"
-                            ng-options="opt for opt in o">
-                        <option value="NA"></option>
-                    </select>
-                </div>
-                <div ng-switch-when="checkbox">
+                <div ng-switch-when="checkbox|radio" ng-switch-when-separator="|">
                     <div>
                         <span ng-repeat="checkbox in checkboxes">
                             <input id="::{{uuid+$index}}"
-                                   type="radio"
+                                   type="{{t}}"
                                    ng-value="checkbox"
                                    ng-disabled="!fe"
                                    ng-model="pureContent.text"
-                                   ng-click="toggleCheckbox(event)">
+                                   ng-checked="pureContent.text===checkbox"
+                                   ng-click="toggleCheckbox($event)">
                             <label for="::{{uuid+$index}}">{{checkbox}}</label>
                         </span>
                     </div>
@@ -186,30 +178,17 @@
                         </div>
                     </div>
                 </div>
-                <div ng-switch-when="select-chosen" class="chosen-full-width">
-                    <h4 ng-if="reviewLayout('regular')">New Content:</h4>
-                    <select ng-disabled="!reviewContentEditable('regular')"
-                            chosen allow-single-deselect="true"
-                            ng-model="pureContent.text"
-                            ng-change="updateContent(pureContent.text, data[key])"
-                            ng-options="opt for opt in o">
-                        <option value="NA"></option>
-                    </select>
-                    <div ng-if="reviewLayout('regular')">
-                        <h4>Old Content:</h4>
-                        <p class="unEditableBox">{{::reviewObj.lastReviewed}}</p>
-                    </div>
-                </div>
-                <div ng-switch-when="checkbox">
+                <div ng-switch-when="checkbox|radio" ng-switch-when-separator="|">
                     <div ng-if="key !== 'ocg' && reviewLayout('regular')"><h4>New Content:</h4></div>
                     <div ng-style="getInputStyle('new')">
                         <span ng-repeat="checkbox in checkboxes">
                           <input id="::{{uuid+$index}}"
-                                 type="radio"
+                                 type="{{t}}"
                                  ng-value="checkbox"
                                  ng-disabled="!reviewContentEditable('regular')"
                                  ng-model="pureContent.text"
-                                 ng-click="toggleCheckbox(event)">
+                                 ng-checked="pureContent.text===checkbox"
+                                 ng-click="toggleCheckbox($event)">
                           <label for="::{{uuid+$index}}">{{checkbox}}</label>
                         </span>
                     </div>
@@ -218,7 +197,7 @@
                         <div ng-style="getInputStyle('old')">
                             <span ng-repeat="checkbox in checkboxes" class="reviewedBG">
                               <input id="::{{uuid+$index+'_review'}}"
-                                     type="radio"
+                                     type="{{t}}"
                                      ng-checked="getOldContentChecked(checkbox)"
                                      ng-disabled="true">
                               <label for="::{{uuid+$index+'_review'}}">{{checkbox}}</label>

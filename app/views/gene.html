@@ -150,12 +150,12 @@
             <div class="panelContent" id="{{mutation.mutation_effect_uuid}}">
               <p ng-show="displayPrecisely(mutation.mutation_effect.oncogenic_uuid)">
                 <strong style="float: left; margin-right: 5px;">Oncogenic:</strong>
-                <realtime-string t="'checkbox'" key="'oncogenic'" path="effectPath" checkboxes="checkboxes['oncogenic']" uuid="getUUID({type: 'mutation_effect', key: 'oncogenic', path: path})"></realtime-string>
+                <realtime-string t="'radio'" key="'oncogenic'" path="effectPath" checkboxes="checkboxes['oncogenic']" uuid="getUUID({type: 'mutation_effect', key: 'oncogenic', path: path})"></realtime-string>
               </p>
               <div class="mutationEffect" ng-show="displayPrecisely(mutation.mutation_effect.effect_uuid)">
                 <strong class="header">Mutation effect:</strong>
                 <div>
-                  <realtime-string t="'checkbox'" key="'effect'" path="effectPath" checkboxes="checkboxes['mutationEffect']" uuid="getUUID({type: 'mutation_effect', key: 'effect', path: path})"></realtime-string>
+                  <realtime-string t="'radio'" key="'effect'" path="effectPath" checkboxes="checkboxes['mutationEffect']" uuid="getUUID({type: 'mutation_effect', key: 'effect', path: path})"></realtime-string>
                 </div>
               </div>
               <br/>
