@@ -489,7 +489,7 @@ angular.module('oncokbApp')
         };
     }]);
 angular.module('oncokbApp')
-    .factory('FirebaseModel', ['$rootScope', function($rootScope) {
+    .factory('FirebaseModel', ['$rootScope', '_', function($rootScope, _) {
         'use strict';
         function getUUID() {
             return UUIDjs.create(4).toString();
@@ -645,6 +645,25 @@ angular.module('oncokbApp')
             this.ncitName = ncitName;
             this.synonyms = synonyms || [];
         }
+        function ReviewedData(item, mutation, drugs, citations) {
+            return {
+                gene: _.isUndefined(item.gene) ? item.hugoSymbol : item.gene.hugoSymbol,
+                uuid: item.uuid,
+                mutation: mutation,
+                tumorType: item.cancerType,
+                drugs: drugs,
+                lastReview: item.lastReview,
+                oncogene: _.isUndefined(item.gene) ? item.oncogene : item.gene.oncogene,
+                tsg: _.isUndefined(item.gene) ? item.tsg : item.gene.tsg,
+                truncatingMutations: item.alteration === 'Truncating Mutations',
+                deletion: item.alteration === 'Deletion',
+                amplification: item.alteration === 'Amplification',
+                level: item.levelOfEvidence,
+                description: item.description,
+                propagation: item.propagation,
+                citations: citations
+            };
+        }
         return {
             Gene: Gene,
             Mutation: Mutation,
@@ -657,6 +676,7 @@ angular.module('oncokbApp')
             Meta: Meta,
             Setting: Setting,
             Drug: Drug,
-            generateUUID: getUUID
+            generateUUID: getUUID,
+            ReviewedData: ReviewedData
         };
     }]);

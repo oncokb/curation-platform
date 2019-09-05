@@ -3495,23 +3495,7 @@ angular.module('oncokbApp')
                 return 'gene-type';
             };
             $scope.disableUpdateTimestamp = function(uuids) {
-                var result = false;
-                _.some(uuids, function(uuid) {
-                    if (uuid in $scope.geneMeta.review) {
-                        result = true;
-                        return true;
-                    }
-                });
-                return result;
-            };
-            $scope.getLocation = function(type, mutationName, cancerTypes, tiName, treatmentName) {
-                var locationArr = [];
-                if (!_.isUndefined(mutationName)) locationArr.push(mutationName);
-                if (!_.isUndefined(cancerTypes)) locationArr.push(mainUtils.getCancerTypesName(cancerTypes));
-                if (!_.isUndefined(tiName)) locationArr.push(tiName);
-                if (!_.isUndefined(treatmentName)) locationArr.push(treatmentName);
-                if (type.length > 0) locationArr.push(type);
-                return locationArr.join(', ')
+                return _.some(uuids, function(uuid) { return !!$scope.geneMeta.review[uuid]});
             };
         }]
     )

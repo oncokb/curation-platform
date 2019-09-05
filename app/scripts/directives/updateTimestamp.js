@@ -8,7 +8,7 @@
  * # refresh date
  */
 angular.module('oncokbApp')
-    .directive('updateTimestamp', function(_, $timeout, mainUtils, DatabaseConnector, FirebaseModel, $rootScope, firebaseConnector) {
+    .directive('updateTimestamp', function(_, $timeout, mainUtils, DatabaseConnector, FirebaseModel, $rootScope, firebaseConnector, firebasePathUtils) {
         return {
             templateUrl: 'views/updateTimestamp.html',
             restrict: 'E',
@@ -26,8 +26,7 @@ angular.module('oncokbApp')
             controller: function($scope) {
                 $scope.clicked = false;
                 $scope.getIconClass = function(time) {
-                    if ($scope.disabled) return 'disabled';
-                    else return mainUtils.getTimestampClass(time);
+                    return $scope.disabled ? 'text-muted' : mainUtils.getTimestampClass(time);
                 };
                 $scope.validateTime = function () {
                     $scope.clicked = true;
@@ -37,12 +36,12 @@ angular.module('oncokbApp')
                     } else {
                         mainUtils.validateTime($scope.obj, [$scope.key]);
                         if ($scope.key === 'type') {
-                            firebaseConnector.set($scope.path + '/' + $scope.key + '_validateTime', $scope.obj[$scope.key + '_validateTime']).then(function (result) {
+                            firebaseConnector.set(firebasePathUtils.getValidateTimePathInGene($scope.path, $scope.key), $scope.obj[$scope.key + '_validateTime']).then(function (result) {
                                 $scope.updateTime = $scope.obj[$scope.key + '_validateTime'].updateTime;
+                            }, function () {
+                                dialogs.notify('Warning', 'Validate evidence failed. Please try it later.');
+                            }).finally(function() {
                                 $scope.clicked = false;
-                            }, function (error) {
-                                $scope.clicked = false;
-                                console.log("Error:", error);
                             });
                         } else {
                             var data = {};
@@ -50,13 +49,14 @@ angular.module('oncokbApp')
                             DatabaseConnector.updateEvidenceLastReview(data, function(){
                                 $scope.updateTime = $scope.obj[$scope.key + '_validateTime'].updateTime;
                                 $scope.clicked = false;
-                                firebaseConnector.set($scope.path + '/' + $scope.key + '_validateTime', $scope.obj[$scope.key + '_validateTime']).then(function (result) {
-                                }, function (error) {
-                                    console.log("Error:", error);
+                                firebaseConnector.set(firebasePathUtils.getValidateTimePathInGene($scope.path, $scope.key), $scope.obj[$scope.key + '_validateTime']).then(function (result) {
+                                }, function () {
+                                    dialogs.notify('Warning', 'Validate evidence failed. Please try it later.');
                                 });
-                            }, function (error) {
+                            }, function () {
+                                dialogs.notify('Warning', 'Sorry, our service is unavailable for validating evidence. The developer team will fix the issue as soon as possible.');
+                            }).finally(function() {
                                 $scope.clicked = false;
-                                console.log("Error:", error);
                             });
                         }
                     }
@@ -79,12 +79,12 @@ angular.module('oncokbApp')
                         case 'mutationEffect':
                             firebaseConnector.once("Genes/" + $scope.hugoSymbol + '/mutations').then(function(mutations) {
                                 var mutationIndex = _.findIndex(mutations, function(item) {
-                                    return item.mutation_effect.effect_uuid === $scope.obj.effect_uuid || item.mutation_effect.oncogenic_uuid === $scope.obj.oncogenic_uuid;
+                                    return item.mutation_effect.effect_uuid === $scope.obj.uuid || item.mutation_effect.oncogenic_uuid === $scope.obj.uuid;
                                 });
                                 if (mutationIndex > -1) {
                                     validateTimePath.push('mutations/' + mutationIndex + '/mutation_effect/effect_validateTime');
                                     validateTimePath.push('mutations/' + mutationIndex + '/mutation_effect/oncogenic_validateTime');
-                                    updateTimeForReviewedContentInTools(validateTimePath, [$scope.obj.effect_uuid , $scope.obj.oncogenic_uuid]);
+                                    updateTimeForReviewedContentInTools(validateTimePath, [mutations[mutationIndex]['mutation_effect']['effect_uuid'], mutations[mutationIndex]['mutation_effect']['oncogenic_uuid']]);
                                 } else {
                                     $scope.errorMessage = 'Sorry, we cannot find this mutation.';
                                     $scope.clicked = false;
@@ -132,19 +132,19 @@ angular.module('oncokbApp')
                                 var uuids = [];
                                 _.some(mutations, function (mutation, mutationIndex) {
                                     if ('tumors' in mutation) {
-                                        tumorIndex = _.findIndex(mutation.tumors, {summary_uuid: $scope.obj.summary_uuid});
+                                        tumorIndex = _.findIndex(mutation.tumors, {summary_uuid: $scope.obj.uuid});
                                         if (tumorIndex > -1) {
                                             validateTimePath.push('mutations/' + mutationIndex + '/tumors/' + tumorIndex + '/summary_validateTime');
-                                            uuids.push($scope.obj.summary_uuid);
+                                            uuids.push($scope.obj.uuid);
                                             if ('drugs' in $scope.obj) {
                                                 var tis = mutations[mutationIndex].tumors[tumorIndex].TIs;
                                                 _.some(tis, function (ti, tiIndex) {
                                                     if ('treatments' in ti) {
-                                                        treatmentIndex = _.findIndex(ti.treatments, {name_uuid: $scope.obj.treatment_name_uuid});
+                                                        treatmentIndex = _.findIndex(ti.treatments, {name_uuid: $scope.obj.treatmentNameUuid});
                                                         if (treatmentIndex > -1) {
                                                             validateTimePath.push('mutations/' + mutationIndex + '/tumors/' +
                                                                 tumorIndex + '/TIs/' + tiIndex + '/treatments/' + treatmentIndex + '/name_validateTime');
-                                                            uuids.push($scope.obj.treatment_name_uuid);
+                                                            uuids.push($scope.obj.treatmentNameUuid);
                                                         }
                                                     }
                                                     return treatmentIndex > -1;
@@ -209,13 +209,14 @@ angular.module('oncokbApp')
                         $scope.updateTime = validateTimeObj.updateTime;
                         $scope.clicked = false;
                         _.forEach(validateTimePath, function(path) {
-                            firebaseConnector.set("Genes/" + $scope.hugoSymbol + '/' + path, validateTimeObj);
-                        }, function(error){
-                            console.log("Error:", error);
+                            firebaseConnector.set(firebasePathUtils.getValidateTimePathInToolsPage($scope.hugoSymbol, path), validateTimeObj).then(function () {
+                            }, function () {
+                                dialogs.notify('Warning', 'Validate evidence failed. Please try it later.');
+                            });
                         });
                     }, function (error) {
                         $scope.clicked = false;
-                        console.log("Error:", error);
+                        dialogs.notify('Warning', 'Sorry, our service is unavailable for validating evidence. The developer team will fix the issue as soon as possible.');
                     });
 
                 }

@@ -44,7 +44,7 @@
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
                                 ng-model="targetModel"
-                                ng-change="updateContent(targetModel, '{{data.propagation}}', type)"
+                                ng-change="updateContent(targetModel, '{{targetModel}}', type)"
                                 ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                             <option value="NA"></option>
                         </select>
@@ -131,13 +131,13 @@
                     <div ng-repeat="type in content.propagationTypes"
                          ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
                          style="margin-top:10px;">
-                        <strong>Level of Evidence in other tumor types: </strong>
+                        <strong>Level of Evidence in {{type}} tumor types: </strong>
                         <h4 ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">New Content:</h4>
                         <div>
-                            <select ng-disabled="!reviewContentEditable('regular')"
+                            <select ng-disabled="!reviewContentEditable('regular') || pureContent.text == 0"
                                     chosen allow-single-deselect="true"
                                     ng-model="data[targetModelKey]"
-                                    ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}',type')"
+                                    ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}',type)"
                                     ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                                 <option value="NA"></option>
                             </select>

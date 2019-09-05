@@ -349,31 +349,31 @@ angular.module('oncokbApp')
             if ($rootScope.meta.mainType && $rootScope.meta.tumorTypes) {
                 deferred.resolve({
                     mainTypes: $rootScope.meta.mainType,
+                    subtypes: $rootScope.meta.subtypes,
                     tumorTypes: $rootScope.meta.tumorTypes
                 });
             } else {
                 DatabaseConnector.getMainTypes().then(function(result1) {
-                    var mainTypeResult = _.map(result1, function(item) {
-                        return {
-                            name: item,
-                            code: 0
-                        };
-                    });
+                    var mainTypeResult = result1;
                     DatabaseConnector.getSubTypes().then(function(result2) {
                         var subtypeResult = [];
-                        _.each(result1, function(mainTypeName) {
+                        var subtypesObj = {};
+                        _.each(result1, function(mainType) {
                             var tempArr = [];
                             _.each(result2, function(item) {
-                                if (item.mainType && item.mainType.name && item.mainType.name === mainTypeName) {
+                                if (item.mainType && item.mainType.name && item.mainType.name === mainType.name) {
                                     tempArr.push(item);
                                 }
                             });
                             subtypeResult.push(tempArr);
+                            subtypesObj[mainType.name] = tempArr;
                         });
                         $rootScope.meta.mainType = mainTypeResult;
+                        $rootScope.meta.subtypes = subtypesObj;
                         $rootScope.meta.tumorTypes = subtypeResult;
                         deferred.resolve({
                             mainTypes: mainTypeResult,
+                            subtypes: subtypesObj,
                             tumorTypes: subtypeResult
                         });
                     }, function(error) {
@@ -733,6 +733,23 @@ angular.module('oncokbApp')
                 }
             });
         }
+        function getTumorFormsByCancerTypes(cancerTypes) {
+            var tumorForms = [];
+            _.each(cancerTypes, function(cancerType){
+                if (cancerType.subtype) {
+                    _.some($rootScope.meta.subtypes[cancerType.mainType], function(subtype) {
+                        if (subtype.name === cancerType.subtype) tumorForms.push(subtype.tumorForm);
+                        return subtype.name === cancerType.subtype;
+                    });
+                } else {
+                    _.some($rootScope.meta.mainType, function(mainType) {
+                        if (mainType.name === cancerType.mainType) tumorForms.push(mainType.tumorForm);
+                        return mainType.name === cancerType.mainType;
+                    });
+                }
+            });
+            return _.uniq(tumorForms);
+        }
         return {
             setIsoFormAndGeneType: setIsoFormAndGeneType,
             getCancerTypesName: getCancerTypesName,
@@ -775,6 +792,7 @@ angular.module('oncokbApp')
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities,
             getTimestampClass: getTimestampClass,
-            validateTime: validateTime
+            validateTime: validateTime,
+            getTumorFormsByCancerTypes: getTumorFormsByCancerTypes
         };
     });

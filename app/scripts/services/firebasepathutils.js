@@ -21,10 +21,18 @@ angular.module('oncokbApp')
         function getCancerTypesMapPath(drug, geneName, mutationUuid){
             return 'Map/' + drug + '/' + geneName + '/' + mutationUuid + '/cancerTypes'
         }
+        function getValidateTimePathInGene(path, key) {
+            return path + '/' + key + '_validateTime';
+        }
+        function getValidateTimePathInToolsPage(hugoSymbol, path) {
+            return 'Genes/' + hugoSymbol + '/' + path;
+        }
        return{
             getTherapyMapPath: getTherapyMapPath,
            getMutationNameMapPath: getMutationNameMapPath,
            getTherapyNameMapPath: getTherapyNameMapPath,
-           getCancerTypesMapPath: getCancerTypesMapPath
+           getCancerTypesMapPath: getCancerTypesMapPath,
+           getValidateTimePathInGene: getValidateTimePathInGene,
+           getValidateTimePathInToolsPage: getValidateTimePathInToolsPage
        };
     });

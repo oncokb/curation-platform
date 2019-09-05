@@ -10,12 +10,6 @@ $chosen-sprite-retina-path: "../components/bootstrap-chosen/chosen-sprite@2x.png
 @import "../components/bootstrap-chosen/bootstrap-chosen.scss";
 @import "../components/fontawesome/scss/font-awesome.scss";
 
-$primary-color: rgb(50, 118, 177);
-$success-color: rgb(92, 184, 92);
-$info-color: rgb(57, 179, 215);
-$warning-color: rgb(240, 173, 78);
-$danger-color: rgb(217, 83, 79);
-$disabled-color: #777777;
 body {
   margin-bottom: 20px;
 }
@@ -648,31 +642,31 @@ h5 {
 
 .input-group-addon.primary {
   color: rgb(255, 255, 255);
-  background-color: $primary-color;
+  background-color: $brand-primary;
   border-color: rgb(40, 94, 142);
 }
 
 .input-group-addon.success {
   color: rgb(255, 255, 255);
-  background-color: $success-color;
+  background-color: $brand-success;
   border-color: rgb(76, 174, 76);
 }
 
 .input-group-addon.info {
   color: rgb(255, 255, 255);
-  background-color: $info-color;
+  background-color: $brand-info;
   border-color: rgb(38, 154, 188);
 }
 
 .input-group-addon.warning {
   color: rgb(255, 255, 255);
-  background-color: $warning-color;
+  background-color: $brand-warning;
   border-color: rgb(238, 162, 54);
 }
 
 .input-group-addon.danger {
   color: rgb(255, 255, 255);
-  background-color: $danger-color;
+  background-color: $brand-danger;
   border-color: rgb(212, 63, 58);
 }
 
@@ -978,14 +972,11 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
   font-size: 15px;
 
   i.danger {
-    color: $danger-color;
+    color: $brand-danger;
   }
 
   i.warning {
-    color: $warning-color;
-  }
-  i.disabled{
-    color: $disabled-color;
+    color: $brand-warning;
   }
 }
 
