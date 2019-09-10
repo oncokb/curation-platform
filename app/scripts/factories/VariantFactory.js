@@ -477,7 +477,7 @@ angular.module('oncokbApp')
         };
     }]);
 angular.module('oncokbApp')
-    .factory('FirebaseModel', ['$rootScope', function($rootScope) {
+    .factory('FirebaseModel', ['$rootScope', '_', function($rootScope, _) {
         'use strict';
         function getUUID() {
             return UUIDjs.create(4).toString();
@@ -584,7 +584,7 @@ angular.module('oncokbApp')
             this.name_uuid = getUUID();
             this.level = '';
             this.level_uuid = getUUID();
-            this.propagation = '';
+            this.propagation = ''; // propagationSolid
             this.propagation_uuid = getUUID();
             this.propagationLiquid = '';
             this.propagationLiquid_uuid = getUUID();
@@ -611,12 +611,9 @@ angular.module('oncokbApp')
                 value: new Date().getTime()
             };
         }
-        function TimeStamp(userName, userEmail) {
-            this.by = {
-                name: userName,
-                email: userEmail
-            };
-            this.value = (new Date()).getTime().toString();
+        function Timestamp(userName) {
+            this.updatedBy = userName;
+            this.updateTime = new Date().getTime();
         }
         function Meta() {
             this.lastModifiedBy = $rootScope.me.name;
@@ -636,6 +633,25 @@ angular.module('oncokbApp')
             this.ncitName = ncitName;
             this.synonyms = synonyms || [];
         }
+        function ReviewedData(item, mutation, drugs, citations) {
+            return {
+                gene: _.isUndefined(item.gene) ? item.hugoSymbol : item.gene.hugoSymbol,
+                uuid: item.uuid,
+                mutation: mutation,
+                tumorType: item.cancerType,
+                drugs: drugs,
+                lastReview: item.lastReview,
+                oncogene: _.isUndefined(item.gene) ? item.oncogene : item.gene.oncogene,
+                tsg: _.isUndefined(item.gene) ? item.tsg : item.gene.tsg,
+                truncatingMutations: item.alteration === 'Truncating Mutations',
+                deletion: item.alteration === 'Deletion',
+                amplification: item.alteration === 'Amplification',
+                level: item.levelOfEvidence,
+                description: item.description,
+                propagation: item.propagation,
+                citations: citations
+            };
+        }
         return {
             Gene: Gene,
             Mutation: Mutation,
@@ -644,10 +660,11 @@ angular.module('oncokbApp')
             Comment: Comment,
             Cancertype: Cancertype,
             VUSItem: VUSItem,
-            TimeStamp: TimeStamp,
+            Timestamp: Timestamp,
             Meta: Meta,
             Setting: Setting,
             Drug: Drug,
-            generateUUID: getUUID
+            generateUUID: getUUID,
+            ReviewedData: ReviewedData
         };
     }]);
