@@ -1192,6 +1192,11 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
   margin-top: -25px;
   margin-left: 150px;
 }
-.clock-margin {
-  margin-left: 5px;
+.update-timestamp {
+    i {
+       cursor: pointer;
+    }
+    .clock-margin {
+        margin-left: 5px;
+    }
 }

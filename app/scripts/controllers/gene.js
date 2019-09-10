@@ -994,7 +994,8 @@ angular.module('oncokbApp')
                     subtype: null,
                     articles: [],
                     treatments: null,
-                    propagation: null
+                    solidPropagationLevel: null,
+                    liquidPropagationLevel: null
                 };
                 if ($scope.meta.gene) {
                     data.gene.entrezGeneId = $scope.meta.gene.entrezGeneId;
@@ -1252,10 +1253,19 @@ angular.module('oncokbApp')
                             historyData.old.propagation = treatment.propagation_review.lastReviewed;
                         }
                     }
+                    if ($scope.geneMeta.review[treatment.propagationLiquid_uuid]) {
+                        if (!_.isUndefined(treatment.propagationLiquid)) {
+                            historyData.new.propagationLiquid = treatment.propagationLiquid;
+                        }
+                        if (!_.isUndefined(treatment.propagationLiquid_review.lastReviewed)) {
+                            historyData.old.propagationLiquid = treatment.propagationLiquid_review.lastReviewed;
+                        }
+                    }
                     data.lastEdit = ReviewResource.mostRecent[dataUUID].updateTime;
                     data.levelOfEvidence = levelMapping[treatment.level];
                     data.description = treatment.description;
-                    data.propagation = levelMapping[treatment.propagation];
+                    data.solidPropagationLevel = levelMapping[treatment.propagation];
+                    data.liquidPropagationLevel = levelMapping[treatment.propagationLiquid];
                     data.treatments = [];
                     var treatments = treatment.name.split(',');
                     var priorities = getNewPriorities(TI.treatments, [dataUUID]);
@@ -2413,6 +2423,8 @@ angular.module('oncokbApp')
                     switch(uuidType) {
                         case 'insideOnly':
                             uuids.push(obj.summary_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
@@ -2420,8 +2432,8 @@ angular.module('oncokbApp')
                             break;
                         case 'evidenceOnly':
                             uuids.push(obj.summary_uuid);
-                            uuids.push(obj.prognostic_uuid);
-                            uuids.push(obj.diagnostic_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             break;
                         case 'sectionOnly':
                             uuids.push(obj.cancerTypes_uuid);
@@ -2431,6 +2443,8 @@ angular.module('oncokbApp')
                         default:
                             uuids.push(obj.cancerTypes_uuid);
                             uuids.push(obj.summary_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
@@ -2462,6 +2476,7 @@ angular.module('oncokbApp')
                         case 'insideOnly':
                             uuids.push(obj.level_uuid);
                             uuids.push(obj.propagation_uuid);
+                            uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
                             uuids.push(obj.description_uuid);
                             break;
@@ -2475,6 +2490,7 @@ angular.module('oncokbApp')
                             uuids.push(obj.name_uuid);
                             uuids.push(obj.level_uuid);
                             uuids.push(obj.propagation_uuid);
+                            uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
                             uuids.push(obj.description_uuid);
                             break;

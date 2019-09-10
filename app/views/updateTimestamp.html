@@ -1,5 +1,6 @@
 <span class="update-timestamp">
-    <i ng-if="type === 'tools'" class="fa fa-clock-o" ng-class="getIconClass(updateTime)" ng-show="!clicked" ng-click="validateTime()">
+    <i ng-if="type === 'tools'" class="fa fa-clock-o" ng-class="getIconClass(updateTime)" ng-show="!clicked" ng-click="validateTime()"
+       qtip content="Update to today">
         <span ng-if="errorMessage">{{errorMessage}}</span>
     </i>
     <span ng-if="type != 'tools'">

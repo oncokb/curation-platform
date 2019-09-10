@@ -46,7 +46,7 @@ angular.module('oncokbApp')
                         } else {
                             var data = {};
                             data[$scope.obj[$scope.key + '_uuid']] = $scope.obj[$scope.key + '_validateTime'].updateTime;
-                            DatabaseConnector.updateEvidenceLastReview(data, function(){
+                            DatabaseConnector.updateEvidenceLastReview(data, function() {
                                 $scope.updateTime = $scope.obj[$scope.key + '_validateTime'].updateTime;
                                 $scope.clicked = false;
                                 firebaseConnector.set(firebasePathUtils.getValidateTimePathInGene($scope.path, $scope.key), $scope.obj[$scope.key + '_validateTime']).then(function (result) {
