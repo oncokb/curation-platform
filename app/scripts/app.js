@@ -120,7 +120,6 @@ angular.module('oncokbApp').run(
             $rootScope.internal = true;
             $rootScope.meta = {
                 levelsDesc: {
-                    '0': '',
                     '1': 'FDA-recognized biomarker predictive of response to an FDA-approved drug in this indication',
                     '2A': 'Standard care biomarker predictive of response to an FDA-approved drug in this indication',
                     '2B': 'Standard care biomarker predictive of response to an FDA-approved drug in another indication but not standard care for this indication',
@@ -138,7 +137,6 @@ angular.module('oncokbApp').run(
                     'Dx3': 'Biomarker that may assist disease diagnosis in this indication based on clinical evidence',
                 },
                 levelsDescHtml: {
-                    '0': '<span></span>',
                     '1': '<span><b>FDA-recognized</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
                     '2A': '<span><b>Standard care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
                     '2B': '<span><b>Standard care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in another indication</b> but not standard care for this indication</span>',

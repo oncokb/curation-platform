@@ -164,12 +164,6 @@ angular.module('oncokbApp')
                 };
                 function updatePropagationByType(propagationType, initial) {
                     var propagationKey = propagationType === 'solid' ? 'propagation' : 'propagationLiquid';
-                    var propagationReviewKey = propagationKey + '_review';
-                    var propagationUuidKey = propagationKey + '_uuid';
-                    if (!initial && $scope.data[propagationReviewKey]) {
-                        delete $scope.data[propagationReviewKey].lastReviewed;
-                        mainUtils.deleteUUID($scope.data[propagationUuidKey]);
-                    }
                     var _propagationOpts = [];
                     var _propagation = '';
                     if (_.isUndefined($scope.tumorForms)) {
