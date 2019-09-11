@@ -648,7 +648,8 @@ angular.module('oncokbApp')
                 amplification: item.alteration === 'Amplification',
                 level: item.levelOfEvidence,
                 description: item.description,
-                propagation: item.propagation,
+                solidPropagationLevel: item.solidPropagationLevel,
+                liquidPropagationLevel: item.liquidPropagationLevel,
                 citations: citations
             };
         }

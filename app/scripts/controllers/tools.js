@@ -323,14 +323,14 @@ angular.module('oncokbApp')
                 ttsDrugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary', 'Drugs', 'Level'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'tumorSummary', 'drugs', 'level'],
+                    keys: ['gene', 'mutation', 'tumorType', 'description', 'drugs', 'level'],
                     fileName: 'TumorTypeSummaryDrugs.xls',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY,DIAGNOSTIC_SUMMARY, PROGNOSTIC_SUMMARY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 },
                 drugs: {
-                    header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Propagation', 'Description', 'Citations'],
+                    header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Solid Propagation', 'Liquid Propagation', 'Description', 'Citations'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'drugs', 'level', 'propagation', 'description', 'citations'],
+                    keys: ['gene', 'mutation', 'tumorType', 'drugs', 'level', 'solidPropagationLevel', 'liquidPropagationLevel', 'description', 'citations'],
                     fileName: 'Therapeutics.xls',
                     evidenceTypes: 'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 }
