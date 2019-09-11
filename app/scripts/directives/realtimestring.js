@@ -36,8 +36,6 @@ angular.module('oncokbApp')
                         $rootScope.$watch('reviewMode', function(n, o) {
                             if (n) {
                                 scope.calculateDiff();
-                            } else if (scope.t === 'treatment-select' && scope.key === 'level' && scope.data[scope.key] == 0 ) {
-                                scope.changePropagation(true);
                             }
                         });
                     }, function (error) {
@@ -212,7 +210,7 @@ angular.module('oncokbApp')
                 }
 
                 function setDefaultPropagation(propagationKey, defaultPropagation, initial) {
-                    var _propagation = '';
+                    var _propagation = $scope.data[propagationKey];
                     if ($scope.tumorForms.length === 1) {
                         if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
                             _propagation = defaultPropagation;
@@ -323,7 +321,7 @@ angular.module('oncokbApp')
                         if (!$rootScope.reviewMode) {
                             mainUtils.updateLastModified();
                             if ($scope.t === 'treatment-select' && $scope.key === 'level') {
-                                $scope.changePropagation();
+                                $scope.changePropagation(false);
                             }
                             // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
                             // 2) Do not trigger setReviewRelatedContent() when move mutations.

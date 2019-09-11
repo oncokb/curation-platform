@@ -727,12 +727,12 @@ angular.module('oncokbApp')
             _.each(cancerTypes, function(cancerType){
                 if (cancerType.subtype) {
                     _.some($rootScope.meta.subtypes[cancerType.mainType], function(subtype) {
-                        if (subtype.name === cancerType.subtype) tumorForms.push(subtype.tumorForm);
+                        if (subtype.name === cancerType.subtype && subtype.tumorForm) tumorForms.push(subtype.tumorForm);
                         return subtype.name === cancerType.subtype;
                     });
                 } else {
                     _.some($rootScope.meta.mainType, function(mainType) {
-                        if (mainType.name === cancerType.mainType) tumorForms.push(mainType.tumorForm);
+                        if (mainType.name === cancerType.mainType && mainType.tumorForm) tumorForms.push(mainType.tumorForm);
                         return mainType.name === cancerType.mainType;
                     });
                 }
