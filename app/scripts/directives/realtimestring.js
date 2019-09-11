@@ -200,11 +200,13 @@ angular.module('oncokbApp')
                         ];
                         _propagation = setDefaultPropagation(propagationKey, 'no', initial);
                     } else {
-                        _propagation = null;
+                        _propagation = 'no';
                     }
                     $scope.content.propagationOpts[propagationType] = _propagationOpts;
-                    if (!initial && _propagation !== '' && $scope.data[propagationKey] !== _propagation) {
-                        $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], propagationType);
+                    if (_propagation !== '' && $scope.data[propagationKey] !== _propagation) {
+                        if (!initial) {
+                            $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], propagationType);
+                        }
                         $scope.data[propagationKey] = _propagation;
                     }
                 }
@@ -215,6 +217,8 @@ angular.module('oncokbApp')
                         if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
                             _propagation = defaultPropagation;
                         }
+                    } else if (_propagation === '') {
+                        _propagation = 'no';
                     }
                     return _propagation;
                 }
