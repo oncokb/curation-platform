@@ -548,7 +548,7 @@ angular.module('oncokbApp')
                                 return true;
                             }
                             treatment.name = drugMapUtils.drugUuidtoDrug(treatment.name, drugList);
-                            processData(treatment, ['level', 'propagation', 'indication', 'description'], excludeComments, onlyReviewedContent);
+                            processData(treatment, ['level', 'propagation', 'propagationLiquid', 'indication', 'description'], excludeComments, onlyReviewedContent);
                         });
                         _.each(tempTreatments, function(item) {
                             var index = ti.treatments.indexOf(item);

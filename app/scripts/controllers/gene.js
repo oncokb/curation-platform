@@ -635,10 +635,10 @@ angular.module('oncokbApp')
                                         mutationChanged: mutationChanged_
                                     };
                                 }
-                                if (isChangedSection([treatment.level_uuid, treatment.propagation_uuid, treatment.indication_uuid, treatment.description_uuid])) {
-                                    tempArr = [treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.indication_review, treatment.description_review];
+                                if (isChangedSection([treatment.level_uuid, treatment.propagation_uuid, treatment.propagationLiquid_uuid, treatment.indication_uuid, treatment.description_uuid])) {
+                                    tempArr = [treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review];
                                     treatmentChanged = true;
-                                    setUpdatedSignature([treatment.level_review, treatment.propagation_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
+                                    setUpdatedSignature([treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
                                     ReviewResource.updated.push(treatment.name_uuid);
                                 } else if (isChangedSection([treatment.name_uuid])) {
                                     treatmentChanged = true;

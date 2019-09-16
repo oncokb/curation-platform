@@ -502,7 +502,7 @@
                                                         <div class="panelContent"
                                                              ng-if="initialOpen[treatment.name_uuid]"
                                                              id="{{treatment.name_uuid}}">
-                                                            <div ng-show="displayPrecisely(treatment.level_uuid) || displayPrecisely(treatment.propagation_uuid)">
+                                                            <div ng-show="displayPrecisely(treatment.level_uuid) || displayPrecisely(treatment.propagation_uuid) || displayPrecisely(treatment.propagationLiquid_uuid) ">
                                                                 <strong>Highest level of evidence:</strong>
                                                                 <div ng-switch on="ti.type">
                                                                     <div ng-switch-when="SS">

@@ -134,7 +134,7 @@
                         <strong>Level of Evidence in {{type}} tumor types: </strong>
                         <h4 ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">New Content:</h4>
                         <div>
-                            <select ng-disabled="!reviewContentEditable('regular') || pureContent.text == 0"
+                            <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
                                     ng-model="data[targetModelKey]"
                                     ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}',type)"
