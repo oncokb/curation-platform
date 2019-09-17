@@ -633,9 +633,9 @@ angular.module('oncokbApp')
             this.ncitName = ncitName;
             this.synonyms = synonyms || [];
         }
-        function ReviewedData(item, mutation, drugs, citations) {
+        function ReviewedData(item, mutation, drugs) {
             return {
-                gene: item.gene.hugoSymbol,
+                hugoSymbol: item.gene.hugoSymbol,
                 uuid: item.uuid,
                 mutation: mutation,
                 tumorType: item.cancerType,
@@ -649,8 +649,7 @@ angular.module('oncokbApp')
                 level: item.levelOfEvidence,
                 description: item.description,
                 solidPropagationLevel: item.solidPropagationLevel,
-                liquidPropagationLevel: item.liquidPropagationLevel,
-                citations: citations
+                liquidPropagationLevel: item.liquidPropagationLevel
             };
         }
         return {

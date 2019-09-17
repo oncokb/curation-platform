@@ -260,77 +260,77 @@ angular.module('oncokbApp')
                 geneSummary: {
                     header: ['Gene', 'Summary'],
                     body: [],
-                    keys: ['gene', 'description'],
+                    keys: ['hugoSymbol', 'description'],
                     fileName: 'GeneSummary.xls',
                     evidenceTypes: 'GENE_SUMMARY'
                 },
                 geneBackground: {
                     header: ['Gene', 'Background'],
                     body: [],
-                    keys: ['gene', 'description'],
+                    keys: ['hugoSymbol', 'description'],
                     fileName: 'GeneBackground.xls',
                     evidenceTypes: 'GENE_BACKGROUND'
                 },
                 geneType: {
                     header: ['Gene', 'Oncogene', 'Tumor Suppressor', 'Truncating Mutations', 'Deletion', 'Amplification'],
                     body: [],
-                    keys: ['gene', 'oncogene', 'tsg', 'truncatingMutations', 'deletion', 'amplification'],
+                    keys: ['hugoSymbol', 'oncogene', 'tsg', 'truncatingMutations', 'deletion', 'amplification'],
                     fileName: 'Onc/TS.xls',
                     evidenceTypes: 'geneType'
                 },
                 mutationEffect: {
                     header:['Gene', 'Mutation', 'Oncogenic', 'Mutation Effect', 'Description', 'Citations'],
                     body: [],
-                    keys: ['gene', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
+                    keys: ['hugoSymbol', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
                     fileName: 'MutationEffect.xls',
                     evidenceTypes: 'MUTATION_EFFECT,ONCOGENIC'
                 },
                 tumorSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'TumorTypeSummary.xls',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY'
                 },
                 diagnosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Diagnostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'DiagnosticSummary.xls',
                     evidenceTypes: 'DIAGNOSTIC_SUMMARY'
                 },
                 prognosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Prognostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'PrognosticSummary.xls',
                     evidenceTypes: 'PROGNOSTIC_SUMMARY'
                 },
                 diagnosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
                     fileName: 'DiagnosticImplication.xls',
                     evidenceTypes: 'DIAGNOSTIC_IMPLICATION'
                 },
                 prognosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
                     fileName: 'PrognosticImplication.xls',
                     evidenceTypes: 'PROGNOSTIC_IMPLICATION'
                 },
                 ttsDrugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary', 'Drugs', 'Level'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'description', 'drugs', 'level'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description', 'drugs', 'level'],
                     fileName: 'TumorTypeSummaryDrugs.xls',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY,DIAGNOSTIC_SUMMARY, PROGNOSTIC_SUMMARY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 },
                 drugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Solid Propagation', 'Liquid Propagation', 'Description', 'Citations'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'drugs', 'level', 'solidPropagationLevel', 'liquidPropagationLevel', 'description', 'citations'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'drugs', 'level', 'solidPropagationLevel', 'liquidPropagationLevel', 'description', 'citations'],
                     fileName: 'Therapeutics.xls',
                     evidenceTypes: 'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 }
@@ -423,7 +423,8 @@ angular.module('oncokbApp')
                                         _.each(item.treatments, function (treatment) {
                                             drugs.push(treatment.drugs.map(function(drug){ return drug.drugName}).join('+'));
                                         });
-                                        var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugs.join(), getCitations(item.description));
+                                        var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugs.join());
+                                        reviewedData['citations'] = getCitations(item.description);
                                         if (item.subtype) {
                                             reviewedData.tumorType = subtypeMapping[item.subtype];
                                         }
