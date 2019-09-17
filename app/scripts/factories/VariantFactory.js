@@ -635,7 +635,7 @@ angular.module('oncokbApp')
         }
         function ReviewedData(item, mutation, drugs, citations) {
             return {
-                gene: _.isUndefined(item.gene) ? item.hugoSymbol : item.gene.hugoSymbol,
+                gene: item.gene.hugoSymbol,
                 uuid: item.uuid,
                 mutation: mutation,
                 tumorType: item.cancerType,
