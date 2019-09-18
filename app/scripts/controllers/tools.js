@@ -260,77 +260,77 @@ angular.module('oncokbApp')
                 geneSummary: {
                     header: ['Gene', 'Summary'],
                     body: [],
-                    keys: ['gene', 'summary'],
+                    keys: ['hugoSymbol', 'description'],
                     fileName: 'GeneSummary.xls',
                     evidenceTypes: 'GENE_SUMMARY'
                 },
                 geneBackground: {
                     header: ['Gene', 'Background'],
                     body: [],
-                    keys: ['gene', 'background'],
+                    keys: ['hugoSymbol', 'description'],
                     fileName: 'GeneBackground.xls',
                     evidenceTypes: 'GENE_BACKGROUND'
                 },
                 geneType: {
                     header: ['Gene', 'Oncogene', 'Tumor Suppressor', 'Truncating Mutations', 'Deletion', 'Amplification'],
                     body: [],
-                    keys: ['gene', 'oncogene', 'tsg', 'truncatingMutations', 'deletion', 'amplification'],
+                    keys: ['hugoSymbol', 'oncogene', 'tsg', 'truncatingMutations', 'deletion', 'amplification'],
                     fileName: 'Onc/TS.xls',
                     evidenceTypes: 'geneType'
                 },
                 mutationEffect: {
                     header:['Gene', 'Mutation', 'Oncogenic', 'Mutation Effect', 'Description', 'Citations'],
                     body: [],
-                    keys: ['gene', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
+                    keys: ['hugoSymbol', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
                     fileName: 'MutationEffect.xls',
                     evidenceTypes: 'MUTATION_EFFECT,ONCOGENIC'
                 },
                 tumorSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'tumorSummary'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'TumorTypeSummary.xls',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY'
                 },
                 diagnosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Diagnostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'summary'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'DiagnosticSummary.xls',
                     evidenceTypes: 'DIAGNOSTIC_SUMMARY'
                 },
                 prognosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Prognostic Summary'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'summary'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
                     fileName: 'PrognosticSummary.xls',
                     evidenceTypes: 'PROGNOSTIC_SUMMARY'
                 },
                 diagnosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
                     fileName: 'DiagnosticImplication.xls',
                     evidenceTypes: 'DIAGNOSTIC_IMPLICATION'
                 },
                 prognosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'level', 'description'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
                     fileName: 'PrognosticImplication.xls',
                     evidenceTypes: 'PROGNOSTIC_IMPLICATION'
                 },
                 ttsDrugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary', 'Drugs', 'Level'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'tumorSummary', 'drugs', 'level'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'description', 'drugs', 'level'],
                     fileName: 'TumorTypeSummaryDrugs.xls',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY,DIAGNOSTIC_SUMMARY, PROGNOSTIC_SUMMARY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 },
                 drugs: {
-                    header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Propagation', 'Description', 'Citations'],
+                    header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Solid Propagation', 'Liquid Propagation', 'Description', 'Citations'],
                     body: [],
-                    keys: ['gene', 'mutation', 'tumorType', 'drugs', 'level', 'propagation', 'description', 'citations'],
+                    keys: ['hugoSymbol', 'mutation', 'tumorType', 'drugs', 'level', 'solidPropagationLevel', 'liquidPropagationLevel', 'description', 'citations'],
                     fileName: 'Therapeutics.xls',
                     evidenceTypes: 'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 }
@@ -347,17 +347,13 @@ angular.module('oncokbApp')
             };
             $scope.generateEvidences = function () {
                 $scope.loadingReviewed = true;
+                $scope.displayReviewedData = false;
+                $scope.reviewedData[$scope.data.evidenceType].body = [];
 
                 DatabaseConnector.getReviewedData($scope.reviewedData[$scope.data.evidenceType].evidenceTypes).then(function(response) {
                     if ($scope.data.evidenceType === 'geneSummary' || $scope.data.evidenceType === 'geneBackground') {
-                        // key = 'summary' or key = 'background'
-                        var key = $scope.reviewedData[$scope.data.evidenceType].keys[1];
                         _.each(response.data, function(item) {
-                            var tempObj = {
-                                gene: item.gene.hugoSymbol
-                            };
-                            tempObj[key] = item.description;
-                            $scope.reviewedData[$scope.data.evidenceType].body.push(tempObj);
+                            $scope.reviewedData[$scope.data.evidenceType].body.push(new FirebaseModel.ReviewedData(item));
                         });
                         finishLoadingReviewedData();
                     } else if ($scope.data.evidenceType === 'geneType') {
@@ -369,43 +365,20 @@ angular.module('oncokbApp')
                         var geneWithVariants = {};
                         DatabaseConnector.lookupVariants(variantLookupBody).then(function(result) {
                             _.each(result.data, function(items) {
-                                var tempObj = {};
+                                var reviewedData = {};
                                 _.each(items, function(item) {
-                                    if (_.isEmpty(tempObj)) {
-                                        tempObj = {
-                                            gene: item.gene.hugoSymbol,
-                                            oncogene: item.gene.oncogene,
-                                            tsg: item.gene.tsg,
-                                            truncatingMutations: false,
-                                            deletion: false,
-                                            amplification: false
-                                        };
+                                    if (_.isEmpty(reviewedData)) {
+                                        reviewedData = new FirebaseModel.ReviewedData(item);
                                         geneWithVariants[item.gene.hugoSymbol] = true;
                                     }
-                                    if (item.alteration === 'Truncating Mutations') {
-                                        tempObj.truncatingMutations = true;
-                                    }
-                                    if (item.alteration === 'Deletion') {
-                                        tempObj.deletion = true;
-                                    }
-                                    if (item.alteration === 'Amplification') {
-                                        tempObj.amplification = true;
-                                    }
                                 });
-                                if (!_.isEmpty(tempObj)) {
-                                    $scope.reviewedData.geneType.body.push(tempObj);
+                                if (!_.isEmpty(reviewedData)) {
+                                    $scope.reviewedData.geneType.body.push(reviewedData);
                                 }
                             });
                             _.each(response.data, function(item) {
                                 if (geneWithVariants[item.hugoSymbol] !== true) {
-                                    $scope.reviewedData.geneType.body.push({
-                                        gene: item.hugoSymbol,
-                                        oncogene: item.oncogene,
-                                        tsg: item.tsg,
-                                        truncatingMutations: false,
-                                        deletion: false,
-                                        amplification: false
-                                    });
+                                    $scope.reviewedData.geneType.body.push(new FirebaseModel.ReviewedData(item));
                                 }
                             });
                             finishLoadingReviewedData();
@@ -422,12 +395,9 @@ angular.module('oncokbApp')
                                 }
                             }
                             if (flag === false) {
-                                var newEvidence = {
-                                    gene: item.gene.hugoSymbol,
-                                    mutation: getAlterations(item.alterations)
-                                };
-                                constructMEObj(item, newEvidence);
-                                $scope.reviewedData.mutationEffect.body.push(newEvidence);
+                                var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
+                                constructMEObj(item, reviewedData);
+                                $scope.reviewedData.mutationEffect.body.push(reviewedData);
                             }
                         });
                         finishLoadingReviewedData();
@@ -440,17 +410,11 @@ angular.module('oncokbApp')
                             });
                             if ($scope.data.evidenceType === 'tumorSummary') {
                                 _.each(response.data, function (item) {
-                                    var tempObj =  {
-                                        gene: item.gene.hugoSymbol,
-                                        mutation: getAlterations(item.alterations),
-                                        tumorSummary: item.description
-                                    };
+                                    var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
                                     if (item.subtype) {
-                                        tempObj.tumorType = subtypeMapping[item.subtype];
-                                    } else {
-                                        tempObj.tumorType = item.cancerType;
+                                        reviewedData.tumorType = subtypeMapping[item.subtype];
                                     }
-                                    $scope.reviewedData.tumorSummary.body.push(tempObj);
+                                    $scope.reviewedData.tumorSummary.body.push(reviewedData);
                                 });
                             } else if ($scope.data.evidenceType === 'drugs') {
                                 _.each(response.data, function(item) {
@@ -459,21 +423,12 @@ angular.module('oncokbApp')
                                         _.each(item.treatments, function (treatment) {
                                             drugs.push(treatment.drugs.map(function(drug){ return drug.drugName}).join('+'));
                                         });
-                                        var tempObj = {
-                                            gene: item.gene.hugoSymbol,
-                                            mutation: getAlterations(item.alterations),
-                                            drugs: drugs.join(),
-                                            level: item.levelOfEvidence,
-                                            propagation: item.propagation,
-                                            description: item.description,
-                                            citations: getCitations(item.description)
-                                        };
+                                        var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugs.join());
+                                        reviewedData['citations'] = getCitations(item.description);
                                         if (item.subtype) {
-                                            tempObj.tumorType = subtypeMapping[item.subtype];
-                                        } else {
-                                            tempObj.tumorType = item.cancerType;
+                                            reviewedData.tumorType = subtypeMapping[item.subtype];
                                         }
-                                        $scope.reviewedData.drugs.body.push(tempObj);
+                                        $scope.reviewedData.drugs.body.push(reviewedData);
                                     }
                                 });
                             } else if ($scope.data.evidenceType === 'ttsDrugs') {
@@ -491,12 +446,16 @@ angular.module('oncokbApp')
                                         if (drugsMapping[key]) {
                                             drugsMapping[key].push({
                                                 drugs: drugs.join(),
-                                                level: item.levelOfEvidence
+                                                level: item.levelOfEvidence,
+                                                description: item.description,
+                                                uuid: item.uuid
                                             });
                                         } else {
                                             drugsMapping[key] = [{
                                                 drugs: drugs.join(),
-                                                level: item.levelOfEvidence
+                                                level: item.levelOfEvidence,
+                                                description: item.description,
+                                                uuid: item.uuid
                                             }];
                                         }
                                     }
@@ -505,49 +464,30 @@ angular.module('oncokbApp')
                                     if (item.evidenceType === 'TUMOR_TYPE_SUMMARY') {
                                         var tempTT = item.subtype ? subtypeMapping[item.subtype] : item.cancerType;
                                         var key = item.gene.hugoSymbol + getAlterations(item.alterations) + tempTT;
-                                        var tempObj = {};
+                                        var reviewedData = {};
                                         if (drugsMapping[key]) {
                                             _.each(drugsMapping[key], function(drugItem) {
-                                                tempObj =  {
-                                                    gene: item.gene.hugoSymbol,
-                                                    mutation: getAlterations(item.alterations),
-                                                    tumorType: tempTT,
-                                                    tumorSummary: item.description,
-                                                    drugs: drugItem.drugs,
-                                                    level: drugItem.level
-                                                };
-                                                $scope.reviewedData.ttsDrugs.body.push(tempObj);
+                                                reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugItem.drugs);
+                                                reviewedData.tumorType = tempTT;
+                                                reviewedData.treatmentNameUuid = drugItem.uuid;
+                                                reviewedData.level = drugItem.level;
+                                                $scope.reviewedData.ttsDrugs.body.push(reviewedData);
                                             });
                                         } else {
-                                            tempObj = {
-                                                gene: item.gene.hugoSymbol,
-                                                mutation: getAlterations(item.alterations),
-                                                tumorType: tempTT,
-                                                tumorSummary: item.description
-                                            };
-                                            $scope.reviewedData.ttsDrugs.body.push(tempObj);
+                                            reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
+                                            reviewedData.tumorType = tempTT;
+                                            $scope.reviewedData.ttsDrugs.body.push(reviewedData);
                                         }
                                     }
                                 });
                             } else if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary'
                                 || $scope.data.evidenceType === 'diagnosticImplication' || $scope.data.evidenceType === 'prognosticImplication') {
                                 _.each(response.data, function (item) {
-                                    var tempObj =  {
-                                        gene: item.gene.hugoSymbol,
-                                        mutation: getAlterations(item.alterations)
-                                    };
-                                    if ($scope.data.evidenceType === 'diagnosticSummary' || $scope.data.evidenceType === 'prognosticSummary') {
-                                        tempObj.summary = item.description;
-                                    } else {
-                                        tempObj.level = item.levelOfEvidence;
-                                        tempObj.description = item.description
-                                    }
+                                    var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
                                     if (item.subtype) {
-                                        tempObj.tumorType = subtypeMapping[item.subtype];
-                                    } else {
-                                        tempObj.tumorType = item.cancerType;
+                                        reviewedData.tumorType = subtypeMapping[item.subtype];
                                     }
-                                    $scope.reviewedData[$scope.data.evidenceType].body.push(tempObj);
+                                    $scope.reviewedData[$scope.data.evidenceType].body.push(reviewedData);
                                 });
                             }
                             finishLoadingReviewedData();
@@ -585,7 +525,6 @@ angular.module('oncokbApp')
             function constructMEObj(item, evidence) {
                 if (item.evidenceType === 'MUTATION_EFFECT') {
                     evidence['mutationEffect'] = item.knownEffect;
-                    evidence['description'] = item.description;
                     evidence['citations'] = getCitations(item.description);
                 } else if (item.evidenceType === 'ONCOGENIC') {
                     evidence['oncogenic'] = item.knownEffect;

@@ -100,8 +100,8 @@ angular.module('oncokbApp')
                             }
                         }
                         // Assign new value to scope.data[scope.key] to update content to gene page when multiple editing at the same time.
-                        if (scope.data[scope.key] !== scope.pureContent.text && !isPropagation) {
-                            scope.data[scope.key] = scope.pureContent.text;
+                        if (scope.data[key] !== n) {
+                            scope.data[key] = n;
                         }
                     }
                 }
@@ -162,14 +162,11 @@ angular.module('oncokbApp')
                 };
                 function updatePropagationByType(propagationType, initial) {
                     var propagationKey = propagationType === 'solid' ? 'propagation' : 'propagationLiquid';
-                    var propagationReviewKey = propagationKey + '_review';
-                    var propagationUuidKey = propagationKey + '_uuid';
-                    if (!initial && $scope.data[propagationReviewKey]) {
-                        delete $scope.data[propagationReviewKey].lastReviewed;
-                        mainUtils.deleteUUID($scope.data[propagationUuidKey]);
-                    }
                     var _propagationOpts = [];
                     var _propagation = '';
+                    if (_.isUndefined($scope.tumorForms)) {
+                        $scope.tumorForms = mainUtils.getTumorFormsByCancerTypes($scope.tumor.cancerTypes);
+                    }
                     if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2A' ||
                         ($rootScope.reviewMode && ($scope.data[$scope.key + '_review'].lastReviewed === '1' ||
                             $scope.data[$scope.key + '_review'].lastReviewed === '2A'))) {
@@ -178,8 +175,10 @@ angular.module('oncokbApp')
                             $scope.propagationOpts['2B'],
                             $scope.propagationOpts['4']
                         ];
-                        if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
-                            _propagation = '2B';
+                        if (propagationType === 'solid' && !$scope.tumorForms.includes('LIQUID')) {
+                            _propagation = setDefaultPropagation(propagationKey, '2B', initial)
+                        } else {
+                            _propagation = setDefaultPropagation(propagationKey, 'no', initial);
                         }
                     } else if ($scope.pureContent.text === '3A' ||
                         ($rootScope.reviewMode && $scope.data[$scope.key + '_review'].lastReviewed === '3A')) {
@@ -188,8 +187,10 @@ angular.module('oncokbApp')
                             $scope.propagationOpts['3B'],
                             $scope.propagationOpts['4']
                         ];
-                        if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
-                            _propagation = '3B';
+                        if (propagationType === 'solid' && !$scope.tumorForms.includes('LIQUID')) {
+                            _propagation = setDefaultPropagation(propagationKey, '3B', initial)
+                        } else {
+                            _propagation = setDefaultPropagation(propagationKey, 'no', initial);
                         }
                     } else if ($scope.pureContent.text === '4' ||
                         ($rootScope.reviewMode && $scope.data[$scope.key + '_review'].lastReviewed === '4')) {
@@ -197,17 +198,29 @@ angular.module('oncokbApp')
                             $scope.propagationOpts.no,
                             $scope.propagationOpts['4']
                         ];
-                        if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
-                            _propagation = 'no';
-                        }
+                        _propagation = setDefaultPropagation(propagationKey, 'no', initial);
                     } else {
-                        _propagation = null;
+                        _propagation = 'no';
                     }
                     $scope.content.propagationOpts[propagationType] = _propagationOpts;
-                    if (!initial && _propagation !== '' && $scope.data[propagationKey] !== _propagation) {
-                        $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], propagationType);
+                    if (_propagation !== '' && $scope.data[propagationKey] !== _propagation) {
+                        if (!initial) {
+                            $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], propagationType);
+                        }
                         $scope.data[propagationKey] = _propagation;
                     }
+                }
+
+                function setDefaultPropagation(propagationKey, defaultPropagation, initial) {
+                    var _propagation = $scope.data[propagationKey];
+                    if ($scope.tumorForms.length === 1) {
+                        if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
+                            _propagation = defaultPropagation;
+                        }
+                    } else if (_propagation === '') {
+                        _propagation = 'no';
+                    }
+                    return _propagation;
                 }
                 $scope.changePropagation = function(initial) {
                     _.forEach($scope.content.propagationTypes, function(propagationType) {
@@ -311,8 +324,8 @@ angular.module('oncokbApp')
                     if (n !== o && !_.isUndefined(n) && $scope.fe) {
                         if (!$rootScope.reviewMode) {
                             mainUtils.updateLastModified();
-                            if ($scope.t === 'treatment-select' && $scope.key === 'level' && !propagationType) {
-                                $scope.changePropagation();
+                            if ($scope.t === 'treatment-select' && $scope.key === 'level') {
+                                $scope.changePropagation(false);
                             }
                             // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
                             // 2) Do not trigger setReviewRelatedContent() when move mutations.
