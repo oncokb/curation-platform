@@ -199,7 +199,7 @@ angular.module('oncokbApp')
                             $scope.propagationOpts['4']
                         ];
                         _propagation = setDefaultPropagation(propagationKey, 'no', initial);
-                    } else {
+                    } else if ($scope.pureContent.text !== '') {
                         _propagation = 'no';
                     }
                     $scope.content.propagationOpts[propagationType] = _propagationOpts;
@@ -322,17 +322,16 @@ angular.module('oncokbApp')
                     // 3) Do not run the function when just click panel without any change(_.isEmpty(n) && _.isUndefined(o)).
                     // 4) Do not run the function when file is not editable(scope.fe===false).
                     if (n !== o && !_.isUndefined(n) && $scope.fe) {
-                        if (!$rootScope.reviewMode) {
-                            mainUtils.updateLastModified();
-                            if ($scope.t === 'treatment-select' && $scope.key === 'level') {
-                                $scope.changePropagation(false);
-                            }
-                            // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
-                            // 2) Do not trigger setReviewRelatedContent() when move mutations.
-                            if ($scope.key !== 'short') {
-                                $scope.setReviewRelatedContent(n, o, propagationType);
-                            }
+                        mainUtils.updateLastModified();
+                        if ($scope.t === 'treatment-select' && $scope.key === 'level') {
+                            $scope.changePropagation(false);
                         }
+                        // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
+                        // 2) Do not trigger setReviewRelatedContent() when move mutations.
+                        if ($scope.key !== 'short') {
+                            $scope.setReviewRelatedContent(n, o, propagationType);
+                        }
+
                         if (n !== o && ($scope.key === 'level' || ['summary', 'diagnosticSummary', 'prognosticSummary'].includes($scope.key)  && $scope.mutation && $scope.tumor)) {
                             $timeout(function() {
                                 $scope.indicateMutationContent($scope.mutation);
