@@ -38,13 +38,13 @@
                     </div>
                     <div ng-repeat="type in content.propagationTypes"
                          ng-if="content.propagationOpts[type].length > 0"
-                         ng-init="targetModel = type == 'solid' ? data.propagation:data.propagationLiquid"
+                         ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
                          style="margin-bottom:10px">
                         <span>Level of Evidence in other {{type}} tumor types: </span>
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
-                                ng-model="targetModel"
-                                ng-change="updateContent(targetModel, '{{targetModel}}', type)"
+                                ng-model="data[targetModelKey]"
+                                ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}', type)"
                                 ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                             <option value="NA"></option>
                         </select>

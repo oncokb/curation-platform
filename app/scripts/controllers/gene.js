@@ -2412,6 +2412,8 @@ angular.module('oncokbApp')
                             uuids.push(obj.summary_uuid);
                             uuids.push(obj.prognosticSummary_uuid);
                             uuids.push(obj.diagnosticSummary_uuid);
+                            uuids.push(obj.prognostic_uuid);
+                            uuids.push(obj.diagnostic_uuid);
                             break;
                         case 'sectionOnly':
                             uuids.push(obj.cancerTypes_uuid);
