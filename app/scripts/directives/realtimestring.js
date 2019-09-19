@@ -328,7 +328,9 @@ angular.module('oncokbApp')
                         }
                         // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
                         // 2) Do not trigger setReviewRelatedContent() when move mutations.
-                        if ($scope.key !== 'short') {
+                        if ($scope.key === 'short') {
+                            $scope.data[$scope.key] = n;
+                        } else {
                             $scope.setReviewRelatedContent(n, o, propagationType);
                         }
 
