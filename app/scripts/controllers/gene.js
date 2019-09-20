@@ -416,7 +416,7 @@ angular.module('oncokbApp')
                 // Adjust textarea height
                 $timeout(function () {
                     $scope.$broadcast("elastic:adjust");
-                }, 3000, false);
+                }, 500, false);
             };
             function resetReviewResources() {
                 ReviewResource.accepted = [];
@@ -635,10 +635,10 @@ angular.module('oncokbApp')
                                         mutationChanged: mutationChanged_
                                     };
                                 }
-                                if (isChangedSection([treatment.level_uuid, treatment.propagation_uuid, treatment.indication_uuid, treatment.description_uuid])) {
-                                    tempArr = [treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.indication_review, treatment.description_review];
+                                if (isChangedSection([treatment.level_uuid, treatment.propagation_uuid, treatment.propagationLiquid_uuid, treatment.indication_uuid, treatment.description_uuid])) {
+                                    tempArr = [treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review];
                                     treatmentChanged = true;
-                                    setUpdatedSignature([treatment.level_review, treatment.propagation_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
+                                    setUpdatedSignature([treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
                                     ReviewResource.updated.push(treatment.name_uuid);
                                 } else if (isChangedSection([treatment.name_uuid])) {
                                     treatmentChanged = true;
@@ -993,13 +993,13 @@ angular.module('oncokbApp')
                     subtype: null,
                     articles: [],
                     treatments: null,
-                    propagation: null
+                    solidPropagationLevel: null,
+                    liquidPropagationLevel: null
                 };
                 if ($scope.meta.gene) {
                     data.gene.entrezGeneId = $scope.meta.gene.entrezGeneId;
                 }
                 var levelMapping = {
-                    '0': 'LEVEL_0',
                     '1': 'LEVEL_1',
                     '2A': 'LEVEL_2A',
                     '2B': 'LEVEL_2B',
@@ -1251,10 +1251,19 @@ angular.module('oncokbApp')
                             historyData.old.propagation = treatment.propagation_review.lastReviewed;
                         }
                     }
+                    if ($scope.geneMeta.review[treatment.propagationLiquid_uuid]) {
+                        if (!_.isUndefined(treatment.propagationLiquid)) {
+                            historyData.new.propagationLiquid = treatment.propagationLiquid;
+                        }
+                        if (!_.isUndefined(treatment.propagationLiquid_review.lastReviewed)) {
+                            historyData.old.propagationLiquid = treatment.propagationLiquid_review.lastReviewed;
+                        }
+                    }
                     data.lastEdit = ReviewResource.mostRecent[dataUUID].updateTime;
                     data.levelOfEvidence = levelMapping[treatment.level];
                     data.description = treatment.description;
-                    data.propagation = levelMapping[treatment.propagation];
+                    data.solidPropagationLevel = levelMapping[treatment.propagation];
+                    data.liquidPropagationLevel = levelMapping[treatment.propagationLiquid];
                     data.treatments = [];
                     var treatments = treatment.name.split(',');
                     var priorities = getNewPriorities(TI.treatments, [dataUUID]);
@@ -1442,6 +1451,7 @@ angular.module('oncokbApp')
                         acceptItem([{ reviewObj: treatment.name_review, uuid: treatment.name_uuid },
                             { reviewObj: treatment.level_review, uuid: treatment.level_uuid },
                             { reviewObj: treatment.propagation_review, uuid: treatment.propagation_uuid },
+                            { reviewObj: treatment.propagationLiquid_review, uuid: treatment.propagationLiquid_uuid },
                             { reviewObj: treatment.indication_review, uuid: treatment.indication_uuid },
                             { reviewObj: treatment.description_review, uuid: treatment.description_uuid }], treatment.name_uuid);
                         break;
@@ -2143,8 +2153,8 @@ angular.module('oncokbApp')
                     tumor: tumor,
                     tumorRef: tumorRef,
                     oncoTree: $scope.oncoTree
-                    }, {
-                        size: 'lg'
+                }, {
+                    size: 'lg'
                 });
             };
             $scope.modifyTherapy = function (path) {
@@ -2250,17 +2260,7 @@ angular.module('oncokbApp')
                 });
             };
             $scope.getVUSClass = function(time) {
-                var dt = new Date(time);
-                var _month = new Date().getMonth();
-                var _year = new Date().getYear();
-                var _monthDiff = (_year - dt.getYear()) * 12 + _month - dt.getMonth();
-                if (_monthDiff > 3) {
-                    return 'danger';
-                } else if (_monthDiff > 1) {
-                    return 'warning';
-                } else {
-                    return '';
-                }
+                return mainUtils.getTimestampClass(time);
             };
 
             $scope.getCancerTypesNameInReview = function(tumor, uuid, reviewMode){
@@ -2401,6 +2401,8 @@ angular.module('oncokbApp')
                     switch(uuidType) {
                         case 'insideOnly':
                             uuids.push(obj.summary_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
@@ -2408,6 +2410,8 @@ angular.module('oncokbApp')
                             break;
                         case 'evidenceOnly':
                             uuids.push(obj.summary_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic_uuid);
                             uuids.push(obj.diagnostic_uuid);
                             break;
@@ -2419,6 +2423,8 @@ angular.module('oncokbApp')
                         default:
                             uuids.push(obj.cancerTypes_uuid);
                             uuids.push(obj.summary_uuid);
+                            uuids.push(obj.prognosticSummary_uuid);
+                            uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
@@ -2450,6 +2456,7 @@ angular.module('oncokbApp')
                         case 'insideOnly':
                             uuids.push(obj.level_uuid);
                             uuids.push(obj.propagation_uuid);
+                            uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
                             uuids.push(obj.description_uuid);
                             break;
@@ -2463,6 +2470,7 @@ angular.module('oncokbApp')
                             uuids.push(obj.name_uuid);
                             uuids.push(obj.level_uuid);
                             uuids.push(obj.propagation_uuid);
+                            uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
                             uuids.push(obj.description_uuid);
                             break;
@@ -2928,10 +2936,10 @@ angular.module('oncokbApp')
                                 // Something goes wrong, this needs to be stored into meta file for future update.
                                 console.log('Failed to update priority.');
                                 DatabaseConnector.sendEmail({
-                                    sendTo: 'dev.oncokb@gmail.com',
-                                    subject: 'Error when updating treatments\' priority',
-                                    content: JSON.stringify(postData)
-                                },
+                                        sendTo: 'dev.oncokb@gmail.com',
+                                        subject: 'Error when updating treatments\' priority',
+                                        content: JSON.stringify(postData)
+                                    },
                                     function (result) {
                                         deferred.rejected(error);
                                     },
@@ -2966,7 +2974,6 @@ angular.module('oncokbApp')
             function getLevels() {
                 var desS = {
                     '': '',
-                    '0': $rootScope.meta.levelsDesc['0'],
                     '1': $rootScope.meta.levelsDesc['1'],
                     '2A': $rootScope.meta.levelsDesc['2A'],
                     '2B': $rootScope.meta.levelsDesc['2B'],
@@ -2985,7 +2992,7 @@ angular.module('oncokbApp')
                 var levels = {};
 
                 var levelsCategories = {
-                    SS: ['', '0', '1', '2A'],
+                    SS: ['', '1', '2A'],
                     SR: ['R1'],
                     IS: ['', '2B', '3A', '3B', '4'],
                     IR: ['R2', 'R3']
@@ -3474,6 +3481,13 @@ angular.module('oncokbApp')
                 } else {
                     return drugMapUtils.drugUuidtoName(key, $rootScope.drugList);
                 }
+            };
+            $scope.getGeneTypeClass = function (reviewMode, type) {
+                if (reviewMode) {
+                    if (type === 'tsg') return '';
+                    return 'gene-type-ocg-in-review';
+                }
+                return 'gene-type';
             };
         }]
     )

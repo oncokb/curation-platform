@@ -112,38 +112,38 @@ table.colorHeader thead tr{
   content: attr(placeholder);
   display: block; /* For Firefox */
   color: grey;
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 #gene {
-    .fa.fa-external-link {
-      margin-left: 3px;
+  .fa.fa-external-link {
+    margin-left: 3px;
+  }
+  .top-tools-menu {
+    .dropdown-menu {
+      li > a:hover {
+        cursor: pointer;
+      }
+      .fa {
+        margin-right: 5px;
+      }
     }
-    .top-tools-menu {
-        .dropdown-menu {
-            li > a:hover {
-                cursor: pointer;
-            }
-            .fa {
-                margin-right: 5px;
-            }
-        }
-    }
+  }
 }
 
 .genes {
-    .header-buttons {
-        .group {
-            margin: 0 10px 5px 0;
-        }
-        .backup {
-            width: 200px;
-        }
+  .header-buttons {
+    .group {
+      margin: 0 10px 5px 0;
     }
+    .backup {
+      width: 200px;
+    }
+  }
 }
 
 .success-info {
-    color: #428bca;
+  color: #428bca;
 }
 /* */
 
@@ -180,10 +180,10 @@ input.editableBox {
   width:80%;
 }
 .reviewed {
-    color: #82E452;
+  color: #82E452;
 }
 .reviewedBG {
-    background-color: #EEEEEE;
+  background-color: #EEEEEE;
 }
 .curateTrialItem, .vusItem {
   float: left;
@@ -233,22 +233,22 @@ input.editableBox {
   top: 20px;
 }
 .pageReminder {
-    font-size: 16px;
-    color:red;
+  font-size: 16px;
+  color:red;
 }
 .reportGenerator .row{
-    margin-left: 0px;
-    margin-right:0px;
+  margin-left: 0px;
+  margin-right:0px;
 }
 .first-row-margin {
-    margin-top:30px;
-    margin-bottom:10px;
+  margin-top:30px;
+  margin-bottom:10px;
 }
 .row-margin {
-    margin-bottom:10px;
+  margin-bottom:10px;
 }
 .last-row-margin {
-    margin-bottom:30px;
+  margin-bottom:30px;
 }
 .approvedIndication,.mutationEffect {
   width: 100%;
@@ -455,15 +455,15 @@ i.fa-angle-up, i.fa-angle-double-down, i.fa-angle-double-up{
   color: #70b500;
 }
 .fa-comments-grey {
-    color: grey;
-    cursor:pointer;
-    margin-right: 10px;
+  color: grey;
+  cursor:pointer;
+  margin-right: 10px;
 }
 .fa-margin {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 .left-float {
-    float:left;
+  float:left;
 }
 rect {
   fill: none;
@@ -615,7 +615,7 @@ h5 {
   width: 100%;
 }
 .modify-tumor-type .chosen-container-single {
-    width: 100% !important;
+  width: 100% !important;
 }
 .add-tumor-type-item .chosen-container-single {
   width: 30% !important;
@@ -642,31 +642,31 @@ h5 {
 
 .input-group-addon.primary {
   color: rgb(255, 255, 255);
-  background-color: rgb(50, 118, 177);
+  background-color: $brand-primary;
   border-color: rgb(40, 94, 142);
 }
 
 .input-group-addon.success {
   color: rgb(255, 255, 255);
-  background-color: rgb(92, 184, 92);
+  background-color: $brand-success;
   border-color: rgb(76, 174, 76);
 }
 
 .input-group-addon.info {
   color: rgb(255, 255, 255);
-  background-color: rgb(57, 179, 215);
+  background-color: $brand-info;
   border-color: rgb(38, 154, 188);
 }
 
 .input-group-addon.warning {
   color: rgb(255, 255, 255);
-  background-color: rgb(240, 173, 78);
+  background-color: $brand-warning;
   border-color: rgb(238, 162, 54);
 }
 
 .input-group-addon.danger {
   color: rgb(255, 255, 255);
-  background-color: rgb(217, 83, 79);
+  background-color: $brand-danger;
   border-color: rgb(212, 63, 58);
 }
 
@@ -681,7 +681,7 @@ h5 {
   width: 100% !important;
 }
 #curationQueueEmailCuratorSelect_chosen {
-    width: calc(100% - 200px) !important;
+  width: calc(100% - 200px) !important;
 }
 
 #consequencesDropDown_chosen {
@@ -694,10 +694,10 @@ h5 {
 }
 
 #changeNameDropdown_chosen{
-    width: 300px !important;
+  width: 300px !important;
 }
 #preferNameDropdownChosen_chosen{
-    width: 500px !important;
+  width: 500px !important;
 }
 .chosen-full-width .chosen-container {
   width: 80% !important;
@@ -712,8 +712,8 @@ h5 {
 }
 .oneThird {
   width: 33.33333%;
-    padding-left: 3px;
-    padding-right: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 .oneFifth {
   width: 20%
@@ -783,23 +783,23 @@ h5 {
   float: left;
 }
 .panel-title *:focus {
-    outline: none;
+  outline: none;
 }
 .original-tumor-type {
-    font-size: 12px;
-    color: grey;
-    font-style: italic;
+  font-size: 12px;
+  color: grey;
+  font-style: italic;
 }
 .add-tumor-type-item {
-    width: 100%;
-    margin: 10px 0;
+  width: 100%;
+  margin: 10px 0;
 }
 
 #variantDisplay {
-    .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
-        padding-left: 5px;
-        padding-right: 5px;
-    }
+  .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 }
 /*** custom checkboxes ***/
 input[type=radio], input[type=checkbox] { display:none; } /* to hide the checkbox itself */
@@ -816,144 +816,144 @@ input[type=radio] + label:before, input[type=checkbox] + label:before { content:
 input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:before { content: "\f046"; letter-spacing: 5px;} /* checked icon */
 
 .reviewPanel {
-    float:right;
-    .updateText {
-        font-size:15px;
-        float:left;
-        margin-right:10px
-    }
-    .sectionText {
-        color:red;
-        font-size:15px;
-        float:left;
-        margin-right:10px
-    }
-    .panelMargin {
-      margin-top:10px;
-    }
-    .updatedMargin {
-      margin-top: -20px;
-    }
+  float:right;
+  .updateText {
+    font-size:15px;
+    float:left;
+    margin-right:10px
+  }
+  .sectionText {
+    color:red;
+    font-size:15px;
+    float:left;
+    margin-right:10px
+  }
+  .panelMargin {
+    margin-top:10px;
+  }
+  .updatedMargin {
+    margin-top: -20px;
+  }
 }
 .seperationLine {
-    border-bottom: 2px solid lightgrey;
+  border-bottom: 2px solid lightgrey;
 }
 
 .pub-iframe {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .curationQueue {
+  display: inline-block;
+  width:100%;
+  .headerStyle {
+    margin-bottom: 30px;
+  }
+  .inputMargin {
+    margin-top: 20px;
+  }
+  .buttonStyle {
+    padding: 5px;
+    font-size: 14px;
+    line-height: 14px;
+    i {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  .displayAll {
+    font-size: 14px;
+    margin-left: 20px
+  }
+  table > tbody > tr > td, table > thead > tr > th {
+    padding: 5px;
+  }
+  .cellStyle {
+    padding-left: 0px;
+    padding-right: 5px
+  }
+  .labelAlign{
     display: inline-block;
-    width:100%;
-    .headerStyle {
-        margin-bottom: 30px;
-    }
-    .inputMargin {
-      margin-top: 20px;
-    }
-    .buttonStyle {
-      padding: 5px;
-      font-size: 14px;
-      line-height: 14px;
-      i {
-        width: 14px;
-        height: 14px;
-      }
-    }
-    .displayAll {
-        font-size: 14px;
-        margin-left: 20px
-    }
-    table > tbody > tr > td, table > thead > tr > th {
-        padding: 5px;
-    }
-    .cellStyle {
-        padding-left: 0px;
-        padding-right: 5px
-    }
-    .labelAlign{
-      display: inline-block;
-      width: 150px;
-      float: left;
-    }
-    .inputStyle{
-      width: 80%;
-      display: inline-block;
-    }
-    .attention{
-      color: red;
-    }
-    .subType {
-      display: inline-block;
-      margin-left: 20px;
-    }
-    .subTypeSelect {
-      min-width: 350px;
-    }
-    .predictedArticle {
-      display: inline-block;
-    }
-    .tableStyle {
-      margin-top:20px;
-    }
+    width: 150px;
+    float: left;
+  }
+  .inputStyle{
+    width: 80%;
+    display: inline-block;
+  }
+  .attention{
+    color: red;
+  }
+  .subType {
+    display: inline-block;
+    margin-left: 20px;
+  }
+  .subTypeSelect {
+    min-width: 350px;
+  }
+  .predictedArticle {
+    display: inline-block;
+  }
+  .tableStyle {
+    margin-top:20px;
+  }
 }
 
 .drugsPage {
-    .headerStyle {
-        margin-bottom: 30px;
+  .headerStyle {
+    margin-bottom: 30px;
+  }
+  .table {
+    .buttonStyle {
+      padding: 5px;
+      font-size: 15px;
+      line-height: 15px;
+      i {
+        width: 15px;
+        height: 15px;
+      }
     }
-    .table {
-        .buttonStyle {
-            padding: 5px;
-            font-size: 15px;
-            line-height: 15px;
-            i {
-                width: 15px;
-                height: 15px;
-            }
-        }
-    }
-    table > tbody > tr > td, table > thead > tr > th {
-        padding: 12px;
-    }
-    .table > tbody > tr > td {
-        word-wrap: break-word;
-    }
-    .errorReminderXL {
-        font-size: 24px;
-        color: red;
-    }
+  }
+  table > tbody > tr > td, table > thead > tr > th {
+    padding: 12px;
+  }
+  .table > tbody > tr > td {
+    word-wrap: break-word;
+  }
+  .errorReminderXL {
+    font-size: 24px;
+    color: red;
+  }
 }
 
 .createNewDrug {
-    .nameLabel{
-        width: 170px;
-    }
-    .search-box {
-        width: 500px;
-        margin-right: 20px;
-    }
-    .preferNameDropdown {
-        margin-top: 10px;
-    }
-    .errorReminder {
-        font-size: 15px;
-        color: red;
-    }
-    .infoReminder {
-        font-size: 15px;
-        color: green;
-    }
-    .basicName {
-        color: black;
-        font-size: 15px;
-    }
-    .alsoKnownAs {
-        color: grey;
-        font-size: 13px;
-        white-space: normal;
-    }
+  .nameLabel{
+    width: 170px;
+  }
+  .search-box {
+    width: 500px;
+    margin-right: 20px;
+  }
+  .preferNameDropdown {
+    margin-top: 10px;
+  }
+  .errorReminder {
+    font-size: 15px;
+    color: red;
+  }
+  .infoReminder {
+    font-size: 15px;
+    color: green;
+  }
+  .basicName {
+    color: black;
+    font-size: 15px;
+  }
+  .alsoKnownAs {
+    color: grey;
+    font-size: 13px;
+    white-space: normal;
+  }
   ul.dropdown-menu {
     width: 500px;
 
@@ -965,45 +965,48 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 
 .flexRow {
-    display: flex;
+  display: flex;
 }
 
 .addTherapy {
-    .latestResultDiv{
-        margin-bottom: 10px;
-    }
-    .latestResultFont{
-        font-weight: bold;
-        display: inline;
-    }
-    .therapyLabel{
-        width: 80px;
-    }
-    .addButton {
-        border-style: none;
-        font-size: 16px;
-        margin-top: -6px;
-    }
-    .inputDrugs {
-        flex-grow: 1;
-        flex-basis: 70%;
-    }
-    .errorNote {
-        color: red;
-        float: left;
-    }
-    .tagsBox{
-        width: 650px;
-        height: fit-content;
-    }
+  .latestResultDiv{
+    margin-bottom: 10px;
+  }
+  .latestResultFont{
+    font-weight: bold;
+    display: inline;
+  }
+  .therapyLabel{
+    width: 80px;
+  }
+  .addButton {
+    border-style: none;
+    font-size: 16px;
+    margin-top: -6px;
+  }
+  .inputDrugs {
+    flex-grow: 1;
+    flex-basis: 70%;
+  }
+  .errorNote {
+    color: red;
+    float: left;
+  }
+  .tagsBox{
+    width: 650px;
+    height: fit-content;
+  }
 }
 
 .invalidPubIframe {
-    color: red !important;
+  color: red !important;
 }
 .reviewedData {
-  width: 200px;
+  width: 150px;
   word-break: break-all;
+}
+.timestamp{
+  width: 100px;
 }
 .queryLabel {
   margin-right: -80px;
@@ -1086,36 +1089,36 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
   border: 0.5px solid #ddd;
 }
 .tage-label {
-    display: inline-block;
-    padding: .2em .6em .3em;
-    margin-bottom:5px;
-    font-size: 15px;
-    color: #fff;
-    white-space: pre-wrap;
-    border-radius: .25em;
+  display: inline-block;
+  padding: .2em .6em .3em;
+  margin-bottom:5px;
+  font-size: 15px;
+  color: #fff;
+  white-space: pre-wrap;
+  border-radius: .25em;
 }
 .records-width {
-    max-width: 700px;
+  max-width: 700px;
 }
 .date-range-column {
-    display: inline-flex
+  display: inline-flex
 }
 .cancel-icon {
-    margin-top: 5px;
-    position: relative;
-    left: -20px;
-    cursor: default;
+  margin-top: 5px;
+  position: relative;
+  left: -20px;
+  cursor: default;
 }
 .result-margin {
-    margin-bottom:40px;
+  margin-bottom:40px;
 }
 .label-new {
-    color: #000000;
-    background-color: #F1F9FF;
+  color: #000000;
+  background-color: #F1F9FF;
 }
 .label-old {
-    color: #000000;
-    background-color: #ccc;
+  color: #000000;
+  background-color: #ccc;
 }
 
 .direct-descendants-margin {
@@ -1169,4 +1172,11 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 }
 .margin-bottom-0 {
   margin-bottom: 0;
+}
+.gene-type {
+  display: inline-flex;
+}
+.gene-type-ocg-in-review {
+  margin-top: -25px;
+  margin-left: 150px;
 }

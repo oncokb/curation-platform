@@ -36,13 +36,16 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div ng-if="content.propagationOpts.length > 0" style="margin-bottom:10px">
-                        <span>Level of Evidence in other tumor types: </span>
+                    <div ng-repeat="type in content.propagationTypes"
+                         ng-if="content.propagationOpts[type].length > 0"
+                         ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
+                         style="margin-bottom:10px">
+                        <span>Level of Evidence in other {{type}} tumor types: </span>
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
-                                ng-model="data.propagation"
-                                ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
-                                ng-options="opt.value as opt.name for opt in content.propagationOpts">
+                                ng-model="data[targetModelKey]"
+                                ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}', type)"
+                                ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                             <option value="NA"></option>
                         </select>
                     </div>
@@ -125,25 +128,27 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div style="margin-top:10px;">
-                        <strong>Level of Evidence in other tumor types: </strong>
-                        <h4 ng-if="reviewLayout('regular') && data.propagation_review.lastReviewed">New Content:</h4>
+                    <div ng-repeat="type in content.propagationTypes"
+                         ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
+                         style="margin-top:10px;">
+                        <strong>Level of Evidence in {{type}} tumor types: </strong>
+                        <h4 ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">New Content:</h4>
                         <div>
                             <select ng-disabled="!reviewContentEditable('regular')"
                                     chosen allow-single-deselect="true"
-                                    ng-model="data.propagation"
-                                    ng-change="updateContent(data.propagation, '{{data.propagation}}', true)"
-                                    ng-options="opt.value as opt.name for opt in content.propagationOpts">
+                                    ng-model="data[targetModelKey]"
+                                    ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}',type)"
+                                    ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                                 <option value="NA"></option>
                             </select>
                         </div>
-                        <div ng-if="reviewLayout('regular') && data.propagation_review.lastReviewed">
+                        <div ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">
                             <h4>Old Content:</h4>
                             <div>
                                 <select ng-disabled="true"
                                         chosen
-                                        ng-model="data.propagation_review.lastReviewed"
-                                        ng-options="opt.value as opt.name for opt in content.propagationOpts">
+                                        ng-model="data[targetModelKey + '_review'].lastReviewed"
+                                        ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
                                     <option value="NA"></option>
                                 </select>
                             </div>
