@@ -388,7 +388,7 @@ angular.module('oncokbApp')
                             var flag = false;
                             for (var i = 0; i < $scope.reviewedData.mutationEffect.body.length; i++) {
                                 var evidence = $scope.reviewedData.mutationEffect.body[i];
-                                if (item.gene.hugoSymbol === evidence.gene && getAlterations(item.alterations) === evidence.mutation) {
+                                if (item.gene.hugoSymbol === evidence.hugoSymbol && getAlterations(item.alterations) === evidence.mutation) {
                                     flag = true;
                                     constructMEObj(item, evidence);
                                     break;
@@ -525,6 +525,7 @@ angular.module('oncokbApp')
             function constructMEObj(item, evidence) {
                 if (item.evidenceType === 'MUTATION_EFFECT') {
                     evidence['mutationEffect'] = item.knownEffect;
+                    evidence['description'] = item.description;
                     evidence['citations'] = getCitations(item.description);
                 } else if (item.evidenceType === 'ONCOGENIC') {
                     evidence['oncogenic'] = item.knownEffect;
@@ -542,7 +543,7 @@ angular.module('oncokbApp')
                 _.each($scope.reviewedData[$scope.data.evidenceType].body, function(item) {
                     tempArr = [];
                     _.each($scope.reviewedData[$scope.data.evidenceType].keys, function(key) {
-                        if (key === 'citations') {
+                        if (key === 'citations' && !_.isUndefined(item[key])) {
                             tempArr.push('=HYPERLINK(\"https://www.ncbi.nlm.nih.gov/pubmed/' + item[key] + '\", \"'+item[key] + '\")');
                         } else {
                             tempArr.push(item[key]);
