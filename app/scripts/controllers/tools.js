@@ -543,7 +543,7 @@ angular.module('oncokbApp')
                 _.each($scope.reviewedData[$scope.data.evidenceType].body, function(item) {
                     tempArr = [];
                     _.each($scope.reviewedData[$scope.data.evidenceType].keys, function(key) {
-                        if (key === 'citations') {
+                        if (key === 'citations' && !_.isUndefined(item[key])) {
                             tempArr.push('=HYPERLINK(\"https://www.ncbi.nlm.nih.gov/pubmed/' + item[key] + '\", \"'+item[key] + '\")');
                         } else {
                             tempArr.push(item[key]);
