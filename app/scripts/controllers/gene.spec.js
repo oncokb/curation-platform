@@ -61,7 +61,8 @@ describe('Gene Controller', function () {
 			subtype: null,
 			articles: [],
 			treatments: null,
-			propagation: null
+			propagation: null,
+            propagationLiquid: null
 		};
 		// Test the function to prepare evidence model for API call in each type
 		it('GENE_SUMMARY type is wrong', function () {

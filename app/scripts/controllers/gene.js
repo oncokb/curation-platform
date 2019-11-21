@@ -1627,7 +1627,7 @@ angular.module('oncokbApp')
                         $scope.updateDrugMap('accept', 'add', type, mutation, tumor, treatment);
                         ReviewResource.accepted.push(treatment.name_uuid);
                         delete treatment.name_review.added;
-                        clearReview([treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.indication_review, treatment.description_review]);
+                        clearReview([treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review]);
                         if (firstLayer) {
                             $scope.updatePriority(ti.treatments);
                         }

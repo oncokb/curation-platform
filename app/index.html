@@ -186,7 +186,7 @@
     <script src="//apis.google.com/js/client:platform.js"></script>
     <script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin="anonymous"></script>
     <script>
-        Sentry.init({ dsn: 'https://d4930217d3be47e7aa0cbb8f11a817c4@sentry.io/1382330' });
+        Sentry.init({ dsn: 'https://d4930217d3be47e7aa0cbb8f11a817c4@sentry.io/1382330', blacklistUrls: [new RegExp('.*localhost.*')] });
     </script>
 
     <!-- build:js scripts/oncokb.js -->
