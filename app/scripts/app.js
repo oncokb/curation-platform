@@ -115,19 +115,11 @@ var oncokbApp = angular.module('oncokbApp', [
     });
 
 angular.module('oncokbApp').run(
-    ['$window', '$timeout', '$rootScope', '$location', '$q', 'loadingScreen', 'DatabaseConnector', 'dialogs', 'mainUtils', 'user', 'loadFiles', '$firebaseObject', 'firebaseConnector',
-        function($window, $timeout, $rootScope, $location, $q, loadingScreen, DatabaseConnector, dialogs, mainUtils, user, loadFiles, $firebaseObject, firebaseConnector) {
+    ['$window', '$timeout', '$rootScope', '$location', '$q', 'loadingScreen', 'DatabaseConnector', 'dialogs', 'mainUtils', 'user', 'loadFiles',
+        function($window, $timeout, $rootScope, $location, $q, loadingScreen, DatabaseConnector, dialogs, mainUtils, user, loadFiles) {
             $rootScope.internal = true;
             $rootScope.meta = {
                 levelsDesc: {
-                    '1': 'FDA-recognized biomarker predictive of response to an FDA-approved drug in this indication',
-                    '2A': 'Standard care biomarker predictive of response to an FDA-approved drug in this indication',
-                    '2B': 'Standard care biomarker predictive of response to an FDA-approved drug in another indication but not standard care for this indication',
-                    '3A': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in this indication',
-                    '3B': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in another indication',
-                    '4': 'Compelling biological evidence supports the biomarker as being predictive of response to a drug',
-                    'R1': 'Standard care biomarker predictive of resistance to an FDA-approved drug in this indication',
-                    'R2': 'Compelling clinical evidence supports the biomarker as being predictive of resistance to a drug',
                     'R3': '',
                     'Px1': 'FDA and/or professional guideline-recognized biomarker prognostic in this indication based on well-powered studie(s)',
                     'Px2': 'FDA and/or professional guideline-recognized biomarker prognostic in this indication based on a single or multiple small studies',
@@ -137,32 +129,16 @@ angular.module('oncokbApp').run(
                     'Dx3': 'Biomarker that may assist disease diagnosis in this indication based on clinical evidence',
                 },
                 levelsDescHtml: {
-                    '1': '<span><b>FDA-recognized</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    '2A': '<span><b>Standard care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    '2B': '<span><b>Standard care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in another indication</b> but not standard care for this indication</span>',
-                    '3A': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of response to a drug <b>in this indication</b></span>',
-                    '3B': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of response to a drug <b>in another indication</b></span>',
-                    '4': '<span><b>Compelling biological evidence</b> supports the biomarker as being predictive of response to a drug</span>',
-                    'R1': '<span><b>Standard care</b> biomarker predictive of <b>resistance</b> to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    'R2': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of <b>resistance</b> to a drug</span>',
                     'R3': '<span></span>'
                 },
                 colorsByLevel: {
-                    Level_1: '#33A02C',
-                    Level_2A: '#1F78B4',
-                    Level_2B: '#80B1D3',
-                    Level_3A: '#984EA3',
-                    Level_3B: '#BE98CE',
-                    Level_4: '#424242',
-                    Level_R1: '#EE3424',
-                    Level_R2: '#F79A92',
                     Level_R3: '#FCD6D3',
                     Level_Px1: '#33A02C',
                     Level_Px2: '#1F78B4',
                     Level_Px3: '#984EA3',
                     Level_Dx1: '#33A02C',
                     Level_Dx2: '#1F78B4',
-                    Level_Dx3: '#984EA3',
+                    Level_Dx3: '#984EA3'
                 }
             };
 
@@ -187,6 +163,20 @@ angular.module('oncokbApp').run(
                 return defer.promise;
             }
 
+            function getEvidenceLevels() {
+                DatabaseConnector.getEvidenceLevels(function(data) {
+                    _.forEach(data.levels, function(level) {
+                        var levelCode = level.levelOfEvidence.replace('LEVEL_', '');
+                        $rootScope.meta.levelsDesc[levelCode] = level.description;
+                        $rootScope.meta.levelsDescHtml[levelCode] = level.htmlDescription;
+                        $rootScope.meta.colorsByLevel[levelCode] = level.colorHex;
+                    });
+                }, function() {
+                    dialogs.error('Error', 'Failed to load evidence levels information. Please Contact developer and stop curation.');
+                });
+            }
+
+            getEvidenceLevels();
             testInternal().finally(function() {
                 $rootScope.$broadcast('internalStateChange');
             });

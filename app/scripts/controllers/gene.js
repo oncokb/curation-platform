@@ -1001,8 +1001,7 @@ angular.module('oncokbApp')
                 }
                 var levelMapping = {
                     '1': 'LEVEL_1',
-                    '2A': 'LEVEL_2A',
-                    '2B': 'LEVEL_2B',
+                    '2': 'LEVEL_2',
                     '3A': 'LEVEL_3A',
                     '3B': 'LEVEL_3B',
                     '4': 'LEVEL_4',
@@ -2975,8 +2974,7 @@ angular.module('oncokbApp')
                 var desS = {
                     '': '',
                     '1': $rootScope.meta.levelsDesc['1'],
-                    '2A': $rootScope.meta.levelsDesc['2A'],
-                    '2B': $rootScope.meta.levelsDesc['2B'],
+                    '2': $rootScope.meta.levelsDesc['2'],
                     '3A': $rootScope.meta.levelsDesc['3A'],
                     '3B': $rootScope.meta.levelsDesc['3B'],
                     '4': $rootScope.meta.levelsDesc['4']
@@ -2992,9 +2990,9 @@ angular.module('oncokbApp')
                 var levels = {};
 
                 var levelsCategories = {
-                    SS: ['', '1', '2A'],
+                    SS: ['', '1', '2'],
                     SR: ['R1'],
-                    IS: ['', '2B', '3A', '3B', '4'],
+                    IS: ['', '3A', '3B', '4'],
                     IR: ['R2', 'R3']
                 };
 

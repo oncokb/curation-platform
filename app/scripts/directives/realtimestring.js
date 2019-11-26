@@ -73,7 +73,7 @@ angular.module('oncokbApp')
                                 uuid = scope.data.propagationLiquid_uuid;
                             }
                             if (_.isUndefined(o)) {
-                                // Even if propagation old content is undefined, i.e. Level 0 -> Level 2A Propagation 2B.
+                                // Even if propagation old content is undefined, i.e. Level 0 -> Level 2 Propagation 3B.
                                 // We still need to set its UUID in Meta/GeneName/review since we need its UUID for recording history old content.
                                 mainUtils.setUUIDInReview(uuid);
                             }
@@ -122,10 +122,6 @@ angular.module('oncokbApp')
                         name: 'No level',
                         value: 'no'
                     },
-                    '2B': {
-                        name: 'Level 2B',
-                        value: '2B'
-                    },
                     '3B': {
                         name: 'Level 3B',
                         value: '3B'
@@ -167,20 +163,9 @@ angular.module('oncokbApp')
                     if (_.isUndefined($scope.tumorForms)) {
                         $scope.tumorForms = mainUtils.getTumorFormsByCancerTypes($scope.tumor.cancerTypes);
                     }
-                    if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2A' ||
+                    if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2' ||
                         ($rootScope.reviewMode && ($scope.data[$scope.key + '_review'].lastReviewed === '1' ||
-                            $scope.data[$scope.key + '_review'].lastReviewed === '2A'))) {
-                        _propagationOpts = [
-                            $scope.propagationOpts.no,
-                            $scope.propagationOpts['2B'],
-                            $scope.propagationOpts['4']
-                        ];
-                        if (propagationType === 'solid' && !$scope.tumorForms.includes('LIQUID')) {
-                            _propagation = setDefaultPropagation(propagationKey, '2B', initial)
-                        } else {
-                            _propagation = setDefaultPropagation(propagationKey, 'no', initial);
-                        }
-                    } else if ($scope.pureContent.text === '3A' ||
+                            $scope.data[$scope.key + '_review'].lastReviewed === '2')) || $scope.pureContent.text === '3A' ||
                         ($rootScope.reviewMode && $scope.data[$scope.key + '_review'].lastReviewed === '3A')) {
                         _propagationOpts = [
                             $scope.propagationOpts.no,
