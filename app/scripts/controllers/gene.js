@@ -77,9 +77,15 @@ angular.module('oncokbApp')
                         if (mutation.name.toLowerCase() === variantName) {
                             validMutation = false;
                             if (mutation.name_review && mutation.name_review.removed === true) {
-                                message += 'just got removed, we will reuse the old one';
-                                delete mutation.name_review.removed;
-                                mainUtils.deleteUUID(mutation.name_uuid);
+                                if ($rootScope.me.admin) {
+                                    // Skip mutation checking for admin user.
+                                    // Admin user can delete mutation and add it in VUS directly.
+                                    validMutation = true;
+                                } else {
+                                    message += 'just got removed, we will reuse the old one';
+                                    delete mutation.name_review.removed;
+                                    mainUtils.deleteUUID(mutation.name_uuid);
+                                }
                             } else {
                                 message += 'has already been added in the mutation section!';
                             }
