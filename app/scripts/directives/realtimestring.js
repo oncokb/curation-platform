@@ -17,6 +17,7 @@ angular.module('oncokbApp')
                 path: '=',
                 checkboxes: '=',
                 o: '=',
+                oType: '=',
                 uuid: '=',
                 mutation: '=',
                 tumor: '=',
