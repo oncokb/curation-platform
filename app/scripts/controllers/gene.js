@@ -77,15 +77,9 @@ angular.module('oncokbApp')
                         if (mutation.name.toLowerCase() === variantName) {
                             validMutation = false;
                             if (mutation.name_review && mutation.name_review.removed === true) {
-                                if ($rootScope.me.admin) {
-                                    // Skip mutation checking for admin user.
-                                    // Admin user can delete mutation and add it in VUS directly.
-                                    validMutation = true;
-                                } else {
-                                    message += 'just got removed, we will reuse the old one';
-                                    delete mutation.name_review.removed;
-                                    mainUtils.deleteUUID(mutation.name_uuid);
-                                }
+                                message += 'just got removed, we will reuse the old one';
+                                delete mutation.name_review.removed;
+                                mainUtils.deleteUUID(mutation.name_uuid);
                             } else {
                                 message += 'has already been added in the mutation section!';
                             }
@@ -2234,7 +2228,28 @@ angular.module('oncokbApp')
 
             $scope.addVUSItem = function (newVUSName) {
                 if (newVUSName) {
-                    if (isValidVariant(newVUSName)) {
+                    var newVusIsDeletedMutation = false;
+                    var variantName = newVUSName.trim().toLowerCase();
+                    // Skip mutation checking for admin user.
+                    // Admin user can delete mutation and add it in VUS directly.
+                    if ($rootScope.me.admin) {
+                        _.some($scope.gene.mutations, function (mutation) {
+                            if (mutation.name.toLowerCase() === variantName && mutation.name_review && mutation.name_review.removed) {
+                                newVusIsDeletedMutation = true;
+                                var dlg = dialogs.confirm('Reminder', 'Are you sure you want to delete mutation '
+                                    + mutation.name + ' from database?');
+                                dlg.result.then(function () {
+                                    $scope.confirmDelete('mutation', mutation, null, null, null, $rootScope.me.name);
+                                    var vusItem = new FirebaseModel.VUSItem(newVUSName, $rootScope.me.name, $rootScope.me.email);
+                                    $scope.vusItems.$add(vusItem).then(function(variant) {
+                                        $scope.vusUpdate();
+                                    });
+                                });
+                                return true;
+                            }
+                        });
+                    }
+                    if (!newVusIsDeletedMutation && isValidVariant(newVUSName)) {
                         var vusItem = new FirebaseModel.VUSItem(newVUSName, $rootScope.me.name, $rootScope.me.email);
                         $scope.vusItems.$add(vusItem).then(function(variant) {
                             $scope.vusUpdate();
