@@ -342,33 +342,28 @@ angular.module('oncokbApp').run(
             $rootScope.internal = true;
             $rootScope.meta = {
                 levelsDesc: {
-                    '0': 'FDA-approved drug in this indication irrespective of gene/variant biomarker',
                     '1': 'FDA-recognized biomarker predictive of response to an FDA-approved drug in this indication',
-                    '2A': 'Standard of care biomarker predictive of response to an FDA-approved drug in this indication',
-                    '2B': 'Standard of care biomarker predictive of response to an FDA-approved drug in another indication but not standard of care for this indication',
-                    '3A': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in this indication but neither biomarker and drug are standard of care',
-                    '3B': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in another indication but neither biomarker and drug are standard of care',
-                    '4': 'Compelling biological evidence supports the biomarker as being predictive of response to a drug but neither biomarker and drug are standard of care',
-                    'R1': 'Standard of care biomarker predictive of resistance to an FDA-approved drug in this indication',
-                    'R2': 'Not NCCN compendium-listed biomarker, but clinical evidence linking this biomarker to drug resistance',
-                    'R3': 'Not NCCN compendium-listed biomarker, but preclinical evidence potentially linking this biomarker to drug resistance'
+                    '2': 'Standard care biomarker predictive of response to an FDA-approved drug in this indication',
+                    '3A': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in this indication',
+                    '3B': 'Compelling clinical evidence supports the biomarker as being predictive of response to a drug in another indication',
+                    '4': 'Compelling biological evidence supports the biomarker as being predictive of response to a drug',
+                    'R1': 'Standard care biomarker predictive of resistance to an FDA-approved drug in this indication',
+                    'R2': 'Compelling clinical evidence supports the biomarker as being predictive of resistance to a drug',
+                    'R3': ''
                 },
                 levelsDescHtml: {
-                    '0': '<span>FDA-approved drug in this indication irrespective of gene/variant biomarker</span>',
                     '1': '<span><b>FDA-recognized</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    '2A': '<span><b>Standard of care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    '2B': '<span><b>Standard of care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in another indication</b> but not standard of care for this indication</span>',
+                    '2': '<span><b>Standard of care</b> biomarker predictive of response to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
                     '3A': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of response to a drug <b>in this indication</b> but neither biomarker and drug are standard of care</span>',
                     '3B': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of response to a drug <b>in another indication</b> but neither biomarker and drug are standard of care</span>',
                     '4': '<span><b>Compelling biological evidence</b> supports the biomarker as being predictive of response to a drug but neither biomarker and drug are standard of care</span>',
                     'R1': '<span><b>Standard of care</b> biomarker predictive of <b>resistance</b> to an <b>FDA-approved</b> drug <b>in this indication</b></span>',
-                    'R2': '<span>Not NCCN compendium-listed biomarker, but clinical evidence linking this biomarker to drug resistance</span>',
-                    'R3': '<span>Not NCCN compendium-listed biomarker, but preclinical evidence potentially linking this biomarker to drug resistance</span>'
+                    'R2': '<span><b>Compelling clinical evidence</b> supports the biomarker as being predictive of <b>resistance</b> to a drug</span>',
+                    'R3': ''
                 },
                 colorsByLevel: {
                     Level_1: '#33A02C',
-                    Level_2A: '#1F78B4',
-                    Level_2B: '#80B1D3',
+                    Level_2: '#1F78B4',
                     Level_3A: '#984EA3',
                     Level_3B: '#BE98CE',
                     Level_4: '#424242',

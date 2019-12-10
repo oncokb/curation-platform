@@ -36,7 +36,7 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div ng-repeat="type in content.propagationTypes"
+                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in content.propagationTypes"
                          ng-if="content.propagationOpts[type].length > 0"
                          ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
                          style="margin-bottom:10px">
@@ -128,7 +128,7 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div ng-repeat="type in content.propagationTypes"
+                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in content.propagationTypes"
                          ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
                          style="margin-top:10px;">
                         <strong>Level of Evidence in {{type}} tumor types: </strong>

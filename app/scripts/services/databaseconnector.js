@@ -583,6 +583,16 @@ angular.module('oncokbApp')
                 }
             }
 
+            function getEvidenceLevels(success, fail) {
+                DriveOncokbInfo
+                    .getEvidenceLevels()
+                    .then(function(result) {
+                        success(result.data);
+                    }, function() {
+                        fail();
+                    });
+            }
+
             // Public API here
             return {
                 searchNCITDrugs: searchNCITDrugs,
@@ -632,6 +642,7 @@ angular.module('oncokbApp')
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
                 getMainTypes: getMainTypes,
-                getSubTypes: getSubTypes
+                getSubTypes: getSubTypes,
+                getEvidenceLevels: getEvidenceLevels
             };
         }]);

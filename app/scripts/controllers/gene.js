@@ -1001,14 +1001,12 @@ angular.module('oncokbApp')
                 }
                 var levelMapping = {
                     '1': 'LEVEL_1',
-                    '2A': 'LEVEL_2A',
-                    '2B': 'LEVEL_2B',
+                    '2': 'LEVEL_2',
                     '3A': 'LEVEL_3A',
                     '3B': 'LEVEL_3B',
                     '4': 'LEVEL_4',
                     'R1': 'LEVEL_R1',
                     'R2': 'LEVEL_R2',
-                    'R3': 'LEVEL_R3',
                     'no': 'NO',
                     'Px1': 'LEVEL_Px1',
                     'Px2': 'LEVEL_Px2',
@@ -2975,8 +2973,7 @@ angular.module('oncokbApp')
                 var desS = {
                     '': '',
                     '1': $rootScope.meta.levelsDesc['1'],
-                    '2A': $rootScope.meta.levelsDesc['2A'],
-                    '2B': $rootScope.meta.levelsDesc['2B'],
+                    '2': $rootScope.meta.levelsDesc['2'],
                     '3A': $rootScope.meta.levelsDesc['3A'],
                     '3B': $rootScope.meta.levelsDesc['3B'],
                     '4': $rootScope.meta.levelsDesc['4']
@@ -2985,17 +2982,16 @@ angular.module('oncokbApp')
                 var desR = {
                     '': '',
                     'R1': $rootScope.meta.levelsDesc.R1,
-                    'R2': $rootScope.meta.levelsDesc.R2,
-                    'R3': $rootScope.meta.levelsDesc.R3
+                    'R2': $rootScope.meta.levelsDesc.R2
                 };
 
                 var levels = {};
 
                 var levelsCategories = {
-                    SS: ['', '1', '2A'],
+                    SS: ['', '1', '2'],
                     SR: ['R1'],
-                    IS: ['', '2B', '3A', '3B', '4'],
-                    IR: ['R2', 'R3']
+                    IS: ['', '3A', '4'],
+                    IR: ['R2']
                 };
 
                 _.each(levelsCategories, function (item, key) {
@@ -3048,7 +3044,7 @@ angular.module('oncokbApp')
             $rootScope.userRole = $rootScope.me.role;
             $scope.levelExps = {
                 SR: $sce.trustAsHtml('<div><strong>Level R1:</strong> ' + $rootScope.meta.levelsDescHtml.R1 + '.<br/>Example 1: Colorectal cancer with KRAS mutation → resistance to cetuximab<br/>Example 2: EGFR-L858R or exon 19 mutant lung cancers with coincident T790M mutation → resistance to erlotinib</div>'),
-                IR: $sce.trustAsHtml('<div><strong>Level R2:</strong> ' + $rootScope.meta.levelsDescHtml.R2 + '.<br/>Example: Resistance to crizotinib in a patient with metastatic lung adenocarcinoma harboring a CD74-ROS1 rearrangement (PMID: 23724914).<br/><strong>Level R3:</strong> ' + $rootScope.meta.levelsDescHtml.R3 + '.<br/>Example: Preclinical evidence suggests that BRAF V600E mutant thyroid tumors are insensitive to RAF inhibitors (PMID: 23365119).<br/></div>')
+                IR: $sce.trustAsHtml('<div><strong>Level R2:</strong> ' + $rootScope.meta.levelsDescHtml.R2 + '.<br/>Example: Resistance to crizotinib in a patient with metastatic lung adenocarcinoma harboring a CD74-ROS1 rearrangement (PMID: 23724914).<br/></div>')
             };
             $scope.showHideButtons = [
                 { key: 'proImShow', display: 'Prognostic implications' },
