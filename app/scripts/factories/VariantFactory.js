@@ -133,7 +133,7 @@ angular.module('oncokbApp').factory('DriveOncokbInfo', ['$http', 'OncoKB', funct
     }
 
     function getEvidenceLevels() {
-        return $http.get(OncoKB.config.publicApiLink + '/info');
+        return $http.get(OncoKB.config.publicApiLink + 'info');
     }
 
     return {
