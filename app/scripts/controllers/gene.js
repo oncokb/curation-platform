@@ -183,7 +183,7 @@ angular.module('oncokbApp')
                     }
                     if ($scope.mutationContent[uuid].levels.length > 0) {
                         $scope.mutationContent[uuid].levels = _.map(_.uniq($scope.mutationContent[uuid].levels), function (level) {
-                            return '<span style="color: ' + $rootScope.meta.colorsByLevel['Level_' + level] + '">' + level + '</span>';
+                            return '<span style="color: ' + $rootScope.meta.colorsByLevel[level] + '">' + level + '</span>';
                         });
                         $scope.mutationContent[uuid].result += ', Levels: ' + $scope.mutationContent[uuid].levels.join(', ') + '</span>';
                     }
@@ -242,7 +242,7 @@ angular.module('oncokbApp')
                     });
                     var result = [];
                     _.each(levels, function (level) {
-                        result.push('<span>' + $scope.tumorContent[uuid][level] + 'x </span><span style="color: ' + $rootScope.meta.colorsByLevel['Level_' + level] + '">Level ' + level + '</span>');
+                        result.push('<span>' + $scope.tumorContent[uuid][level] + 'x </span><span style="color: ' + $rootScope.meta.colorsByLevel[level] + '">Level ' + level + '</span>');
                     });
                     if ($scope.tumorContent[uuid].result) {
                         $scope.tumorContent[uuid].result += ', ';
@@ -430,6 +430,7 @@ angular.module('oncokbApp')
                 ReviewResource.removed = [];
                 ReviewResource.mostRecent = {};
                 ReviewResource.precise = [];
+                ReviewResource.openInReviewMode = []; // Store uuids for updated and added evidences
             }
             $scope.developerCheck = function () {
                 return mainUtils.developerCheck($rootScope.me.name);
@@ -536,6 +537,9 @@ angular.module('oncokbApp')
                         userNames.push(mutation.name_review.updatedBy);
                         tempArr = collectUUIDs('mutation', mutation, [], 'sectionOnly');
                         sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                        if (mutation.name_review.added) {
+                            ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                        }
                         tempArr = collectUUIDs('mutation', mutation, [], 'insideOnly');
                         ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                         mutationChanged_ = true;
@@ -569,6 +573,9 @@ angular.module('oncokbApp')
                             userNames.push(tumor.cancerTypes_review.updatedBy);
                             tempArr = collectUUIDs('tumor', tumor, [], 'sectionOnly');
                             sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                            if (tumor.cancerTypes_review.added) {
+                                ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                            }
                             tempArr = collectUUIDs('tumor', tumor, [], 'insideOnly');
                             ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                             return {
@@ -627,6 +634,9 @@ angular.module('oncokbApp')
                                 if (treatmentSectionChanged) {
                                     tempArr = collectUUIDs('treatment', treatment, [], 'sectionOnly');
                                     sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                                    if (treatment.name_review.added) {
+                                        ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                                    }
                                     tempArr = collectUUIDs('treatment', treatment, [], 'insideOnly');
                                     ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                                     return {
@@ -647,12 +657,14 @@ angular.module('oncokbApp')
                                 }
                                 if (treatmentChanged) {
                                     sectionUUIDs_.push(treatment.name_uuid);
+                                    ReviewResource.openInReviewMode.push(treatment.name_uuid);
                                     tiChanged = true;
                                 }
                                 treatmentChanged = false;
                             });
                             if (tiChanged) {
                                 sectionUUIDs_.push(ti.name_uuid);
+                                ReviewResource.openInReviewMode.push(ti.name_uuid);
                                 tumorChanged = true;
                             }
                             tiChanged = false;
@@ -664,6 +676,7 @@ angular.module('oncokbApp')
                         }
                         if (tumorChanged) {
                             sectionUUIDs_.push(tumor.cancerTypes_uuid);
+                            ReviewResource.openInReviewMode.push(tumor.cancerTypes_uuid);
                             mutationChanged = true;
                         }
                         tumorChanged = false;
@@ -675,6 +688,7 @@ angular.module('oncokbApp')
                     }
                     if (mutationChanged) {
                         sectionUUIDs_.push(mutation.name_uuid);
+                        ReviewResource.openInReviewMode.push(mutation.name_uuid);
                         hasReviewContent_ = true;
                         mutationChanged_ = true;
                     }
@@ -707,7 +721,12 @@ angular.module('oncokbApp')
                     $scope.geneMeta.review.currentReviewer = $rootScope.me.name;
                     $rootScope.reviewMode = true;
                     if (reviewInfo.mutationChanged) {
-                        $scope.setSectionOpenStatus('open', reviewInfo.sectionUUIDs);
+                        var evidenceUUIDsToOpen = reviewInfo.sectionUUIDs;
+                        if (reviewInfo.sectionUUIDs.length > 100) {
+                            // Only open updated and added evidences in review mode when the changed evidences over 100.
+                            evidenceUUIDsToOpen = _.uniq(_.concat(ReviewResource.updated, ReviewResource.added, ReviewResource.openInReviewMode));
+                        }
+                        $scope.setSectionOpenStatus('open', evidenceUUIDsToOpen);
                     }
                     var validUsers = [];
                     _.each(_.uniq(userNames), function (userName) {
@@ -1001,14 +1020,12 @@ angular.module('oncokbApp')
                 }
                 var levelMapping = {
                     '1': 'LEVEL_1',
-                    '2A': 'LEVEL_2A',
-                    '2B': 'LEVEL_2B',
+                    '2': 'LEVEL_2',
                     '3A': 'LEVEL_3A',
                     '3B': 'LEVEL_3B',
                     '4': 'LEVEL_4',
                     'R1': 'LEVEL_R1',
                     'R2': 'LEVEL_R2',
-                    'R3': 'LEVEL_R3',
                     'no': 'NO',
                     'Px1': 'LEVEL_Px1',
                     'Px2': 'LEVEL_Px2',
@@ -2975,8 +2992,7 @@ angular.module('oncokbApp')
                 var desS = {
                     '': '',
                     '1': $rootScope.meta.levelsDesc['1'],
-                    '2A': $rootScope.meta.levelsDesc['2A'],
-                    '2B': $rootScope.meta.levelsDesc['2B'],
+                    '2': $rootScope.meta.levelsDesc['2'],
                     '3A': $rootScope.meta.levelsDesc['3A'],
                     '3B': $rootScope.meta.levelsDesc['3B'],
                     '4': $rootScope.meta.levelsDesc['4']
@@ -2985,17 +3001,16 @@ angular.module('oncokbApp')
                 var desR = {
                     '': '',
                     'R1': $rootScope.meta.levelsDesc.R1,
-                    'R2': $rootScope.meta.levelsDesc.R2,
-                    'R3': $rootScope.meta.levelsDesc.R3
+                    'R2': $rootScope.meta.levelsDesc.R2
                 };
 
                 var levels = {};
 
                 var levelsCategories = {
-                    SS: ['', '1', '2A'],
+                    SS: ['', '1', '2'],
                     SR: ['R1'],
-                    IS: ['', '2B', '3A', '3B', '4'],
-                    IR: ['R2', 'R3']
+                    IS: ['', '3A', '4'],
+                    IR: ['R2']
                 };
 
                 _.each(levelsCategories, function (item, key) {
@@ -3048,7 +3063,7 @@ angular.module('oncokbApp')
             $rootScope.userRole = $rootScope.me.role;
             $scope.levelExps = {
                 SR: $sce.trustAsHtml('<div><strong>Level R1:</strong> ' + $rootScope.meta.levelsDescHtml.R1 + '.<br/>Example 1: Colorectal cancer with KRAS mutation → resistance to cetuximab<br/>Example 2: EGFR-L858R or exon 19 mutant lung cancers with coincident T790M mutation → resistance to erlotinib</div>'),
-                IR: $sce.trustAsHtml('<div><strong>Level R2:</strong> ' + $rootScope.meta.levelsDescHtml.R2 + '.<br/>Example: Resistance to crizotinib in a patient with metastatic lung adenocarcinoma harboring a CD74-ROS1 rearrangement (PMID: 23724914).<br/><strong>Level R3:</strong> ' + $rootScope.meta.levelsDescHtml.R3 + '.<br/>Example: Preclinical evidence suggests that BRAF V600E mutant thyroid tumors are insensitive to RAF inhibitors (PMID: 23365119).<br/></div>')
+                IR: $sce.trustAsHtml('<div><strong>Level R2:</strong> ' + $rootScope.meta.levelsDescHtml.R2 + '.<br/>Example: Resistance to crizotinib in a patient with metastatic lung adenocarcinoma harboring a CD74-ROS1 rearrangement (PMID: 23724914).<br/></div>')
             };
             $scope.showHideButtons = [
                 { key: 'proImShow', display: 'Prognostic implications' },

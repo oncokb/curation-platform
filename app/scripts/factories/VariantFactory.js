@@ -132,8 +132,13 @@ angular.module('oncokbApp').factory('DriveOncokbInfo', ['$http', 'OncoKB', funct
         return $http.get(OncoKB.config.curationLink + 'oncokbInfo.json');
     }
 
+    function getEvidenceLevels() {
+        return $http.get(OncoKB.config.publicApiLink + 'info');
+    }
+
     return {
-        getFromServer: getFromServer
+        getFromServer: getFromServer,
+        getEvidenceLevels: getEvidenceLevels
     };
 }]);
 
@@ -635,7 +640,7 @@ angular.module('oncokbApp')
         }
         function ReviewedData(item, mutation, drugs) {
             return {
-                hugoSymbol: item.gene.hugoSymbol,
+                hugoSymbol: _.isUndefined(item.gene) ? item.hugoSymbol: item.gene.hugoSymbol,
                 uuid: item.uuid,
                 mutation: mutation,
                 tumorType: item.cancerType,
