@@ -430,6 +430,7 @@ angular.module('oncokbApp')
                 ReviewResource.removed = [];
                 ReviewResource.mostRecent = {};
                 ReviewResource.precise = [];
+                ReviewResource.openInReviewMode = []; // Store uuids for updated and added evidences
             }
             $scope.developerCheck = function () {
                 return mainUtils.developerCheck($rootScope.me.name);
@@ -536,6 +537,9 @@ angular.module('oncokbApp')
                         userNames.push(mutation.name_review.updatedBy);
                         tempArr = collectUUIDs('mutation', mutation, [], 'sectionOnly');
                         sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                        if (mutation.name_review.added) {
+                            ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                        }
                         tempArr = collectUUIDs('mutation', mutation, [], 'insideOnly');
                         ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                         mutationChanged_ = true;
@@ -569,6 +573,9 @@ angular.module('oncokbApp')
                             userNames.push(tumor.cancerTypes_review.updatedBy);
                             tempArr = collectUUIDs('tumor', tumor, [], 'sectionOnly');
                             sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                            if (tumor.cancerTypes_review.added) {
+                                ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                            }
                             tempArr = collectUUIDs('tumor', tumor, [], 'insideOnly');
                             ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                             return {
@@ -627,6 +634,9 @@ angular.module('oncokbApp')
                                 if (treatmentSectionChanged) {
                                     tempArr = collectUUIDs('treatment', treatment, [], 'sectionOnly');
                                     sectionUUIDs_ = _.union(sectionUUIDs_, tempArr);
+                                    if (treatment.name_review.added) {
+                                        ReviewResource.openInReviewMode = _.union(ReviewResource.openInReviewMode, tempArr);
+                                    }
                                     tempArr = collectUUIDs('treatment', treatment, [], 'insideOnly');
                                     ReviewResource.inside = _.union(ReviewResource.inside, tempArr);
                                     return {
@@ -647,12 +657,14 @@ angular.module('oncokbApp')
                                 }
                                 if (treatmentChanged) {
                                     sectionUUIDs_.push(treatment.name_uuid);
+                                    ReviewResource.openInReviewMode.push(treatment.name_uuid);
                                     tiChanged = true;
                                 }
                                 treatmentChanged = false;
                             });
                             if (tiChanged) {
                                 sectionUUIDs_.push(ti.name_uuid);
+                                ReviewResource.openInReviewMode.push(ti.name_uuid);
                                 tumorChanged = true;
                             }
                             tiChanged = false;
@@ -664,6 +676,7 @@ angular.module('oncokbApp')
                         }
                         if (tumorChanged) {
                             sectionUUIDs_.push(tumor.cancerTypes_uuid);
+                            ReviewResource.openInReviewMode.push(tumor.cancerTypes_uuid);
                             mutationChanged = true;
                         }
                         tumorChanged = false;
@@ -675,6 +688,7 @@ angular.module('oncokbApp')
                     }
                     if (mutationChanged) {
                         sectionUUIDs_.push(mutation.name_uuid);
+                        ReviewResource.openInReviewMode.push(mutation.name_uuid);
                         hasReviewContent_ = true;
                         mutationChanged_ = true;
                     }
@@ -707,7 +721,12 @@ angular.module('oncokbApp')
                     $scope.geneMeta.review.currentReviewer = $rootScope.me.name;
                     $rootScope.reviewMode = true;
                     if (reviewInfo.mutationChanged) {
-                        $scope.setSectionOpenStatus('open', reviewInfo.sectionUUIDs);
+                        var evidenceUUIDsToOpen = reviewInfo.sectionUUIDs;
+                        if (reviewInfo.sectionUUIDs.length > 100) {
+                            // Only open updated and added evidences in review mode when the changed evidences over 100.
+                            evidenceUUIDsToOpen = _.uniq(_.concat(ReviewResource.updated, ReviewResource.added, ReviewResource.openInReviewMode));
+                        }
+                        $scope.setSectionOpenStatus('open', evidenceUUIDsToOpen);
                     }
                     var validUsers = [];
                     _.each(_.uniq(userNames), function (userName) {
