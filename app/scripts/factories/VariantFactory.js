@@ -66,10 +66,16 @@ angular.module('oncokbApp').factory('DataSummary', ['$http', function($http) {
     function getEvidenceByType(type) {
         return $http.get(OncoKB.config.publicApiLink + 'evidences/lookup?source=oncotree&evidenceTypes=' + type);
     }
+
+    function getEvidenceLevels() {
+        return $http.get(OncoKB.config.publicApiLink + 'info');
+    }
+
     return {
         getFromServer: getFromServer,
         getGeneType: getGeneType,
-        getEvidenceByType: getEvidenceByType
+        getEvidenceByType: getEvidenceByType,
+        getEvidenceLevels: getEvidenceLevels,
     };
 }]);
 
@@ -122,23 +128,6 @@ angular.module('oncokbApp').factory('Alteration', ['$http', 'OncoKB', function($
     return {
         findByGene: findByGene,
         getFromServer: getFromServer
-    };
-}]);
-
-angular.module('oncokbApp').factory('DriveOncokbInfo', ['$http', 'OncoKB', function($http, OncoKB) {
-    'use strict';
-
-    function getFromServer() {
-        return $http.get(OncoKB.config.curationLink + 'oncokbInfo.json');
-    }
-
-    function getEvidenceLevels() {
-        return $http.get(OncoKB.config.publicApiLink + 'info');
-    }
-
-    return {
-        getFromServer: getFromServer,
-        getEvidenceLevels: getEvidenceLevels
     };
 }]);
 
