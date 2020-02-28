@@ -10,7 +10,6 @@ angular.module('oncokbApp')
         'TumorType',
         'Evidence',
         'SearchVariant',
-        'DriveOncokbInfo',
         'DriveAnnotation',
         'SendEmail',
         'onLocalhost',
@@ -30,7 +29,6 @@ angular.module('oncokbApp')
                  TumorType,
                  Evidence,
                  SearchVariant,
-                 DriveOncokbInfo,
                  DriveAnnotation,
                  SendEmail,
                  onLocalhost,
@@ -584,7 +582,7 @@ angular.module('oncokbApp')
             }
 
             function getEvidenceLevels(success, fail) {
-                DriveOncokbInfo
+                DataSummary
                     .getEvidenceLevels()
                     .then(function(result) {
                         success(result.data);
