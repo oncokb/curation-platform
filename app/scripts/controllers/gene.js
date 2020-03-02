@@ -3086,7 +3086,6 @@ angular.module('oncokbApp')
             ];
             $scope.list = [];
             $scope.selfParams = {};
-            $scope.geneStatus = {};
             $scope.oncoTree = {
                 mainTypes: [],
                 tumorTypes: {}
