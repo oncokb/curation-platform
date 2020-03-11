@@ -739,6 +739,16 @@ angular.module('oncokbApp')
             });
             return _.uniq(tumorForms);
         }
+
+        function isJson(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
         return {
             setIsoFormAndGeneType: setIsoFormAndGeneType,
             getCancerTypesName: getCancerTypesName,
@@ -778,6 +788,7 @@ angular.module('oncokbApp')
             getCancerTypeNameFromOncoTreeType: getCancerTypeNameFromOncoTreeType,
             getTreatmentsName: getTreatmentsName,
             getEvidenceTypeName: getEvidenceTypeName,
+            isJson: isJson,
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities,
             getTimestampClass: getTimestampClass,
