@@ -676,6 +676,61 @@ angular.module('oncokbApp')
                 }
             };
 
+            // data validation
+            var IS_PENDING = 'isPending';
+            var IS_ERROR = 'isError';
+            var IS_COMPLETE = 'isComplete';
+            function initDataValidation () {
+                $scope.dataValidation = {
+                    status: '', // isPending | 'isError' | 'isComplte'
+                    additionalInfo: '',
+                    tests: []
+                };
+            }
+            initDataValidation();
+            $scope.onClickDataValidation = function () {
+              var websocket = DatabaseConnector.getDataValidateWebSocket();
+                websocket.onopen = function(e) {
+                    initDataValidation();
+                    $scope.dataValidation.status = IS_PENDING;
+                    $scope.$apply();
+                };
+
+                websocket.onmessage = function(event) {
+                    var testIndex = -1;
+                    var data = mainUtils.isJson(event.data) ? JSON.parse(event.data) : event.data;
+                    $scope.dataValidation.tests.forEach(function(test, index) {
+                        if (test.test === data.test) {
+                            testIndex = index;
+                        }
+                    });
+                    if (_.isString(data)) {
+                        $scope.dataValidation.additionalInfo = data;
+                    } else {
+                        if (testIndex === -1) {
+                            $scope.dataValidation.tests.push(data);
+                        } else {
+                            $scope.dataValidation.tests[testIndex] = data;
+                        }
+                    }
+                    $scope.$apply();
+                };
+
+                websocket.onclose = function(event) {
+                    if (event.wasClean) {
+                        $scope.dataValidation.status = IS_COMPLETE;
+                    } else {
+                        $scope.dataValidation.status = IS_ERROR;
+                    }
+                    $scope.$apply();
+                };
+
+                websocket.onerror = function(error) {
+                    $scope.dataValidation.status = IS_ERROR;
+                    $scope.$apply();
+                };
+            };
+
             $scope.create = function() {
                 var promises = [];
                 $scope.createdGenes = [];

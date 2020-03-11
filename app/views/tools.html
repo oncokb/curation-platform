@@ -151,6 +151,53 @@
         <h4 ng-class="{'invalidResult': !tsgValidation.flag, 'validResult': tsgValidation.flag}">
             {{ tsgValidation.result }}
         </h4>
+        <hr/>
+       <h3>
+           <span>Data Validation</span>
+           <button type="button" class="btn btn-default"
+                   ng-disabled="dataValidation.status !== '' && dataValidation.status !== 'isComplete'"
+                   ng-click="onClickDataValidation()">
+               <span ng-show="dataValidation.status === 'isPending'"><i class="fa fa-spinner fa-spin"></i></span>
+               <span ng-show="dataValidation.status === '' || dataValidation.status === 'isComplete'">Click here to check whether all data look ok</span>
+           </button>
+       </h3>
+        <div>
+            <div style="margin: 5px; font-size: large">
+                {{dataValidation.additionalInfo}}
+            </div>
+            <hr style="border-style: dashed"/>
+            <div>
+                <div
+                    style="border: 1px solid lightgrey; border-radius: 5px; padding: 5px 10px; margin: 5px 0"
+                    ng-repeat="test in dataValidation.tests">
+                    <div>
+                        <span ng-show="test.status === 'IS_PENDING'"><i
+                            class="fa fa-spinner fa-spin"></i></span>
+                        <span ng-show="test.status === 'IS_COMPLETE'"><i class="fa fa-check-circle"
+                                                                                  style="color:green"></i></span>
+                        <span ng-show="test.status === 'IS_ERROR'"><i
+                            class="fa fa-exclamation-triangle" style="color: red"></i></span>
+                        <span style="margin-left: 5px">{{test.test}}</span>
+                    </div>
+                    <div ng-if="test.data.length > 0">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Variant</th>
+                                <th>Issue</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in test.data">
+                                <td>{{item.target}}</td>
+                                <td>{{item.reason}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br/><br/>
     </div>
 </div>
