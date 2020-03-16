@@ -638,6 +638,9 @@ angular.module('oncokbApp')
                 isHotspot: isHotspot,
                 getEvidencesByUUID: getEvidencesByUUID,
                 getEvidencesByUUIDs: getEvidencesByUUIDs,
+                getEvidencesByType: function(evidenceType) {
+                    return DataSummary.getEvidenceByType(evidenceType);
+                },
                 getPubMedArticle: getPubMedArticle,
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
