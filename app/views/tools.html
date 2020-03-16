@@ -155,15 +155,16 @@
        <h3>
            <span>Data Validation</span>
            <button type="button" class="btn btn-default"
-                   ng-disabled="dataValidation.status !== '' && dataValidation.status !== 'isComplete'"
+                   ng-disabled="dataValidation.status !== '' && dataValidation.status !== IS_COMPLETE"
                    ng-click="onClickDataValidation()">
-               <span ng-show="dataValidation.status === 'isPending'"><i class="fa fa-spinner fa-spin"></i></span>
-               <span ng-show="dataValidation.status === '' || dataValidation.status === 'isComplete'">Click here to check whether all data look ok</span>
+               <span ng-show="dataValidation.status === IS_PENDING"><i class="fa fa-spinner fa-spin"></i></span>
+               <span ng-show="dataValidation.status === '' || dataValidation.status === IS_COMPLETE">Click here to check whether all data look ok</span>
            </button>
        </h3>
         <div>
             <div style="margin: 5px; font-size: large">
-                {{dataValidation.additionalInfo}}
+                <div ng-show="dataValidation.status === IS_COMPLETE">Validation is finished</div>
+                <div>{{dataValidation.additionalInfo}}</div>
             </div>
             <hr style="border-style: dashed"/>
             <div>

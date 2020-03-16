@@ -677,9 +677,9 @@ angular.module('oncokbApp')
             };
 
             // data validation
-            var IS_PENDING = 'isPending';
-            var IS_ERROR = 'isError';
-            var IS_COMPLETE = 'isComplete';
+            $scope.IS_PENDING = 'IS_PENDING';
+            $scope.IS_ERROR = 'IS_ERROR';
+            $scope.IS_COMPLETE = 'IS_COMPLETE';
             function initDataValidation () {
                 $scope.dataValidation = {
                     status: '', // isPending | 'isError' | 'isComplte'
@@ -692,21 +692,21 @@ angular.module('oncokbApp')
               var websocket = DatabaseConnector.getDataValidateWebSocket();
                 websocket.onopen = function(e) {
                     initDataValidation();
-                    $scope.dataValidation.status = IS_PENDING;
+                    $scope.dataValidation.status = $scope.IS_PENDING;
                     $scope.$apply();
                 };
 
                 websocket.onmessage = function(event) {
                     var testIndex = -1;
                     var data = mainUtils.isJson(event.data) ? JSON.parse(event.data) : event.data;
-                    $scope.dataValidation.tests.forEach(function(test, index) {
-                        if (test.test === data.test) {
-                            testIndex = index;
-                        }
-                    });
                     if (_.isString(data)) {
                         $scope.dataValidation.additionalInfo = data;
                     } else {
+                        $scope.dataValidation.tests.forEach(function(test, index) {
+                            if (test.test === data.test) {
+                                testIndex = index;
+                            }
+                        });
                         if (testIndex === -1) {
                             $scope.dataValidation.tests.push(data);
                         } else {
@@ -717,18 +717,61 @@ angular.module('oncokbApp')
                 };
 
                 websocket.onclose = function(event) {
-                    if (event.wasClean) {
-                        $scope.dataValidation.status = IS_COMPLETE;
-                    } else {
-                        $scope.dataValidation.status = IS_ERROR;
+                    if (!event.wasClean) {
+                        $scope.dataValidation.status = $scope.IS_ERROR;
                     }
                     $scope.$apply();
+                    $scope.validateNumOfVUS();
                 };
 
                 websocket.onerror = function(error) {
-                    $scope.dataValidation.status = IS_ERROR;
+                    $scope.dataValidation.status = $scope.IS_ERROR;
                     $scope.$apply();
                 };
+            };
+
+            var VUS_TEST_CHECK_NAME = 'The VUS number are match';
+            function failedToValidateVUS() {
+                $scope.dataValidation.status = $scope.IS_ERROR;
+                $scope.dataValidation.tests.push({
+                    test: VUS_TEST_CHECK_NAME,
+                    status: $scope.IS_ERROR,
+                    data: []
+                });
+            }
+            function succeedToValidateVUS(issueGenes) {
+                $scope.dataValidation.status = $scope.IS_COMPLETE;
+                $scope.dataValidation.tests.push({
+                    test: VUS_TEST_CHECK_NAME,
+                    status: issueGenes && issueGenes.length > 0 ? $scope.IS_ERROR : $scope.IS_COMPLETE,
+                    data: issueGenes.map(function(gene) {
+                        return {
+                            target: gene,
+                            reason: 'The number of VUS does not match'
+                        }
+                    })
+                });
+            }
+            $scope.validateNumOfVUS = function() {
+                DatabaseConnector.getEvidencesByType('VUS')
+                    .then(function(response) {
+                        var vusInProduction = _.groupBy(response.data.map(function(evidence) {
+                            evidence.gene = evidence.gene.hugoSymbol;
+                            return evidence;
+                        }), 'gene');
+                        loadFiles.load('vus').then(function() {
+                            DatabaseConnector.getAllGenes()
+                                .then(function(genes){
+                                    var issueGenes = [];
+                                    _.each(genes.data, function(gene) {
+                                        if ($rootScope.VUS[gene.hugoSymbol] && _.keys($rootScope.VUS[gene.hugoSymbol]).length !== vusInProduction[gene.hugoSymbol].length) {
+                                            issueGenes.push(gene.hugoSymbol);
+                                        }
+                                    });
+                                    succeedToValidateVUS(issueGenes);
+                                }, failedToValidateVUS);
+                        }, failedToValidateVUS);
+                    }, failedToValidateVUS)
             };
 
             $scope.create = function() {

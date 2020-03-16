@@ -86,6 +86,18 @@ angular.module('oncokbApp')
                 });
                 return historyDefer.promise;
             }
+
+            function loadVUS() {
+                var vusDefer = $q.defer();
+                var ref = firebase.database().ref('VUS');
+                ref.on('value', function(doc) {
+                    $rootScope.VUS = doc.val();
+                    vusDefer.resolve('success');
+                }, function(error) {
+                    vusDefer.reject('Fail to load VUS');
+                });
+                return vusDefer.promise;
+            }
             function loadSetting() {
                 var settingDefer = $q.defer();
                 // We need to update rootscope.setting when that is changed in firebase, so we call firebase.on
@@ -143,6 +155,9 @@ angular.module('oncokbApp')
             var apiCalls = [];
             if (types.indexOf('meta') !== -1) {
                 apiCalls.push(loadMeta());
+            }
+            if (types.indexOf('vus') !== -1) {
+                apiCalls.push(loadVUS());
             }
             if (types.indexOf('collaborators') !== -1) {
                 apiCalls.push(loadCollaborators());
