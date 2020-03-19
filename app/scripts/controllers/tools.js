@@ -680,11 +680,24 @@ angular.module('oncokbApp')
             $scope.IS_PENDING = 'IS_PENDING';
             $scope.IS_ERROR = 'IS_ERROR';
             $scope.IS_COMPLETE = 'IS_COMPLETE';
-            function initDataValidation () {
+            $scope.dataValidationTypes = [{
+                key: 'TEST',
+                name: 'Test'
+            }, {
+                key: 'INFO',
+                name: 'Info'
+            }];
+            function initDataValidation() {
+                var initialData = {};
+                _.reduce(initialData, (acc, next) => {
+                    acc[next.key] = [];
+                    return acc;
+                }, initialData);
                 $scope.dataValidation = {
-                    status: '', // isPending | 'isError' | 'isComplte'
+                    status: '', // isPending | 'isError' | 'isComplete'
+                    type: 'TEST',
                     additionalInfo: '',
-                    tests: []
+                    data: initialData
                 };
             }
             initDataValidation();
@@ -702,15 +715,20 @@ angular.module('oncokbApp')
                     if (_.isString(data)) {
                         $scope.dataValidation.additionalInfo = data;
                     } else {
-                        $scope.dataValidation.tests.forEach(function(test, index) {
-                            if (test.test === data.test) {
+                        var type = data.type;
+                        if(!$scope.dataValidation.data[type]){
+                            $scope.dataValidation.data[type]=[];
+                        }
+                        $scope.dataValidation.data[type].forEach(function(test, index) {
+                            if (test.key === data.key) {
                                 testIndex = index;
                             }
                         });
+                        data.data = _.sortBy(data.data, 'target');
                         if (testIndex === -1) {
-                            $scope.dataValidation.tests.push(data);
+                            $scope.dataValidation.data[type].push(data);
                         } else {
-                            $scope.dataValidation.tests[testIndex] = data;
+                            $scope.dataValidation.data[type][testIndex] = data;
                         }
                     }
                     $scope.$apply();
@@ -733,7 +751,7 @@ angular.module('oncokbApp')
             var VUS_TEST_CHECK_NAME = 'The VUS number are match';
             function failedToValidateVUS() {
                 $scope.dataValidation.status = $scope.IS_ERROR;
-                $scope.dataValidation.tests.push({
+                $scope.dataValidation.data.TEST.push({
                     test: VUS_TEST_CHECK_NAME,
                     status: $scope.IS_ERROR,
                     data: []
@@ -741,10 +759,10 @@ angular.module('oncokbApp')
             }
             function succeedToValidateVUS(issueGenes) {
                 $scope.dataValidation.status = $scope.IS_COMPLETE;
-                $scope.dataValidation.tests.push({
-                    test: VUS_TEST_CHECK_NAME,
+                $scope.dataValidation.data.TEST.push({
+                    key: VUS_TEST_CHECK_NAME,
                     status: issueGenes && issueGenes.length > 0 ? $scope.IS_ERROR : $scope.IS_COMPLETE,
-                    data: issueGenes.map(function(gene) {
+                    data: issueGenes.sort().map(function(gene) {
                         return {
                             target: gene,
                             reason: 'The number of VUS does not match'
