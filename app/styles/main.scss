@@ -1180,3 +1180,9 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
   margin-top: -25px;
   margin-left: 150px;
 }
+
+.data-validation-table table {
+    td:nth-child(2) {
+        min-width: 100px;
+    }
+}

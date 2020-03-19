@@ -167,34 +167,42 @@
                 <div>{{dataValidation.additionalInfo}}</div>
             </div>
             <hr style="border-style: dashed"/>
-            <div>
-                <div
-                    style="border: 1px solid lightgrey; border-radius: 5px; padding: 5px 10px; margin: 5px 0"
-                    ng-repeat="test in dataValidation.tests">
-                    <div>
+            <div ng-if="dataValidation.status !== ''">
+                <ul class="nav nav-pills">
+                    <li role="presentation" ng-repeat="type in dataValidationTypes"
+                        ng-class="{'active':dataValidation.type === type.key}" ng-click="dataValidation.type=type.key">
+                        <a>{{type.name}}</a></li>
+                </ul>
+                <div ng-repeat="type in dataValidationTypes" class="data-validation-table">
+                    <div
+                        ng-show="dataValidation.type === type.key"
+                        style="border: 1px solid lightgrey; border-radius: 5px; padding: 5px 10px; margin: 5px 0"
+                        ng-repeat="test in dataValidation.data[type.key]">
+                        <div>
                         <span ng-show="test.status === 'IS_PENDING'"><i
                             class="fa fa-spinner fa-spin"></i></span>
-                        <span ng-show="test.status === 'IS_COMPLETE'"><i class="fa fa-check-circle"
-                                                                                  style="color:green"></i></span>
-                        <span ng-show="test.status === 'IS_ERROR'"><i
-                            class="fa fa-exclamation-triangle" style="color: red"></i></span>
-                        <span style="margin-left: 5px">{{test.test}}</span>
-                    </div>
-                    <div ng-if="test.data.length > 0">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>Variant</th>
-                                <th>Issue</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="item in test.data">
-                                <td>{{item.target}}</td>
-                                <td>{{item.reason}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                            <span ng-show="test.status === 'IS_COMPLETE'"><i class="fa fa-check-circle"
+                                                                             style="color:green"></i></span>
+                            <span ng-show="test.status === 'IS_ERROR'"><i
+                                class="fa fa-exclamation-triangle" style="color: red"></i></span>
+                            <span style="margin-left: 5px">{{test.key}}</span>
+                        </div>
+                        <div ng-if="test.data.length > 0">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Variant</th>
+                                    <th>Issue</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="item in test.data">
+                                    <td>{{item.target}}</td>
+                                    <td>{{item.reason}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
