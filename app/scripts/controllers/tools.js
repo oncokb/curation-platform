@@ -261,77 +261,77 @@ angular.module('oncokbApp')
                     header: ['Gene', 'Summary'],
                     body: [],
                     keys: ['hugoSymbol', 'description'],
-                    fileName: 'GeneSummary.xls',
+                    fileName: 'GeneSummary.txt',
                     evidenceTypes: 'GENE_SUMMARY'
                 },
                 geneBackground: {
                     header: ['Gene', 'Background'],
                     body: [],
                     keys: ['hugoSymbol', 'description'],
-                    fileName: 'GeneBackground.xls',
+                    fileName: 'GeneBackground.txt',
                     evidenceTypes: 'GENE_BACKGROUND'
                 },
                 geneType: {
                     header: ['Gene', 'Oncogene', 'Tumor Suppressor', 'Truncating Mutations', 'Deletion', 'Amplification'],
                     body: [],
                     keys: ['hugoSymbol', 'oncogene', 'tsg', 'truncatingMutations', 'deletion', 'amplification'],
-                    fileName: 'Onc/TS.xls',
+                    fileName: 'Onc/TS.txt',
                     evidenceTypes: 'geneType'
                 },
                 mutationEffect: {
                     header:['Gene', 'Mutation', 'Oncogenic', 'Mutation Effect', 'Description', 'Citations'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
-                    fileName: 'MutationEffect.xls',
+                    fileName: 'MutationEffect.txt',
                     evidenceTypes: 'MUTATION_EFFECT,ONCOGENIC'
                 },
                 tumorSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
-                    fileName: 'TumorTypeSummary.xls',
+                    fileName: 'TumorTypeSummary.txt',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY'
                 },
                 diagnosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Diagnostic Summary'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
-                    fileName: 'DiagnosticSummary.xls',
+                    fileName: 'DiagnosticSummary.txt',
                     evidenceTypes: 'DIAGNOSTIC_SUMMARY'
                 },
                 prognosticSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Prognostic Summary'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'description'],
-                    fileName: 'PrognosticSummary.xls',
+                    fileName: 'PrognosticSummary.txt',
                     evidenceTypes: 'PROGNOSTIC_SUMMARY'
                 },
                 diagnosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
-                    fileName: 'DiagnosticImplication.xls',
+                    fileName: 'DiagnosticImplication.txt',
                     evidenceTypes: 'DIAGNOSTIC_IMPLICATION'
                 },
                 prognosticImplication: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Level', 'Description'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'level', 'description'],
-                    fileName: 'PrognosticImplication.xls',
+                    fileName: 'PrognosticImplication.txt',
                     evidenceTypes: 'PROGNOSTIC_IMPLICATION'
                 },
                 ttsDrugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary', 'Drugs', 'Level'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'description', 'drugs', 'level'],
-                    fileName: 'TumorTypeSummaryDrugs.xls',
+                    fileName: 'TumorTypeSummaryDrugs.txt',
                     evidenceTypes: 'TUMOR_TYPE_SUMMARY,DIAGNOSTIC_SUMMARY, PROGNOSTIC_SUMMARY, STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 },
                 drugs: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Drugs', 'Level', 'Solid Propagation', 'Liquid Propagation', 'Description', 'Citations'],
                     body: [],
                     keys: ['hugoSymbol', 'mutation', 'tumorType', 'drugs', 'level', 'solidPropagationLevel', 'liquidPropagationLevel', 'description', 'citations'],
-                    fileName: 'Therapeutics.xls',
+                    fileName: 'Therapeutics.txt',
                     evidenceTypes: 'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY,STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY,INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE'
                 }
             };
@@ -535,7 +535,7 @@ angular.module('oncokbApp')
                 var header = [];
                 var content = [];
                 var tempArr = [];
-                var fileName = 'Reviewed.xls';
+                var fileName = 'Reviewed.txt';
                 if ($scope.data.evidenceType && $scope.reviewedData[$scope.data.evidenceType]) {
                     content.push($scope.reviewedData[$scope.data.evidenceType].header.join('\t'));
                     fileName = $scope.reviewedData[$scope.data.evidenceType].fileName;
