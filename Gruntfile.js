@@ -18,8 +18,8 @@ module.exports = function(grunt) {
 
     // Configurable paths for the application
     var appConfig = {
-        app: require('./bower.json').appPath || 'app',
-        dist: require('./bower.json').distPath || 'dist'
+        app: 'app',
+        dist: 'dist'
     };
 
     // Define the configuration for all the tasks
@@ -30,10 +30,6 @@ module.exports = function(grunt) {
 
         // Watches files for changes and runs tasks based on the changed files
         watch: {
-            bower: {
-                files: ['bower.json'],
-                tasks: ['wiredep']
-            },
             js: {
                 files: ['<%= oncokb.app %>/scripts/{,*/}*.js'],
                 tasks: ['newer:eslint:all'],
@@ -152,19 +148,6 @@ module.exports = function(grunt) {
                     src: '{,*/}*.css',
                     dest: '.tmp/styles/'
                 }]
-            }
-        },
-
-        // Automatically inject Bower components into the app
-        wiredep: {
-            app: {
-                src: [
-                    '<%= oncokb.app %>/index.html'],
-                ignorePath: /\.\.\//
-            },
-            sass: {
-                src: ['<%= oncokb.app %>/styles/{,*/}*.{scss,sass}'],
-                ignorePath: /(\.\.\/){1,2}app\/components\//
             }
         },
 
@@ -429,7 +412,6 @@ module.exports = function(grunt) {
 
         grunt.task.run([
             'clean:server',
-            'wiredep',
             'sass',
             'postcss',
             'connect:livereload',
@@ -448,7 +430,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'wiredep',
         'useminPrepare:html',
         'concurrent:dist',
         'postcss',
