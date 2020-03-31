@@ -15,6 +15,7 @@ module.exports = function(grunt) {
     require('time-grunt')(grunt);
 
     var sass = require('node-sass');
+    var serveStatic = require('serve-static');
 
     // Configurable paths for the application
     var appConfig = {
@@ -73,12 +74,12 @@ module.exports = function(grunt) {
                     open: true,
                     middleware: function(connect) {
                         return [
-                            connect.static('.tmp'),
+                            serveStatic('.tmp'),
                             connect().use(
                                 '<%= oncokb.app %>/components',
-                                connect.static('<%= oncokb.app %>/components')
+                                serveStatic('<%= oncokb.app %>/components')
                             ),
-                            connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -88,13 +89,13 @@ module.exports = function(grunt) {
                     port: 9001,
                     middleware: function(connect) {
                         return [
-                            connect.static('.tmp'),
-                            connect.static('test'),
+                            serveStatic('.tmp'),
+                            serveStatic('test'),
                             connect().use(
                                 '<%= oncokb.app %>/components',
-                                connect.static('<%= oncokb.app %>/components')
+                                serveStatic('<%= oncokb.app %>/components')
                             ),
-                            connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -298,11 +299,11 @@ module.exports = function(grunt) {
         },
 
         // Replace Google CDN references
-        cdnify: {
-            dist: {
-                html: ['<%= oncokb.dist %>/*.html']
-            }
-        },
+        // cdnify: {
+        //     dist: {
+        //         html: ['<%= oncokb.dist %>/*.html']
+        //     }
+        // },
 
         // Copies remaining files to places other tasks can use
         copy: {
