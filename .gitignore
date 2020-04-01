@@ -9,7 +9,6 @@ app/data/config.json
 target
 dist
 *.iml
-
-
+*.log
 .DS_Store
 
