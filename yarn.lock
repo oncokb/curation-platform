@@ -22,10 +22,6 @@
   version "0.0.0"
   resolved "https://codeload.github.com/iiome/angular-chosen/tar.gz/e9fa4962f76604311ba04d669adb97603bf29367"
 
-"@bower_components/angular-contenteditable@akatov/angular-contenteditable#~0.3.7":
-  version "0.3.8"
-  resolved "https://codeload.github.com/akatov/angular-contenteditable/tar.gz/749c52cbdff4e8e506e4f0291250091eb279a486"
-
 "@bower_components/angular-cookies@angular/bower-angular-cookies#~1.6.10":
   version "1.6.10"
   resolved "https://codeload.github.com/angular/bower-angular-cookies/tar.gz/a2675d6a6f5176fe7252cbbba3fb1fbbf5e5f757"

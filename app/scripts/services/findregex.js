@@ -234,7 +234,7 @@ angular.module('oncokbApp')
                 str = '<a class="withUnderScore" target="_blank" href="' + link + '">' + content + '</a>';
                 break;
             case 'iframe':
-                str = '<div contenteditable="false" tooltip-html-unsafe="<iframe src=\'' + link + '\'></iframe>">' + content + '</div>';
+                str = '<div tooltip-html-unsafe="<iframe src=\'' + link + '\'></iframe>">' + content + '</div>';
                 break;
             default:
                 break;

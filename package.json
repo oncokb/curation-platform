@@ -7,7 +7,6 @@
     "@bower_components/angular-bootstrap": "angular-ui/bootstrap-bower#~0.14.3",
     "@bower_components/angular-chosen": "iiome/angular-chosen#*",
     "@bower_components/angular-chosen-localytics": "leocaseiro/angular-chosen#^1.4.0",
-    "@bower_components/angular-contenteditable": "akatov/angular-contenteditable#~0.3.7",
     "@bower_components/angular-cookies": "angular/bower-angular-cookies#~1.6.10",
     "@bower_components/angular-datatables": "l-lin/angular-datatables#~0.4.0",
     "@bower_components/angular-daterangepicker": "fragaria/angular-daterangepicker#^0.2.2",
