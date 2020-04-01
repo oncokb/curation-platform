@@ -94,6 +94,7 @@
     "karma-coverage": "^1.1.2",
     "karma-jasmine": "^0.1.6",
     "load-grunt-tasks": "^0.4.0",
+    "node-gyp": "^6.1.0",
     "node-sass": "^4.9.4",
     "time-grunt": "^0.3.1"
   },
