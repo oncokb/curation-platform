@@ -57,6 +57,7 @@
     "@bower_components/uuid-js": "aurigadl/uuid-js#^0.7.5",
     "@bower_components/x2js": "abdmob/x2js#~1.2.0",
     "graceful-fs": "^4.2.3",
+    "node-gyp": "^6.1.0",
     "serve-static": "^1.14.1"
   },
   "devDependencies": {
@@ -94,7 +95,6 @@
     "karma-coverage": "^1.1.2",
     "karma-jasmine": "^0.1.6",
     "load-grunt-tasks": "^0.4.0",
-    "node-gyp": "^6.1.0",
     "node-sass": "^4.9.4",
     "time-grunt": "^0.3.1"
   },

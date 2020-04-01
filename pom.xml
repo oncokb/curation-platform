@@ -39,6 +39,16 @@
                     </execution>
 
                     <execution>
+                        <id>yarn postinstall</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>postinstall</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>grunt build</id>
                         <goals>
                             <goal>grunt</goal>
