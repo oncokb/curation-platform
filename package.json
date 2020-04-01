@@ -7,7 +7,6 @@
     "@bower_components/angular-bootstrap": "angular-ui/bootstrap-bower#~0.14.3",
     "@bower_components/angular-chosen": "iiome/angular-chosen#*",
     "@bower_components/angular-chosen-localytics": "leocaseiro/angular-chosen#^1.4.0",
-    "@bower_components/angular-contenteditable": "akatov/angular-contenteditable#~0.3.7",
     "@bower_components/angular-cookies": "angular/bower-angular-cookies#~1.6.10",
     "@bower_components/angular-datatables": "l-lin/angular-datatables#~0.4.0",
     "@bower_components/angular-daterangepicker": "fragaria/angular-daterangepicker#^0.2.2",
@@ -58,6 +57,7 @@
     "@bower_components/uuid-js": "aurigadl/uuid-js#^0.7.5",
     "@bower_components/x2js": "abdmob/x2js#~1.2.0",
     "graceful-fs": "^4.2.3",
+    "node-gyp": "^6.1.0",
     "serve-static": "^1.14.1"
   },
   "devDependencies": {
