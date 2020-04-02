@@ -156,7 +156,8 @@ angular.module('oncokbApp')
                     }
                 };
 
-                if (['vusItem', 'map', 'evidence', 'level'].indexOf(attrs.type) !== -1 || (attrs.number !== undefined && attrs.number.length > 0)) {
+                if (['vusItem', 'map', 'evidence', 'level'].indexOf(attrs.type) !== -1 ||
+                    (attrs.number !== undefined && attrs.number.length > 0) || (attrs.content !== undefined && attrs.content.length > 0)) {
                     $(element).qtip(options);
                 }
 

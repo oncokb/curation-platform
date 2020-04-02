@@ -7,7 +7,7 @@
  * # pubIframe
  */
 angular.module('oncokbApp')
-    .directive('pubIframe', function(FindRegex, S, $timeout, pubCache) {
+    .directive('pubIframe', function(FindRegex, S, $timeout, pubCache, $http, _) {
         return {
             templateUrl: 'views/pubIframe.html',
             restrict: 'E',
@@ -49,6 +49,22 @@ angular.module('oncokbApp')
             },
             controller: function($scope) {
                 $scope.pubs = [];
+                $scope.loadedData = false;
+                $scope.isIframeDisabled = function(url) {
+                    try {
+                        $http.get(url).success(function (response) {
+                            // Check Content-Security-Policy and X-Frame-Options
+                            if (_.isUndefined(response.headers('Content-Security-Policy')) && (_.isUndefined(response.headers('X-Frame-Options')) ||
+                                    (response.headers('X-Frame-Options') === 'DENY' || response.headers('X-Frame-Options') === 'SAMEORIGIN'))){
+                                $scope.loadedData = true;
+                            }
+                        }).error(function (response) {
+                            $scope.loadedData = false;
+                        });
+                    } catch (error) {
+                        $scope.loadedData = false;
+                    }
+                };
             }
         };
     });
