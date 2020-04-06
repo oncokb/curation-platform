@@ -15,11 +15,12 @@ module.exports = function(grunt) {
     require('time-grunt')(grunt);
 
     var sass = require('node-sass');
+    var serveStatic = require('serve-static');
 
     // Configurable paths for the application
     var appConfig = {
-        app: require('./bower.json').appPath || 'app',
-        dist: require('./bower.json').distPath || 'dist'
+        app: 'app',
+        dist: 'dist'
     };
 
     // Define the configuration for all the tasks
@@ -30,10 +31,6 @@ module.exports = function(grunt) {
 
         // Watches files for changes and runs tasks based on the changed files
         watch: {
-            bower: {
-                files: ['bower.json'],
-                tasks: ['wiredep']
-            },
             js: {
                 files: ['<%= oncokb.app %>/scripts/{,*/}*.js'],
                 tasks: ['newer:eslint:all'],
@@ -77,12 +74,12 @@ module.exports = function(grunt) {
                     open: true,
                     middleware: function(connect) {
                         return [
-                            connect.static('.tmp'),
+                            serveStatic('.tmp'),
                             connect().use(
                                 '<%= oncokb.app %>/components',
-                                connect.static('<%= oncokb.app %>/components')
+                                serveStatic('<%= oncokb.app %>/components')
                             ),
-                            connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -92,13 +89,13 @@ module.exports = function(grunt) {
                     port: 9001,
                     middleware: function(connect) {
                         return [
-                            connect.static('.tmp'),
-                            connect.static('test'),
+                            serveStatic('.tmp'),
+                            serveStatic('test'),
                             connect().use(
                                 '<%= oncokb.app %>/components',
-                                connect.static('<%= oncokb.app %>/components')
+                                serveStatic('<%= oncokb.app %>/components')
                             ),
-                            connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -152,19 +149,6 @@ module.exports = function(grunt) {
                     src: '{,*/}*.css',
                     dest: '.tmp/styles/'
                 }]
-            }
-        },
-
-        // Automatically inject Bower components into the app
-        wiredep: {
-            app: {
-                src: [
-                    '<%= oncokb.app %>/index.html'],
-                ignorePath: /\.\.\//
-            },
-            sass: {
-                src: ['<%= oncokb.app %>/styles/{,*/}*.{scss,sass}'],
-                ignorePath: /(\.\.\/){1,2}app\/components\//
             }
         },
 
@@ -314,13 +298,6 @@ module.exports = function(grunt) {
             }
         },
 
-        // Replace Google CDN references
-        cdnify: {
-            dist: {
-                html: ['<%= oncokb.dist %>/*.html']
-            }
-        },
-
         // Copies remaining files to places other tasks can use
         copy: {
             dist: {
@@ -394,7 +371,8 @@ module.exports = function(grunt) {
         },
 
         // Run some tasks in parallel to speed up the build process
-        concurrent: {dist: [
+        concurrent: {
+            dist: [
                 'sass',
                 'imagemin',
                 'svgmin'
@@ -429,7 +407,6 @@ module.exports = function(grunt) {
 
         grunt.task.run([
             'clean:server',
-            'wiredep',
             'sass',
             'postcss',
             'connect:livereload',
@@ -448,14 +425,12 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'wiredep',
         'useminPrepare:html',
         'concurrent:dist',
         'postcss',
         'concat',
         'ngAnnotate',
         'copy:dist',
-        // 'cdnify',
         'cssmin',
         'uglify:dist',
         'filerev',

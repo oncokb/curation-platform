@@ -317,7 +317,6 @@ var oncokbApp = angular.module('oncokbApp', [
     'dialogs.default-translations',
     'RecursionHelper',
     'xml',
-    'contenteditable',
     'datatables',
     'datatables.bootstrap',
     'ui.sortable',
