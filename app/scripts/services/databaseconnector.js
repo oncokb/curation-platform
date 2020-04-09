@@ -20,6 +20,7 @@ angular.module('oncokbApp')
         'InternalAccess',
         'ApiUtils',
         'PrivateApiUtils',
+        'DataValidation',
         '$firebaseArray',
         function($timeout,
                  $q,
@@ -39,6 +40,7 @@ angular.module('oncokbApp')
                  InternalAccess,
                  ApiUtils,
                  PrivateApiUtils,
+                 DataValidation,
                  $firebaseArray) {
             var numOfLocks = {};
             var data = {};
@@ -636,11 +638,17 @@ angular.module('oncokbApp')
                 isHotspot: isHotspot,
                 getEvidencesByUUID: getEvidencesByUUID,
                 getEvidencesByUUIDs: getEvidencesByUUIDs,
+                getEvidencesByType: function(evidenceType) {
+                    return DataSummary.getEvidenceByType(evidenceType);
+                },
                 getPubMedArticle: getPubMedArticle,
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
                 getMainTypes: getMainTypes,
                 getSubTypes: getSubTypes,
-                getEvidenceLevels: getEvidenceLevels
+                getEvidenceLevels: getEvidenceLevels,
+                getDataValidateWebSocket: function(){
+                    return DataValidation.getWebSocket();
+                },
             };
         }]);

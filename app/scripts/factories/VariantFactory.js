@@ -414,6 +414,15 @@ angular.module('oncokbApp').factory('ApiUtils', ['$http', function($http) {
     };
 }]);
 
+angular.module('oncokbApp').factory('DataValidation', function(OncoKB) {
+    'use strict';
+    return {
+        getWebSocket: function () {
+            return new WebSocket('ws://' + OncoKB.config.websocketApiLink + 'curation/validation');
+        }
+    };
+});
+
 angular.module('oncokbApp')
     .factory('PrivateApiUtils', ['$http', 'OncoKB', function($http, OncoKB) {
         'use strict';
