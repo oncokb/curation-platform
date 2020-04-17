@@ -5,12 +5,11 @@ OncoKB Curation Platform is built with lots of great open source JS libraries. A
 We use Google Firebase Realtime Database to store all information curators generated.
 
 ## Install project
-1. Install npm & bower & yo & grunt-cli (globally)
-2. npm install
-3. bower install
+1. Install npm & & yarn & grunt-cli (globally)
+2. yarn install
 
 ## config.json setting
-File is located under app/data
+File is located under /app/data
 ```
 {
     curationLink: 'legacy-api/', // Your endpoints URL specifically designed for curation platform.
@@ -32,8 +31,9 @@ File is located under app/data
 
 ## Testing
 For front-end, we use Karma and Jasmin to run unit test cases.
-1. Copy data/config.json to **OncoKB.config** in app.spec.js.
-2. Under web/yo/, run **karma start**.
+1. Install karma-cli (globally).
+2. Copy /app/data/config.json to **OncoKB.config** in /app/scripts/app.spec.js.
+3. Run **karma start** at root folder.
 
 ## FAQs      
 #### Can’t getAllUsers() because of the different rules set in Firebase. It still shows 'don’t have access...' after logging in successfully.         
