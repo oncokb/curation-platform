@@ -44,7 +44,7 @@ For example, if concokb-core runs at `http://localhost:8888/oncokb`, you should 
     "internalPrivateApiLink": "http://localhost:8888/oncokb/api/private/",
     "privateApiLink": "http://localhost:8888/oncokb/api/private/",
     "publicApiLink": "http://localhost:8888/oncokb/api/v1/",
-    "websocketApiLink": "http://localhost:8888/oncokb/api/websocket/",
+    "websocketApiLink": "localhost:8888/oncokb/api/websocket/",
 
     ...
 ```
