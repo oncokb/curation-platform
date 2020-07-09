@@ -12,21 +12,41 @@ We use Google Firebase Realtime Database to store all information curators gener
 File is located under /app/data
 ```
 {
-    curationLink: 'legacy-api/', // Your endpoints URL specifically designed for curation platform.
-    apiLink: "legacy-api/",  // Your endpoints URL.
-    privateApiLink: "api/private/", // Endpints are specifically designed to use internally.
-    publicApiLink: "api/v1/",
-    testing: false // If the testing is set to ture, all endpoints will be disabled and will use the files from web/yo/app/data folder.
-    production: true, // If the production is set to ture, all endpoints will be enabled and reviewed data will be updated to MySQL database.
-    firebaseConfig: { // Go to "Authentication" page in Firebase Console, click "Web setup" button and Firebase config will pop up.
-        apiKey: "",
-        authDomain: "",
-        databaseURL: "",
-        projectId: "",
-        storageBucket: "",
-        messagingSenderId: ""
+    "curationLink": "legacy-api/",  // Your endpoints URL specifically designed for curation platform.
+    "apiLink": "legacy-api/",   // Your endpoints URL.
+    "internalPrivateApiLink": "api/private/",
+    "privateApiLink": "api/private/",   // Endpoints are specifically designed to use internally.
+    "publicApiLink": "api/v1/",
+    "websocketApiLink": "api/websocket/",
+    "testing": false,   // If the testing is set to ture, all endpoints will be disabled and will use the files from web/yo/app/data folder.
+    "production": false,    // If the production is set to ture, all endpoints will be enabled and reviewed data will be updated to MySQL database.
+    
+    // Click "Settings" button in Dev Oncokb Curation Firebase Console and choose project settings. Under General tab you will find Firebase SDK snippet section which has this config
+    "firebaseConfig": {  
+        "apiKey": "",
+        "authDomain": "",
+        "databaseURL": "",
+        "projectId": "",
+        "storageBucket": "",
+        "messagingSenderId": "",
+        "appId": ""
     }
-};
+}
+```
+
+#### Tips
+It needs to be ran with oncokb-core. If you run locally, endpoint URLs need to be modified based on the URL of oncokb-core.
+
+For example, if concokb-core runs at `http://localhost:8888/oncokb`, you should modify config as
+```
+    "curationLink": "http://localhost:8888/oncokb/legacy-api/",  
+    "apiLink": "http://localhost:8888/oncokb/legacy-api/",   
+    "internalPrivateApiLink": "http://localhost:8888/oncokb/api/private/",
+    "privateApiLink": "http://localhost:8888/oncokb/api/private/",
+    "publicApiLink": "http://localhost:8888/oncokb/api/v1/",
+    "websocketApiLink": "localhost:8888/oncokb/api/websocket/",
+
+    ...
 ```
 
 ## Testing
