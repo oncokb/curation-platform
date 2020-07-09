@@ -35,7 +35,7 @@ File is located under /app/data
 ```
 
 #### Tips
-It need to run with oncokb-core. If you run locally, endpoints URL needs to be modified based on the URL of oncokb-core.
+It needs to be ran with oncokb-core. If you run locally, endpoint URLs need to be modified based on the URL of oncokb-core.
 
 For example, if concokb-core runs at `http://localhost:8888/oncokb`, you should modify config as
 ```
