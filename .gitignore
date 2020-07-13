@@ -12,6 +12,12 @@ dist
 *.log
 .DS_Store
 
+######################
+# Project Specific
+######################
+.classpath
+.project
+.settings/
 .classpath
 .project
 .settings/
