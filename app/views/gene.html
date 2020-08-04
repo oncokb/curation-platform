@@ -95,15 +95,15 @@
                     <input
                         ng-show="developerCheck()"
                         type="text"
-                        ng-model="gene.isoform_override_38"
+                        ng-model="gene.isoform_override_grch38"
                     />
                     <span
                         ng-show="!developerCheck()"
                     >
-                        {{gene.isoform_override_38 ? gene.isoform_override_38 : '???'}}
+                        {{gene.isoform_override_grch38 ? gene.isoform_override_grch38 : '???'}}
                         <a
-                            ng-if="gene.isoform_override_38"
-                            href="https://www.ensembl.org/id/{{gene.isoform_override_38}}"
+                            ng-if="gene.isoform_override_grch38"
+                            href="https://www.ensembl.org/id/{{gene.isoform_override_grch38}}"
                             target="_blank">
                             <i class="fa fa-external-link"></i>
                         </a>
@@ -113,15 +113,15 @@
                     <input
                         ng-show="developerCheck()"
                         type="text"
-                        ng-model="gene.dmp_refseq_id_38"
+                        ng-model="gene.dmp_refseq_id_grch38"
                     />
                     <span
                         ng-show="!developerCheck()"
                     >
-                        {{gene.dmp_refseq_id_38 ? gene.dmp_refseq_id_38 : '???'}}
+                        {{gene.dmp_refseq_id_grch38 ? gene.dmp_refseq_id_grch38 : '???'}}
                         <a
-                            ng-if="gene.dmp_refseq_id_38"
-                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id_38}}"
+                            ng-if="gene.dmp_refseq_id_grch38"
+                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id_grch38}}"
                             target="_blank">
                             <i class="fa fa-external-link"></i>
                         </a>
