@@ -49,17 +49,85 @@
                 </span>
             </div>
         </div>
-        <div ng-show="!reviewMode">
-            <span ng-if="::gene.isoform_override" style="margin-right: 10px">Isoform: {{::gene.isoform_override}}
-                <a href="https://www.ensembl.org/id/{{gene.curatedIsoform}}" target="_blank">
-                    <i class="fa fa-external-link"></i>
-                </a>
-            </span>
-            <span ng-if="::gene.dmp_refseq_id">RefSeq: {{::gene.dmp_refseq_id}}
-                <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id}}" target="_blank">
-                    <i class="fa fa-external-link"></i>
-                </a>
-            </span>
+        <div ng-show="!reviewMode" style="margin-top: 5px">
+            <div class="gene-grch37">
+                <span><b>GRCh37</b></span>
+                <span> Isoform:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.isoform_override"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.isoform_override ? gene.isoform_override : '???'}}
+                        <a
+                            ng-if="gene.isoform_override"
+                            href="https://www.ensembl.org/id/{{gene.isoform_override}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+                <span> RefSeq:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.dmp_refseq_id"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.dmp_refseq_id ? gene.dmp_refseq_id : '???'}}
+                        <a
+                            ng-if="gene.dmp_refseq_id"
+                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+            </div>
+            <div class="gene-grch38" style="margin-top: 5px">
+                <span><b>GRCh38</b></span>
+                <span> Isoform:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.isoform_override_38"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.isoform_override_38 ? gene.isoform_override_38 : '???'}}
+                        <a
+                            ng-if="gene.isoform_override_38"
+                            href="https://www.ensembl.org/id/{{gene.isoform_override_38}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+                <span> RefSeq:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.dmp_refseq_id_38"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.dmp_refseq_id_38 ? gene.dmp_refseq_id_38 : '???'}}
+                        <a
+                            ng-if="gene.dmp_refseq_id_38"
+                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id_38}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+            </div>
         </div>
         <div ng-if="reviewMode">
             <br/>
