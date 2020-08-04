@@ -12,7 +12,7 @@
                     <a ng-if="pub.link" href="{{::pub.link}}" target="_blank">Abstract: {{::pub.id}}</a>
                     <span ng-if="!pub.link">Abstract: {{::pub.id}}</span>
               </span>
-              <span ng-if="!loadedData" qtip content="We cannot visualize the data from JCO. Please click the link on the right.">
+              <span ng-if="!loadedData" qtip qtip-content="We cannot visualize the data from JCO. Please click the link on the right.">
                   <span>Abstract: {{::pub.id}}
                       <a ng-if="pub.link" href="{{::pub.link}}" target="_blank">
                           <i class="fa fa-external-link"></i>

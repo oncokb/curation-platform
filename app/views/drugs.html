@@ -40,7 +40,7 @@
                 <td>{{ drug.ncitCode }}</td>
                 <td>{{ drug.description }}</td>
                 <td>
-                    <div ng-repeat = "gene in drugMapReviewed[drug.uuid]" qtip type="map" content="{{gene.mutationNumber}} mutation(s): {{gene.mutationInfo}}"><a
+                    <div ng-repeat = "gene in drugMapReviewed[drug.uuid]" qtip qtip-type="map" qtip-content="{{gene.mutationNumber}} mutation(s): {{gene.mutationInfo}}"><a
                         ng-href="{{gene.geneLink}}">{{gene.geneName}}</a></div>
                 </td>
                 <td>
