@@ -28,9 +28,15 @@ angular.module('oncokbApp')
                         var geneType = result[1];
                         if (isoform && isoform.error) {
                             console.error('Error when getting isoforms.', hugoSymbol);
-                        } else if (isoform && isoform.gene_name) {
-                            gene.isoform_override = isoform.isoform_override;
-                            gene.dmp_refseq_id = isoform.dmp_refseq_id;
+                        } else if (isoform) {
+                            if (isoform.grch37Transcript) {
+                                gene.isoform_override = isoform.grch37Transcript.transcriptId;
+                                gene.dmp_refseq_id = isoform.grch37Transcript.refseqMrnaId;
+                            }
+                            if (isoform.grch38Transcript) {
+                                gene.isoform_override_grch38 = isoform.grch38Transcript.transcriptId;
+                                gene.dmp_refseq_id_grch38 = isoform.grch38Transcript.refseqMrnaId;
+                            }
                         } else {
                             console.error('No isoform found!', hugoSymbol);
                         }
@@ -223,23 +229,9 @@ angular.module('oncokbApp')
         function getIsoform(hugoSymbol) {
             var deferred = $q.defer();
             if (Object.keys(isoforms).length === 0) {
-                $q.all([DatabaseConnector.getIsoforms(), DatabaseConnector.getIsoforms('msk')])
+                DatabaseConnector.getIsoforms(hugoSymbol)
                     .then(function(result) {
-                        if (_.isArray(result)) {
-                            var allGenes = [];
-                            _.each(result, function(item) {
-                                if (_.isArray(item)) {
-                                    allGenes = allGenes.concat(item);
-                                }
-                            });
-                            _.each(allGenes, function(item) {
-                                if (_.isObject(item) &&
-                                    _.isString(item.gene_name)) {
-                                    isoforms[item.gene_name] = item;
-                                }
-                            });
-                        }
-                        deferred.resolve(isoforms[hugoSymbol]);
+                        deferred.resolve(result);
                     }, function() {
                         deferred.reject();
                     });
