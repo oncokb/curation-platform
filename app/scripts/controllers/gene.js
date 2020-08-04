@@ -293,47 +293,22 @@ angular.module('oncokbApp')
                 }, 2000);
             };
             function parseMutationString(mutationStr) {
-                mutationStr = mutationStr.replace(/\([^\)]+\)/g, '');
-                var parts = _.map(mutationStr.split(','), function (item) {
+                var parts = _.map(mutationStr.split(','), function(item) {
                     return item.trim();
                 });
                 var altResults = [];
                 var proteinChange = '';
-                var displayName = '';
 
                 for (var i = 0; i < parts.length; i++) {
-                    if (!parts[i]) continue;
-                    if (parts[i].indexOf('[') === -1) {
-                        proteinChange = parts[i].trim();
-                        displayName = parts[i].trim();
-                    } else {
-                        var l = parts[i].indexOf('[');
-                        var r = parts[i].indexOf(']');
-                        proteinChange = parts[i].substring(0, l).trim();
-                        displayName = parts[i].substring(l + 1, r).trim();
+                    if (!parts[i]) {
+                        continue;
                     }
-
-                    if (proteinChange.indexOf('/') === -1) {
-                        altResults.push({
-                            alteration: proteinChange,
-                            name: displayName,
-                            gene: {
-                                hugoSymbol: $scope.gene.name
-                            }
-                        });
-                    } else {
-                        var tempRes = proteinChange.match(/([A-Z][0-9]+)(.*)/i);
-                        var refs = tempRes[2].split('/');
-                        for (var j = 0; j < refs.length; j++) {
-                            altResults.push({
-                                alteration: tempRes[1] + refs[j],
-                                name: displayName,
-                                gene: {
-                                    hugoSymbol: $scope.gene.name
-                                }
-                            });
+                    altResults.push({
+                        alteration: parts[i],
+                        gene: {
+                            hugoSymbol: $scope.gene.name
                         }
-                    }
+                    });
                 }
                 return altResults;
             }
