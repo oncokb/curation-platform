@@ -17,10 +17,10 @@
             <td ng-if="key.includes('THERAPEUTIC')">{{getTreatmentsName(evidence.treatments)}}</td>
             <td>{{getCancerTypeNameFromOncoTreeType(evidence.oncoTreeType)}}</td>
             <td>
-                <span qtip type="evidence"
+                <span qtip qtip-type="evidence"
                       my="center right"
                       at="center left"
-                      content="{{evidence.description}}"
+                      qtip-content="{{evidence.description}}"
                       abstracts="evidence.abstracts"
                       pmids="evidence.pmids">
                     {{evidence.articles.length}}

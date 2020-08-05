@@ -2228,6 +2228,30 @@ angular.module('oncokbApp')
                     }
                 }
             };
+
+            $scope.editVUSItem = function(vusItem, newVUSName) {
+                var deferred = $q.defer();
+                if (newVUSName) {
+                    if (isValidVariant(newVUSName)) {
+                        var obj = $firebaseObject(firebase.database().ref('VUS/' + $routeParams.geneName + '/' + vusItem.$id));
+                        obj.name = newVUSName;
+                        obj.$save().then(function(ref) {
+                            $scope.refreshVUS(obj)
+                                .then(function() {
+                                    deferred.resolve();
+                                });
+                        }, function(error) {
+                            deferred.reject(error);
+                        });
+                    } else {
+                        deferred.reject();
+                    }
+                } else {
+                    deferred.reject('The new VUS name cannot be empty.');
+                }
+                return deferred.promise;
+            };
+
             $scope.removeVUS = function(variant) {
                 var dlg = dialogs.confirm('Confirmation', 'Are you sure you want to delete this entry?');
                 dlg.result.then(function() {
@@ -2238,6 +2262,7 @@ angular.module('oncokbApp')
                 });
             };
             $scope.refreshVUS = function(variant) {
+                var deferred = $q.defer();
                 var obj = $firebaseObject(firebase.database().ref('VUS/' + $routeParams.geneName + '/' + variant.$id + '/time'));
                 obj.value = new Date().getTime();
                 obj.by = {
@@ -2246,13 +2271,13 @@ angular.module('oncokbApp')
                 };
                 obj.$save().then(function(ref) {
                     $scope.vusUpdate();
+                    deferred.resolve();
                     console.log('data refreshed');
                 }, function(error) {
+                    deferred.reject(error);
                     console.log("Error:", error);
                 });
-            };
-            $scope.getVUSClass = function(time) {
-                return mainUtils.getTimestampClass(time);
+                return deferred.promise;
             };
 
             $scope.getCancerTypesNameInReview = function(tumor, uuid, reviewMode){
