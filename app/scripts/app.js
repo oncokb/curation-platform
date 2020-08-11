@@ -92,7 +92,7 @@ var oncokbApp = angular.module('oncokbApp', [
         dialogsProvider.useBackdrop(true);
         dialogsProvider.useEscClose(true);
         dialogsProvider.useCopy(false);
-        dialogsProvider.setSize('sm');
+        dialogsProvider.setSize('md');
 
         $animateProvider.classNameFilter(/^((?!(fa-spinner)).)*$/);
 
