@@ -164,8 +164,8 @@ angular.module('oncokbApp')
                         .updateGene(data)
                         .then(function(data) {
                             success(data);
-                        }, function() {
-                            fail();
+                        }, function(error) {
+                            fail(error);
                         });
                 }
             }

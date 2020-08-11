@@ -1964,7 +1964,7 @@ angular.module('oncokbApp')
                         $scope.status.releasingGene = false;
                         defer.resolve();
                     }, function(error) {
-                        var errorMessage = 'An error has occurred when saving data.' + error;
+                        var errorMessage = 'An error has occurred when saving data.' + error.data;
                         dialogs.error('Error', errorMessage);
                         $scope.status.releasingGene = false;
                         defer.reject(error);
@@ -3542,11 +3542,11 @@ angular.module('oncokbApp')
             setTimeout(function() {
                 if (data.confirmCallback) {
                     data.confirmCallback().then(function() {
-                        $modalInstance.dismiss('canceled');
                     }, function(error) {
                         $scope.error = 'Some error happened: ' + error.message;
                     }).finally(function() {
                         $scope.confirmingRelease = false;
+                        $modalInstance.dismiss('canceled');
                     })
                 } else {
                     $modalInstance.dismiss('canceled');
