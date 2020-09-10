@@ -484,6 +484,7 @@ angular.module('oncokbApp')
             added: [], // newly added sections
             removed: [], // deleted sections
             precise: [], // the exact item that has been changed
+            openInReviewMode: [], // Store uuids for updated and added evidences
             reviewObjs: {}
         };
     }]);
