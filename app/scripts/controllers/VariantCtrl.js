@@ -8,8 +8,8 @@ angular.module('oncokbApp')
         'OncoKB',
         'mainUtils',
         '_',
-        'PrivateApiUtils',
-        function($scope, $filter, DatabaseConnector, OncoKB, mainUtils, _, PrivateApiUtils) {
+        'PrivateApi',
+        function($scope, $filter, DatabaseConnector, OncoKB, mainUtils, _, PrivateApi) {
 
             function getUnique(data, attr) {
                 var unique = [];
@@ -140,7 +140,7 @@ angular.module('oncokbApp')
                 }
 
                 $scope.query.params = params;
-                PrivateApiUtils.getVariantAnnotation(params.entrezGeneId, params.alteration, params.tumorType)
+                PrivateApi.getVariantAnnotation(params.entrezGeneId, params.alteration, params.tumorType)
                     .then(function(data) {
                         searchAnnotationCallback('success', data.data);
                     }, function() {

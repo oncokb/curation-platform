@@ -424,7 +424,7 @@ angular.module('oncokbApp').factory('DataValidation', function(OncoKB) {
 });
 
 angular.module('oncokbApp')
-    .factory('PrivateApiUtils', ['$http', 'OncoKB', function($http, OncoKB) {
+    .factory('PrivateApi', ['$http', 'OncoKB', function($http, OncoKB) {
         'use strict';
 
         function getSuggestedVariants() {
@@ -437,6 +437,13 @@ angular.module('oncokbApp')
             }
             return $http.get(OncoKB.config.privateApiLink + 'utils/isHotspot?hugoSymbol=' +
                 hugoSymbol + '&variant=' + variant);
+        }
+
+        function getTranscripts(hugoSymbol) {
+            if (!hugoSymbol) {
+                return null;
+            }
+            return $http.get(OncoKB.config.privateApiLink + 'transcripts/' + hugoSymbol);
         }
 
         function getVariantAnnotation(entrezGeneId, alteration, tumorType) {
@@ -457,6 +464,7 @@ angular.module('oncokbApp')
         return {
             getSuggestedVariants: getSuggestedVariants,
             getVariantAnnotation: getVariantAnnotation,
+            getTranscripts: getTranscripts,
             isHotspot: isHotspot
         };
     }]);
@@ -476,6 +484,7 @@ angular.module('oncokbApp')
             added: [], // newly added sections
             removed: [], // deleted sections
             precise: [], // the exact item that has been changed
+            openInReviewMode: [], // Store uuids for updated and added evidences
             reviewObjs: {}
         };
     }]);
@@ -518,7 +527,9 @@ angular.module('oncokbApp')
             this.background = '';
             this.background_uuid = getUUID();
             this.isoform_override = '';
+            this.isoform_override_grch38 = '';
             this.dmp_refseq_id = '';
+            this.dmp_refseq_id_grch38 = '';
             this.type = {
                 tsg: '',
                 tsg_uuid: getUUID(),

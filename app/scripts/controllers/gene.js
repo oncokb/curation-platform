@@ -293,47 +293,22 @@ angular.module('oncokbApp')
                 }, 2000);
             };
             function parseMutationString(mutationStr) {
-                mutationStr = mutationStr.replace(/\([^\)]+\)/g, '');
-                var parts = _.map(mutationStr.split(','), function (item) {
+                var parts = _.map(mutationStr.split(','), function(item) {
                     return item.trim();
                 });
                 var altResults = [];
                 var proteinChange = '';
-                var displayName = '';
 
                 for (var i = 0; i < parts.length; i++) {
-                    if (!parts[i]) continue;
-                    if (parts[i].indexOf('[') === -1) {
-                        proteinChange = parts[i].trim();
-                        displayName = parts[i].trim();
-                    } else {
-                        var l = parts[i].indexOf('[');
-                        var r = parts[i].indexOf(']');
-                        proteinChange = parts[i].substring(0, l).trim();
-                        displayName = parts[i].substring(l + 1, r).trim();
+                    if (!parts[i]) {
+                        continue;
                     }
-
-                    if (proteinChange.indexOf('/') === -1) {
-                        altResults.push({
-                            alteration: proteinChange,
-                            name: displayName,
-                            gene: {
-                                hugoSymbol: $scope.gene.name
-                            }
-                        });
-                    } else {
-                        var tempRes = proteinChange.match(/([A-Z][0-9]+)(.*)/i);
-                        var refs = tempRes[2].split('/');
-                        for (var j = 0; j < refs.length; j++) {
-                            altResults.push({
-                                alteration: tempRes[1] + refs[j],
-                                name: displayName,
-                                gene: {
-                                    hugoSymbol: $scope.gene.name
-                                }
-                            });
+                    altResults.push({
+                        alteration: parts[i],
+                        gene: {
+                            hugoSymbol: $scope.gene.name
                         }
-                    }
+                    });
                 }
                 return altResults;
             }
@@ -1989,7 +1964,7 @@ angular.module('oncokbApp')
                         $scope.status.releasingGene = false;
                         defer.resolve();
                     }, function(error) {
-                        var errorMessage = 'An error has occurred when saving data.' + error;
+                        var errorMessage = 'An error has occurred when saving data.' + error.data;
                         dialogs.error('Error', errorMessage);
                         $scope.status.releasingGene = false;
                         defer.reject(error);
@@ -2253,6 +2228,30 @@ angular.module('oncokbApp')
                     }
                 }
             };
+
+            $scope.editVUSItem = function(vusItem, newVUSName) {
+                var deferred = $q.defer();
+                if (newVUSName) {
+                    if (isValidVariant(newVUSName)) {
+                        var obj = $firebaseObject(firebase.database().ref('VUS/' + $routeParams.geneName + '/' + vusItem.$id));
+                        obj.name = newVUSName;
+                        obj.$save().then(function(ref) {
+                            $scope.refreshVUS(obj)
+                                .then(function() {
+                                    deferred.resolve();
+                                });
+                        }, function(error) {
+                            deferred.reject(error);
+                        });
+                    } else {
+                        deferred.reject();
+                    }
+                } else {
+                    deferred.reject('The new VUS name cannot be empty.');
+                }
+                return deferred.promise;
+            };
+
             $scope.removeVUS = function(variant) {
                 var dlg = dialogs.confirm('Confirmation', 'Are you sure you want to delete this entry?');
                 dlg.result.then(function() {
@@ -2263,6 +2262,7 @@ angular.module('oncokbApp')
                 });
             };
             $scope.refreshVUS = function(variant) {
+                var deferred = $q.defer();
                 var obj = $firebaseObject(firebase.database().ref('VUS/' + $routeParams.geneName + '/' + variant.$id + '/time'));
                 obj.value = new Date().getTime();
                 obj.by = {
@@ -2271,13 +2271,13 @@ angular.module('oncokbApp')
                 };
                 obj.$save().then(function(ref) {
                     $scope.vusUpdate();
+                    deferred.resolve();
                     console.log('data refreshed');
                 }, function(error) {
+                    deferred.reject(error);
                     console.log("Error:", error);
                 });
-            };
-            $scope.getVUSClass = function(time) {
-                return mainUtils.getTimestampClass(time);
+                return deferred.promise;
             };
 
             $scope.getCancerTypesNameInReview = function(tumor, uuid, reviewMode){
@@ -3542,11 +3542,11 @@ angular.module('oncokbApp')
             setTimeout(function() {
                 if (data.confirmCallback) {
                     data.confirmCallback().then(function() {
-                        $modalInstance.dismiss('canceled');
                     }, function(error) {
                         $scope.error = 'Some error happened: ' + error.message;
                     }).finally(function() {
                         $scope.confirmingRelease = false;
+                        $modalInstance.dismiss('canceled');
                     })
                 } else {
                     $modalInstance.dismiss('canceled');

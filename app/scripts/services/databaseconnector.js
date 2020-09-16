@@ -19,7 +19,7 @@ angular.module('oncokbApp')
         'OncoTree',
         'InternalAccess',
         'ApiUtils',
-        'PrivateApiUtils',
+        'PrivateApi',
         'DataValidation',
         '$firebaseArray',
         function($timeout,
@@ -39,7 +39,7 @@ angular.module('oncokbApp')
                  OncoTree,
                  InternalAccess,
                  ApiUtils,
-                 PrivateApiUtils,
+                 PrivateApi,
                  DataValidation,
                  $firebaseArray) {
             var numOfLocks = {};
@@ -164,8 +164,8 @@ angular.module('oncokbApp')
                         .updateGene(data)
                         .then(function(data) {
                             success(data);
-                        }, function() {
-                            fail();
+                        }, function(error) {
+                            fail(error);
                         });
                 }
             }
@@ -444,9 +444,9 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function getIsoforms(type) {
+            function getIsoforms(hugoSymbol) {
                 var deferred = $q.defer();
-                ApiUtils.getIsoforms(type)
+                PrivateApi.getTranscripts(hugoSymbol)
                     .then(function(data) {
                         deferred.resolve(data.data);
                     }, function(result) {
@@ -474,7 +474,7 @@ angular.module('oncokbApp')
                         data: ['Fusion']
                     });
                 } else {
-                    PrivateApiUtils.getSuggestedVariants()
+                    PrivateApi.getSuggestedVariants()
                         .then(function(data) {
                             deferred.resolve(data);
                         }, function(result) {
@@ -492,7 +492,7 @@ angular.module('oncokbApp')
                         data: false
                     });
                 } else {
-                    PrivateApiUtils.isHotspot(hugoSymbol, variant)
+                    PrivateApi.isHotspot(hugoSymbol, variant)
                         .then(function(data) {
                             deferred.resolve(data);
                         }, function(result) {
