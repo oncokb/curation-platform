@@ -29,7 +29,7 @@ angular.module('oncokbApp')
                     if (attrs.qtipType && attrs.number) {
                         switch (attrs.qtipType) {
                         case 'pmid':
-                            src += 'https://www.ncbi.nlm.nih.gov/pubmed/' + attrs.number;
+                            src += 'https://www.ncbi.nlm.nih.gov/research/pubtator/index.html?view=docsum&query=' + attrs.number;
                             break;
                         case 'nct':
                             src += 'https://clinicaltrials.gov/show/' + attrs.number;
