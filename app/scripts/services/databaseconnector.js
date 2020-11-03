@@ -369,51 +369,6 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function setCache(operation) {
-                var deferred = $q.defer();
-                if (testing) {
-                    if (operation === 'enable') {
-                        deferred.resolve('enabled');
-                    }
-                    if (operation === 'disable') {
-                        deferred.resolve('disabled');
-                    }
-                } else {
-                    switch (operation) {
-                    case 'disable':
-                        Cache.disable()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    case 'enable':
-                        Cache.enable()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    case 'reset':
-                        Cache.reset()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                return deferred.promise;
-            }
-
             function updateGeneCache(hugoSymbol) {
                 var deferred = $q.defer();
                 if (testing) {
@@ -610,15 +565,6 @@ angular.module('oncokbApp')
                 addHisotryRecord: addHisotryRecord,
                 sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
-                disableCache: function() {
-                    return setCache('disable');
-                },
-                enableCache: function() {
-                    return setCache('enable');
-                },
-                resetCache: function() {
-                    return setCache('reset');
-                },
                 updateGeneCache: function(hugoSymbol) {
                     return updateGeneCache(hugoSymbol);
                 },

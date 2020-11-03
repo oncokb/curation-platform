@@ -146,43 +146,8 @@ angular.module('oncokbApp')
             };
             $scope.mappedTumorTypes = {};
 
-            $scope.changeCacheStatus = function() {
-                if ($scope.status.cache === 'enabled') {
-                    DatabaseConnector.disableCache()
-                        .then(function() {
-                            $scope.status.cache = 'disabled';
-                        }, function() {
-                            $scope.status.cache = 'unknown';
-                        });
-                } else if ($scope.status.cache === 'disabled') {
-                    DatabaseConnector.enableCache()
-                        .then(function() {
-                            $scope.status.cache = 'enabled';
-                        }, function() {
-                            $scope.status.cache = 'unknown';
-                        });
-                }
-            };
-
-            $scope.resetCache = function() {
-                DatabaseConnector.resetCache()
-                    .then(function() {
-                        console.log('succeed.');
-                    }, function() {
-                        console.log('failed.');
-                    });
-            };
-
             $scope.developerCheck = function() {
                 return mainUtils.developerCheck($rootScope.me.name);
             };
-
-            function getCacheStatus() {
-                DatabaseConnector.getCacheStatus().then(function(result) {
-                    $scope.status.cache = result.hasOwnProperty('status') ? result.status : 'unknown';
-                }, function(result) {
-                    $scope.status.cache = 'unknown';
-                });
-            }
         }]
     );

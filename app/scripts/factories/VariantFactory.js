@@ -360,12 +360,6 @@ angular.module('oncokbApp').factory('Cache', ['$http', 'OncoKB', function($http,
         reset: function() {
             return setStatus('reset');
         },
-        enable: function() {
-            return setStatus('enable');
-        },
-        disable: function() {
-            return setStatus('disable');
-        },
         getStatus: getStatus,
         updateGene: updateGene
     };
