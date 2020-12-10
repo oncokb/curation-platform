@@ -668,7 +668,7 @@
                                                  no-results-text="'Could not find any'"
                                                  ng-model="cancerType.mainType"
                                                  ng-disabled="!fileEditable"
-                                                 ng-options="tt.name for tt in oncoTree.mainTypes | orderBy: 'name'"
+                                                 ng-options="tt.name for tt in oncoTree.mainTypes"
                                                  ng-change="subIsSameWithMain(cancerType, 'main')">
                                             <option value=""></option>
                                         </select>

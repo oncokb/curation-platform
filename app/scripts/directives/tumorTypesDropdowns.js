@@ -11,32 +11,21 @@ angular.module('oncokbApp')
                 afterSelection: '&'
             },
             controller: function($scope) {
-                function findMainType(name) {
-                    for (var i = 0; i < $scope.oncoTree.mainTypes.length; i++) {
-                        if ($scope.oncoTree.mainTypes[i].name === name) {
-                            return $scope.oncoTree.mainTypes[i];
-                        }
-                    }
-                    return '';
-                }
-
                 function findCancerType(mainType, subtype, callback) {
                     var list;
                     var _mainType;
-                    if (mainType && mainType.name) {
-                        list = $scope.oncoTree.tumorTypes[mainType.name];
+                    if (mainType) {
+                        list = $scope.oncoTree.tumorTypes[mainType];
                     }
                     if (!mainType && subtype) {
-                        _mainType = findMainType(subtype.mainType.name);
+                        _mainType = subtype.mainType;
                     }
                     callback(_mainType, subtype, list);
                 }
 
                 $scope.$watch('selectedMainTypeName', function(name) {
                     if (name) {
-                        $scope.selectedCancerType.mainType = $scope.oncoTree.mainTypes.find(function(item) {
-                            return item.name === name;
-                        });
+                        $scope.selectedCancerType.mainType = name;
                     }
                 });
 
@@ -89,27 +78,17 @@ angular.module('oncokbApp')
                         subtype: '',
                         oncoTreeTumorTypes: []
                     };
-                    mainUtils.getOncoTreeMainTypes().then(function(result) {
-                        var mainTypesReturned = result.mainTypes,
-                            tumorTypesReturned = result.tumorTypes;
-                        if (mainTypesReturned) {
-                            scope.oncoTree.mainTypes = mainTypesReturned;
-                            if (_.isArray(tumorTypesReturned)) {
-                                var tumorTypes = {};
-                                var allTumorTypes = [];
-                                _.each(mainTypesReturned, function(mainType, i) {
-                                    tumorTypes[mainType.name] = tumorTypesReturned[i];
-                                    allTumorTypes = _.union(allTumorTypes, tumorTypesReturned[i]);
-                                });
-                                scope.oncoTree.tumorTypes = tumorTypes;
-                                scope.oncoTree.allTumorTypes = allTumorTypes;
-                                scope.selectedCancerType = {
-                                    mainType: '',
-                                    subtype: '',
-                                    oncoTreeTumorTypes: allTumorTypes
-                                };
-                            }
-                        }
+                    mainUtils.getTumorTypes().then(function(result) {
+                        scope.oncoTree.mainTypes = result.mainTypes.map(function(mainType) {
+                            return mainType.name;
+                        });
+                        scope.oncoTree.tumorTypes = _.groupBy(result.subtypes, 'mainType');
+                        scope.oncoTree.allTumorTypes = result.tumorTypes;
+                        scope.selectedCancerType = {
+                            mainType: '',
+                            subtype: '',
+                            oncoTreeTumorTypes: result.tumorTypes
+                        };
                     }, function(error) {
                         dialogs.error('Error', 'Failed to load tumor types information. Please Contact developer.');
                     });

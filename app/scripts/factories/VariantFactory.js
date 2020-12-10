@@ -14,18 +14,6 @@ angular.module('oncokbApp').factory('errorHttpInterceptor', ['$q', function($q) 
     };
 }]);
 
-angular.module('oncokbApp').factory('TumorType', ['$http', 'OncoKB', function($http, OncoKB) {
-    'use strict';
-
-    function getFromServer() {
-        return $http.get(OncoKB.config.apiLink + 'tumorType.json');
-    }
-
-    return {
-        getFromServer: getFromServer
-    };
-}]);
-
 angular.module('oncokbApp').factory('Gene', ['$http', 'OncoKB', function($http, OncoKB) {
     'use strict';
 
@@ -373,18 +361,13 @@ angular.module('oncokbApp').factory('OncoTree', ['$http', 'OncoKB', '_', functio
             'tumorTypes/search/maintype/' + mainType + '?exactMatch=true&version=' + OncoKB.config.oncoTreeVersion);
     }
 
-    function getMainTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/mainTypes');
-    }
-
-    function getSubTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/subtypes');
+    function getTumorTypes() {
+        return $http.get(OncoKB.config.privateApiLink + 'utils/tumorTypes');
     }
 
     return {
         getTumorTypeByMainType: getTumorTypeByMainType,
-        getMainTypes: getMainTypes,
-        getSubTypes: getSubTypes
+        getTumorTypes: getTumorTypes,
     };
 }]);
 

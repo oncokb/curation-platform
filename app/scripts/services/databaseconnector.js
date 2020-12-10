@@ -7,7 +7,6 @@ angular.module('oncokbApp')
         '$rootScope',
         'Gene',
         'Alteration',
-        'TumorType',
         'Evidence',
         'SearchVariant',
         'DriveAnnotation',
@@ -27,7 +26,6 @@ angular.module('oncokbApp')
                  $rootScope,
                  Gene,
                  Alteration,
-                 TumorType,
                  Evidence,
                  SearchVariant,
                  DriveAnnotation,
@@ -112,7 +110,7 @@ angular.module('oncokbApp')
             }
 
             function getAllTumorType(callback, timestamp) {
-                TumorType.getFromServer()
+                getTumorTypes()
                     .then(function(data) {
                         if (timestamp) {
                             numOfLocks[timestamp]--;
@@ -491,9 +489,9 @@ angular.module('oncokbApp')
                     });
                 return deferred.promise;
             }
-            function getMainTypes() {
+            function getTumorTypes() {
                 var deferred = $q.defer();
-                OncoTree.getMainTypes()
+                OncoTree.getTumorTypes()
                     .then(function(result) {
                         deferred.resolve(result.data);
                     }, function(error) {
@@ -521,7 +519,7 @@ angular.module('oncokbApp')
                     data[timestamp].genes = d.data;
                 }, timestamp);
                 getAllTumorType(function(d) {
-                    data[timestamp].tumorTypes = d.data;
+                    data[timestamp].tumorTypes = d;
                 }, timestamp);
 
                 timeout(callback, timestamp);
@@ -590,7 +588,7 @@ angular.module('oncokbApp')
                 getPubMedArticle: getPubMedArticle,
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
-                getMainTypes: getMainTypes,
+                getTumorTypes: getTumorTypes,
                 getSubTypes: getSubTypes,
                 getEvidenceLevels: getEvidenceLevels,
                 getDataValidateWebSocket: function(){

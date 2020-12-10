@@ -31,21 +31,13 @@ angular.module('oncokbApp')
             }
 
             function separateTumorTypes(tumorTypes) {
-                var subtypes = {};
-                var cancerTypes = {};
-                _.each(tumorTypes, function(tumorType) {
-                    if (tumorType) {
-                        if (tumorType.name) {
-                            subtypes[tumorType.name] = tumorType;
-                        }
-                        if (!tumorType.name && tumorType.mainType && tumorType.mainType.name) {
-                            cancerTypes[tumorType.mainType.name] = tumorType;
-                        }
-                    }
-                });
                 return {
-                    subtypes: _.values(subtypes),
-                    cancerTypes: _.values(cancerTypes)
+                    subtypes: tumorTypes.filter(function(tumorType) {
+                        return !!tumorType.code;
+                    }),
+                    cancerTypes: tumorTypes.filter(function(tumorType) {
+                        return !tumorType.code;
+                    })
                 };
             }
 

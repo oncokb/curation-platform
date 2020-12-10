@@ -480,27 +480,14 @@ angular.module('oncokbApp')
                         return annotationLocation[x.article].join('; ');
                     }
                 };
-                function getOncoTreeMainTypes() {
-                    mainUtils.getOncoTreeMainTypes().then(function(result) {
-                        var mainTypesReturned = result.mainTypes,
-                            tumorTypesReturned = result.tumorTypes;
-                        if (mainTypesReturned) {
-                            $scope.data.mainTypes = _.map(mainTypesReturned, function(item) {
-                                return item.name;
-                            });
-                            if (_.isArray(tumorTypesReturned)) {
-                                var tumorTypes = {};
-                                var allTumorTypes = [];
-                                _.each(mainTypesReturned, function(mainType, i) {
-                                    tumorTypes[mainType.name] = tumorTypesReturned[i];
-                                });
-                                $scope.data.subTypes = tumorTypes;
-                            }
-                        }
+                function getTumorTypes() {
+                    mainUtils.getTumorTypes().then(function(result) {
+                        $scope.data.mainTypes = result.mainTypes;
+                        $scope.data.subTypes = _.groupBy(result.subtype, 'mainType');
                     }, function(error) {
                     });
                 }
-                getOncoTreeMainTypes();
+                getTumorTypes();
                 $scope.toggleForm = function() {
                     $scope.data.formExpanded = !$scope.data.formExpanded;
                     $timeout(function() {
