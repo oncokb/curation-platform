@@ -230,6 +230,17 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
             });
     }
 
+    function updateEvidenceRelevantCancerTypesBatch(data) {
+        return $http.post(
+            OncoKB.config.apiLink + 'evidences/updateRelevantCancerTypes',
+            data,
+            {
+                transformResponse: function(result) {
+                    return {status: result};
+                }
+            });
+    }
+
     function updateEvidenceTreatmentPriorityBatch(data) {
         return $http.post(
             OncoKB.config.apiLink + 'evidences/priority/update',
@@ -287,6 +298,7 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         updateVUS: updateVUS,
         updateEvidenceBatch: updateEvidenceBatch,
         updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+        updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
         getEvidencesByUUID: getEvidencesByUUID,
         getEvidencesByUUIDs: getEvidencesByUUIDs,
         getPubMedArticle: getPubMedArticle,
@@ -365,9 +377,26 @@ angular.module('oncokbApp').factory('OncoTree', ['$http', 'OncoKB', '_', functio
         return $http.get(OncoKB.config.privateApiLink + 'utils/tumorTypes');
     }
 
+    function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+        var queryStr = [];
+        if (levelOfEvidence) {
+            queryStr.push('levelOfEvidence=' + levelOfEvidence);
+        }
+        if (onlyDetailedCancerType) {
+            queryStr.push('onlyDetailedCancerType=TRUE');
+        }
+        if (queryStr.length > 0) {
+            queryStr = '?' + queryStr.join('&');
+        } else {
+            queryStr = '';
+        }
+        return $http.post(OncoKB.config.privateApiLink + 'utils/relevantCancerTypes' + queryStr, cancerTypes);
+    }
+
     return {
         getTumorTypeByMainType: getTumorTypeByMainType,
         getTumorTypes: getTumorTypes,
+        getRelevantCancerTypes: getRelevantCancerTypes,
     };
 }]);
 

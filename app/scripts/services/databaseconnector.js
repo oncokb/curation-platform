@@ -308,6 +308,10 @@ angular.module('oncokbApp')
                 }
             }
 
+            function updateEvidenceRelevantCancerTypesBatch(data) {
+                return DriveAnnotation.updateEvidenceRelevantCancerTypesBatch(data);
+            }
+
             function sendEmail(params, success, fail) {
                 if (testing || !inProduction) {
                     success(true);
@@ -392,6 +396,17 @@ angular.module('oncokbApp')
                         deferred.resolve(data);
                     })
                     .error(function(result) {
+                        deferred.reject(result);
+                    });
+                return deferred.promise;
+            }
+
+            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+                var deferred = $q.defer();
+                OncoTree.getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes)
+                    .then(function(data) {
+                        deferred.resolve(data);
+                    }, function(result) {
                         deferred.reject(result);
                     });
                 return deferred.promise;
@@ -560,6 +575,7 @@ angular.module('oncokbApp')
                 updateVUS: updateVUS,
                 updateEvidenceBatch: updateEvidenceBatch,
                 updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+                updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
                 addHisotryRecord: addHisotryRecord,
                 sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
@@ -575,6 +591,7 @@ angular.module('oncokbApp')
                 },
                 getAllInternalGenes: getAllInternalGenes,
                 getOncoTreeTumorTypesByMainType: getOncoTreeTumorTypesByMainType,
+                getRelevantCancerTypes: getRelevantCancerTypes,
                 testAccess: testAccess,
                 getIsoforms: getIsoforms,
                 getOncogeneTSG: getOncogeneTSG,

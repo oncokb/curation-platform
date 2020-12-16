@@ -2149,18 +2149,103 @@ angular.module('oncokbApp')
                 }
             };
 
+            $scope.updateCancerTypes = function(uuid, tumorRef, previousCancerTypes, newCancerTypes) {
+                if (!_.isEqual(previousCancerTypes, newCancerTypes)) {
+                    if (_.isUndefined(tumorRef.cancerTypes_review)) {
+                        tumorRef.cancerTypes_review = {};
+                    }
+                    tumorRef.cancerTypes_review.updatedBy = $rootScope.me.name;
+                    tumorRef.cancerTypes_review.updateTime = new Date().getTime();
+                    if (_.isUndefined(tumorRef.cancerTypes_review.lastReviewed)) {
+                        tumorRef.cancerTypes_review.lastReviewed = newCancerTypes;
+                    }
+                    mainUtils.setUUIDInReview(tumorRef.cancerTypes_uuid);
+                    tumorRef.cancerTypes = newCancerTypes;
+                }
+            }
+
+            $scope.updateDx1RelevantCancerTypes = function(diagnosticUuid, diagnosticRef, previousCancerTypes, newCancerTypes) {
+                if (!_.isEqual(previousCancerTypes, newCancerTypes)) {
+                    if (_.isUndefined(diagnosticRef.relevantCancerTypes_review)) {
+                        diagnosticRef.relevantCancerTypes_review = {};
+                    }
+                    diagnosticRef.relevantCancerTypes_review.updatedBy = $rootScope.me.name;
+                    diagnosticRef.relevantCancerTypes_review.updateTime = new Date().getTime();
+                    if (_.isUndefined(diagnosticRef.relevantCancerTypes_review.lastReviewed)) {
+                        diagnosticRef.relevantCancerTypes_review.lastReviewed = newCancerTypes;
+                    }
+                    mainUtils.setUUIDInReview(diagnosticRef.relevantCancerTypes_uuid);
+                    diagnosticRef.relevantCancerTypes = newCancerTypes;
+                    DatabaseConnector
+                        .updateEvidenceRelevantCancerTypesBatch([{
+                            uuid: diagnosticUuid,
+                            relevantTumorTypes: diagnosticRef.relevantCancerTypes
+                        }]);
+                }
+            }
+
             $scope.modifyTumorType = function (mutation, tumor, path) {
                 var indices = getIndexByPath(path);
                 var tumorRef = $scope.gene.mutations[indices[0]].tumors[indices[1]];
                 var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
-                    mutation: mutation,
-                    tumor: tumor,
-                    tumorRef: tumorRef,
-                    oncoTree: $scope.oncoTree
+                    parentNodeRef: tumorRef,
+                    uuid: tumor.name_uuid,
+                    cancerTypes: tumor.cancerTypes,
+                    oncoTree: $scope.oncoTree,
+                    save: $scope.updateCancerTypes
                 }, {
                     size: 'lg'
                 });
             };
+
+            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, tumorRef) {
+                var cancerTypes = tumorRef.cancerTypes;
+                var diagnosticRelevantCancerTypes = tumorRef.diagnostic ? (
+                    tumorRef.diagnostic.relevantCancerTypes ? tumorRef.diagnostic.relevantCancerTypes : []
+                ) : [];
+                var deferred = $q.defer();
+                // When the relevant cancer types is empty, it means there is no special list. We need to fetch the relevant cancer types from database
+                if (diagnosticRelevantCancerTypes.length == 0) {
+                    DatabaseConnector.getRelevantCancerTypes(
+                        levelOfEvidence,
+                        onlyDetailedCancerType,
+                        _.map(cancerTypes, function(cancerType) {
+                            return {
+                                mainType: cancerType.mainType,
+                                code: cancerType.code
+                            }
+                        })
+                    ).then(function(data) {
+                        deferred.resolve(data.data);
+                    }).catch(function(error) {
+                        deferred.reject(error);
+                    })
+                } else {
+                    deferred.resolve(diagnosticRelevantCancerTypes);
+                }
+                return deferred.promise;
+            }
+
+            $scope.modifyDx1ApplicableCancerType = function(path) {
+                var indices = getIndexByPath(path);
+                var tumorRef = $scope.gene.mutations[indices[0]].tumors[indices[1]];
+                getRelevantCancerTypes('LEVEL_Dx1', true, tumorRef)
+                    .then(function(data) {
+                        var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
+                            parentNodeRef: tumorRef.diagnostic,
+                            uuid: tumorRef.diagnostic_uuid,
+                            cancerTypes: data,
+                            oncoTree: $scope.oncoTree,
+                            save: $scope.updateDx1RelevantCancerTypes
+                        }, {
+                            size: 'lg'
+                        });
+                    })
+                    .catch(function(error) {
+                        dialogs.error('Error', 'Failed to get the relevant cancer types.' + JSON.stringify(error));
+                    })
+            };
+
             $scope.modifyTherapy = function (path) {
                 var indices = getIndexByPath(path);
                 var mutationRef = $scope.gene.mutations[indices[0]];
@@ -3557,13 +3642,10 @@ angular.module('oncokbApp')
 
     .controller('ModifyTumorTypeCtrl', function ($scope, $modalInstance, data, _, OncoKB, $rootScope, mainUtils, FirebaseModel, $timeout) {
         $scope.meta = {
-            cancerTypes: data.tumor.cancerTypes,
-            originalTumorName: mainUtils.getFullCancerTypesNames(data.tumor.cancerTypes),
+            cancerTypes: data.cancerTypes,
+            originalTumorName: mainUtils.getFullCancerTypesNames(data.cancerTypes),
             newCancerTypes: [],
-            cancerTypes_review: data.tumor.cancerTypes_review,
-            cancerTypes_uuid: data.tumor.cancerTypes_uuid,
             oncoTree: data.oncoTree,
-            mutation: data.mutation,
             invalid: true,
             message: ''
         };
@@ -3574,17 +3656,6 @@ angular.module('oncokbApp')
 
         $scope.save = function () {
             var cancerTypes = [];
-            if(!_.isEmpty($scope.meta.cancerTypes)) {
-                if (_.isUndefined(data.tumorRef.cancerTypes_review)) {
-                    data.tumorRef.cancerTypes_review = {};
-                }
-                data.tumorRef.cancerTypes_review.updatedBy = $rootScope.me.name;
-                data.tumorRef.cancerTypes_review.updateTime = new Date().getTime();
-                if (_.isUndefined(data.tumorRef.cancerTypes_review.lastReviewed)) {
-                    data.tumorRef.cancerTypes_review.lastReviewed = $scope.meta.cancerTypes;
-                }
-                mainUtils.setUUIDInReview($scope.meta.cancerTypes_uuid);
-            }
             _.each($scope.meta.newCancerTypes, function (ct) {
                 if (ct.mainType) {
                     var tempSubtype = ct.subtype && ct.subtype.name ? ct.subtype.name : '';
@@ -3593,7 +3664,7 @@ angular.module('oncokbApp')
                     cancerTypes.push(cancerType);
                 }
             });
-            data.tumorRef.cancerTypes = cancerTypes;
+            data.save(data.uuid, data.parentNodeRef, data.cancerTypes, cancerTypes);
             $modalInstance.close();
         };
         $scope.$watch('meta.newCancerTypes', function (n) {
@@ -3647,7 +3718,7 @@ angular.module('oncokbApp')
 
         function initNewCancerTypes() {
             var newCancerTypes = [];
-            _.each(data.tumor.cancerTypes, function (cancerType) {
+            _.each(data.cancerTypes, function (cancerType) {
                 newCancerTypes.push({
                     mainType: {
                         name: cancerType.mainType
@@ -3717,16 +3788,13 @@ angular.module('oncokbApp')
             return result;
         }
         $scope.tumorValidationCheck = function () {
-            var tumorNameList = [];
-            _.each($scope.meta.mutation.tumors, function (tumor) {
-                tumorNameList.push(mainUtils.getFullCancerTypesName(tumor.cancerTypes));
-            });
+            var tumorNameList = data.cancerTypes;
             var currentTumorStr = mainUtils.getFullCancerTypesNames($scope.meta.newCancerTypes);
             if (!currentTumorStr) {
                 $scope.meta.message = 'Please input cancer type';
                 $scope.meta.invalid = true;
             } else if (currentTumorStr === $scope.meta.originalTumorName) {
-                var exceptionResult = changedSubSameWithMainItem($scope.meta.newCancerTypes, data.tumor.cancerTypes);
+                var exceptionResult = changedSubSameWithMainItem($scope.meta.newCancerTypes, data.cancerTypes);
                 if (exceptionResult) {
                     $scope.meta.message = '';
                     $scope.meta.invalid = false;

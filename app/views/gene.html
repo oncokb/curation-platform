@@ -414,6 +414,7 @@
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
+                                        <i class="fa fa-edit" ng-if="fileEditable && tumor.diagnostic && tumor.diagnostic.level && tumor.diagnostic.level ==='Dx1'" qtip qtip-content="Click to see the cancer types this evidence applies to" ng-click="modifyDx1ApplicableCancerType(path)"></i>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
                                         </span>
