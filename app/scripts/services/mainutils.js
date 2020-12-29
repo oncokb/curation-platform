@@ -120,8 +120,8 @@ angular.module('oncokbApp')
             }
             var list = [];
             _.each(cancerTypes, function(cancerType) {
-                if (cancerType.subtype && cancerType.subtype.name) {
-                    list.push(cancerType.subtype.name);
+                if (cancerType.subtype && cancerType.subtype.subtype) {
+                    list.push(cancerType.subtype.subtype);
                 } else if (cancerType.mainType){
                     list.push(cancerType.mainType);
                 }
@@ -146,8 +146,8 @@ angular.module('oncokbApp')
                     name[1] = cancerType.subtype.code;
                     hasInfo = true;
                 }
-                if (cancerType.subtype && cancerType.subtype.name) {
-                    name[2] = cancerType.subtype.name;
+                if (cancerType.subtype && cancerType.subtype.subtype) {
+                    name[2] = cancerType.subtype.subtype;
                     hasInfo = true;
                 }
                 if(hasInfo) {
@@ -167,8 +167,8 @@ angular.module('oncokbApp')
             var tempName = '';
             _.some(cancerTypes, function(cancerType) {
                 tempName = '';
-                if (cancerType.subtype && cancerType.subtype.name) {
-                    tempName = cancerType.subtype.name;
+                if (cancerType.subtype && cancerType.subtype.subtype) {
+                    tempName = cancerType.subtype.subtype;
                 } else if (cancerType.mainType) {
                     tempName = cancerType.mainType;
                 }
@@ -373,7 +373,7 @@ angular.module('oncokbApp')
 
                 if (t1.subtype && t2.subtype) {
                     if(flag) {
-                        if (t1.subtype.name === t2.subtype.name && t1.subtype.code === t2.subtype.code) {
+                        if (t1.subtype.subtype === t2.subtype.subtype && t1.subtype.code === t2.subtype.code) {
                             return true;
                         }
                     }
@@ -672,7 +672,7 @@ angular.module('oncokbApp')
 
         function getCancerTypeNameFromOncoTreeType(oncoTreeType) {
             return _.isObject(oncoTreeType) ?
-                (oncoTreeType.name ||
+                (oncoTreeType.subtype ||
                     (oncoTreeType.mainType ?
                         oncoTreeType.mainType : 'NA') ||
                     'NA') : 'NA';
@@ -701,8 +701,8 @@ angular.module('oncokbApp')
             _.each(cancerTypes, function(cancerType){
                 if (cancerType.subtype) {
                     _.some($rootScope.meta.subtypes[cancerType.mainType], function(subtype) {
-                        if (subtype.name === cancerType.subtype && subtype.tumorForm) tumorForms.push(subtype.tumorForm);
-                        return subtype.name === cancerType.subtype;
+                        if (subtype.subtype === cancerType.subtype && subtype.tumorForm) tumorForms.push(subtype.tumorForm);
+                        return subtype.subtype === cancerType.subtype;
                     });
                 } else {
                     _.some($rootScope.meta.mainType, function(mainType) {

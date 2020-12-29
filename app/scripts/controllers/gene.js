@@ -975,7 +975,6 @@ angular.module('oncokbApp')
                 var data = {
                     additionalInfo: null,
                     alterations: null,
-                    cancerType: null,
                     description: null,
                     evidenceType: type,
                     gene: {
@@ -1155,6 +1154,9 @@ angular.module('oncokbApp')
                             data.lastEdit = ReviewResource.mostRecent[dataUUID].updateTime;
                             historyData.location = historyStr(mutation, tumor) + ', Diagnostic';
                         }
+                        if (tumor.diagnostic.relevantCancerTypes) {
+                            data.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
+                        }
                         break;
                     case 'Standard implications for sensitivity to therapy':
                         data.evidenceType = 'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY';
@@ -1198,30 +1200,30 @@ angular.module('oncokbApp')
                 }
                 if (tumor && type !== 'TREATMENT_NAME_CHANGE') {
                     if ($scope.geneMeta.review[tumor.cancerTypes_uuid] && _.isArray(tumor.cancerTypes_review.lastReviewed) && tumor.cancerTypes_review.lastReviewed.length > 0 && type !== 'TUMOR_NAME_CHANGE' && !tumor.cancerTypes_review.added) {
-                        data.tumorTypes = tumor.cancerTypes_review.lastReviewed.map(function(tumorType) {
+                        data.cancerTypes = tumor.cancerTypes_review.lastReviewed.map(function(tumorType) {
                             if (tumorType.code) {
                                 return {
                                     code: tumorType.code,
                                     mainType: tumorType.mainType,
-                                    name: tumorType.subtype
+                                    subtype: tumorType.subtype
                                 }
                             } else {
                                 return {
-                                    name: tumorType.mainType
+                                    mainType: tumorType.mainType
                                 }
                             }
                         });
                     } else {
-                        data.tumorTypes = tumor.cancerTypes.map(function(tumorType) {
+                        data.cancerTypes = tumor.cancerTypes.map(function(tumorType) {
                             if (tumorType.code) {
                                 return {
                                     code: tumorType.code,
                                     mainType: tumorType.mainType,
-                                    name: tumorType.subtype
+                                    subtype: tumorType.subtype
                                 }
                             } else {
                                 return {
-                                    name: tumorType.mainType
+                                    mainType: tumorType.mainType
                                 }
                             }
                         });
@@ -2118,16 +2120,19 @@ angular.module('oncokbApp')
                 }
                 return isValid;
             }
-            $scope.addTumorType = function (index) {
+            $scope.addTumorType = function(index) {
                 var newTumorTypesName = mainUtils.getNewCancerTypesName($scope.meta.newCancerTypes);
                 if (isValidTumor(index, newTumorTypesName)) {
                     var cancerTypes = [];
-                    _.each($scope.meta.newCancerTypes, function (ct) {
+                    _.each($scope.meta.newCancerTypes, function(ct) {
                         if (ct.mainType) {
-                            var tempCode = ct.subtype.code ? ct.subtype.code : '';
-                            var tempSubtype = ct.subtype.name ? ct.subtype.name : '';
-                            var cancerType = new FirebaseModel.Cancertype(ct.mainType.name, tempSubtype, tempCode);
-                            cancerTypes.push(cancerType);
+                            var tempCode = (ct.subtype && ct.subtype.code) ? ct.subtype.code : '';
+                            var tempSubtype = (ct.subtype && ct.subtype.code) ? ct.subtype.subtype : '';
+                            cancerTypes.push({
+                                mainType: ct.mainType.mainType,
+                                subtype: tempSubtype,
+                                code: tempCode
+                            });
                         }
                     });
                     var tumor = new FirebaseModel.Tumor(cancerTypes);
@@ -2179,7 +2184,7 @@ angular.module('oncokbApp')
                     DatabaseConnector
                         .updateEvidenceRelevantCancerTypesBatch([{
                             uuid: diagnosticUuid,
-                            relevantTumorTypes: diagnosticRef.relevantCancerTypes
+                            relevantCancerTypes: diagnosticRef.relevantCancerTypes
                         }]);
                 }
             }
@@ -2234,7 +2239,13 @@ angular.module('oncokbApp')
                         var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
                             parentNodeRef: tumorRef.diagnostic,
                             uuid: tumorRef.diagnostic_uuid,
-                            cancerTypes: data,
+                            cancerTypes: data.map(function(cancerType) {
+                                return {
+                                    mainType: cancerType.mainType,
+                                    subtype: cancerType.subtype,
+                                    code: cancerType.code
+                                }
+                            }),
                             oncoTree: $scope.oncoTree,
                             save: $scope.updateDx1RelevantCancerTypes
                         }, {
@@ -3244,8 +3255,8 @@ angular.module('oncokbApp')
             function findCancerType(index, mainType, subtype, callback) {
                 var list;
                 var _mainType;
-                if (mainType && mainType.name) {
-                    list = $scope.oncoTree.tumorTypes[mainType.name];
+                if (mainType && mainType.mainType) {
+                    list = $scope.oncoTree.tumorTypes[mainType.mainType];
                 }
                 if (!mainType && subtype) {
                     _mainType = findMainType(subtype.mainType);
@@ -3254,7 +3265,7 @@ angular.module('oncokbApp')
             }
             function findMainType(name) {
                 for (var i = 0; i < $scope.oncoTree.mainTypes.length; i++) {
-                    if ($scope.oncoTree.mainTypes[i].name === name) {
+                    if ($scope.oncoTree.mainTypes[i].mainType === name) {
                         return $scope.oncoTree.mainTypes[i];
                     }
                 }
@@ -3508,9 +3519,9 @@ angular.module('oncokbApp')
                 if (type === 'sub' || !cancerType.mainType) {
                     return;
                 }
-                var mainTypeName = cancerType.mainType;
+                var mainTypeName = cancerType.mainType.mainType;
                 _.some(cancerType.oncoTreeTumorTypes, function(subtypeItem) {
-                    if (subtypeItem.name === mainTypeName) {
+                    if (subtypeItem.subtype === mainTypeName) {
                         cancerType.message = 'same name also exist in Subtype';
                         return true;
                     }
@@ -3656,11 +3667,15 @@ angular.module('oncokbApp')
 
         $scope.save = function () {
             var cancerTypes = [];
-            _.each($scope.meta.newCancerTypes, function (ct) {
+            _.each($scope.meta.newCancerTypes, function(ct) {
                 if (ct.mainType) {
-                    var tempSubtype = ct.subtype && ct.subtype.name ? ct.subtype.name : '';
+                    var tempSubtype = ct.subtype && ct.subtype.subtype ? ct.subtype.subtype : '';
                     var tempCode = ct.subtype && ct.subtype.code ? ct.subtype.code : '';
-                    var cancerType = new FirebaseModel.Cancertype(ct.mainType.name, tempSubtype, tempCode);
+                    var cancerType = {
+                        mainType: ct.mainType.mainType,
+                        subtype: tempSubtype,
+                        code: tempCode
+                    };
                     cancerTypes.push(cancerType);
                 }
             });
@@ -3707,8 +3722,8 @@ angular.module('oncokbApp')
         function findCancerType(index, mainType, subtype, callback) {
             var list;
             var _mainType;
-            if (mainType && mainType.name) {
-                list = $scope.meta.oncoTree.tumorTypes[mainType.name];
+            if (mainType && mainType.mainType) {
+                list = $scope.meta.oncoTree.tumorTypes[mainType.mainType];
             }
             if (!mainType && subtype) {
                 _mainType = findMainType(subtype.mainType);
@@ -3721,10 +3736,10 @@ angular.module('oncokbApp')
             _.each(data.cancerTypes, function (cancerType) {
                 newCancerTypes.push({
                     mainType: {
-                        name: cancerType.mainType
+                        mainType: cancerType.mainType
                     },
                     subtype: {
-                        name: cancerType.subtype,
+                        subtype: cancerType.subtype,
                         code: cancerType.code
                     },
                     oncoTreeTumorTypes: angular.copy($scope.meta.oncoTree.allTumorTypes)
@@ -3740,7 +3755,7 @@ angular.module('oncokbApp')
 
         function findMainType(name) {
             for (var i = 0; i < $scope.meta.oncoTree.mainTypes.length; i++) {
-                if ($scope.meta.oncoTree.mainTypes[i].name === name) {
+                if ($scope.meta.oncoTree.mainTypes[i].mainType === name) {
                     return $scope.meta.oncoTree.mainTypes[i];
                 }
             }

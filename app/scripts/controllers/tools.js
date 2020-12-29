@@ -404,7 +404,7 @@ angular.module('oncokbApp')
                     } else {
                         mainUtils.getTumorTypes().then(function(result) {
                             result.subtype.each(function(subtype) {
-                                subtypeMapping[subtype.code] = subtype.name;
+                                subtypeMapping[subtype.code] = subtype.subtype;
                             });
                             if ($scope.data.evidenceType === 'tumorSummary') {
                                 _.each(response.data, function (item) {

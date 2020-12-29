@@ -669,7 +669,7 @@
                                                  no-results-text="'Could not find any'"
                                                  ng-model="cancerType.mainType"
                                                  ng-disabled="!fileEditable"
-                                                 ng-options="tt.name for tt in oncoTree.mainTypes"
+                                                 ng-options="tt.mainType for tt in oncoTree.mainTypes | orderBy: 'mainType'"
                                                  ng-change="subIsSameWithMain(cancerType, 'main')">
                                             <option value=""></option>
                                         </select>
@@ -680,7 +680,7 @@
                                     allow-single-deselect="true"
                                     ng-model="cancerType.subtype"
                                     ng-disabled="!fileEditable"
-                                    ng-options="tt.name for tt in cancerType.oncoTreeTumorTypes | orderBy: 'name' track by tt.code"
+                                    ng-options="tt.subtype for tt in cancerType.oncoTreeTumorTypes | orderBy: 'subtype' track by tt.code"
                                     ng-change="subIsSameWithMain(cancerType, 'sub')">
                                 <option value=""></option>
                             </select>

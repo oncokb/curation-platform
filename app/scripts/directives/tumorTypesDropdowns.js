@@ -32,7 +32,7 @@ angular.module('oncokbApp')
                 $scope.$watch('selectedSubtypeName', function(name) {
                     if (name) {
                         $scope.selectedCancerType.subtype = $scope.oncoTree.allTumorTypes.find(function(item) {
-                            return item.name === name;
+                            return item.subtype === name;
                         });
                     }
                 });
@@ -80,7 +80,7 @@ angular.module('oncokbApp')
                     };
                     mainUtils.getTumorTypes().then(function(result) {
                         scope.oncoTree.mainTypes = result.mainTypes.map(function(mainType) {
-                            return mainType.name;
+                            return mainType.mainType;
                         });
                         scope.oncoTree.tumorTypes = _.groupBy(result.subtypes, 'mainType');
                         scope.oncoTree.allTumorTypes = result.tumorTypes;
