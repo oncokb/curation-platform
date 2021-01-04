@@ -23,8 +23,8 @@ angular.module('oncokbApp').filter('getIndexByObjectNameInArray', function() {
             for (var i = 0, arrayL = array.length; i < arrayL; i++) {
                 var _datum = array[i];
                 if (_datum.hasOwnProperty('mainType') &&
-                    _datum.mainType.name &&
-                    _datum.mainType.name.toUpperCase() === mainType.toUpperCase()) {
+                    _datum.mainType &&
+                    _datum.mainType.toUpperCase() === mainType.toUpperCase()) {
                     return array[i];
                 }
             }

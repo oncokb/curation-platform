@@ -414,6 +414,7 @@
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
+                                        <i class="fa fa-edit" ng-if="fileEditable && tumor.diagnostic && tumor.diagnostic.level && tumor.diagnostic.level ==='Dx1'" qtip qtip-content="Click to see the cancer types this evidence applies to" ng-click="modifyDx1ApplicableCancerType(path)"></i>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
                                         </span>
@@ -668,7 +669,7 @@
                                                  no-results-text="'Could not find any'"
                                                  ng-model="cancerType.mainType"
                                                  ng-disabled="!fileEditable"
-                                                 ng-options="tt.name for tt in oncoTree.mainTypes | orderBy: 'name'"
+                                                 ng-options="tt.mainType for tt in oncoTree.mainTypes | orderBy: 'mainType'"
                                                  ng-change="subIsSameWithMain(cancerType, 'main')">
                                             <option value=""></option>
                                         </select>
@@ -679,7 +680,7 @@
                                     allow-single-deselect="true"
                                     ng-model="cancerType.subtype"
                                     ng-disabled="!fileEditable"
-                                    ng-options="tt.name for tt in cancerType.oncoTreeTumorTypes | orderBy: 'name' track by tt.code"
+                                    ng-options="tt.subtype for tt in cancerType.oncoTreeTumorTypes | orderBy: 'subtype' track by tt.code"
                                     ng-change="subIsSameWithMain(cancerType, 'sub')">
                                 <option value=""></option>
                             </select>

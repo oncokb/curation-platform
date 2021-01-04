@@ -312,6 +312,12 @@ angular.module('oncokbApp')
                         if ($scope.t === 'treatment-select' && $scope.key === 'level') {
                             $scope.changePropagation(false);
                         }
+                        // we should delete the relevant cancer types when level is not Dx1
+                        if ($scope.t === 'implication' && $scope.key === 'level') {
+                            if (o === 'Dx1') {
+                                delete $scope.data.relevantCancerTypes;
+                            }
+                        }
                         // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
                         // 2) Do not trigger setReviewRelatedContent() when move mutations.
                         if ($scope.key === 'short') {

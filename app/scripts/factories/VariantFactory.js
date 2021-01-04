@@ -14,18 +14,6 @@ angular.module('oncokbApp').factory('errorHttpInterceptor', ['$q', function($q) 
     };
 }]);
 
-angular.module('oncokbApp').factory('TumorType', ['$http', 'OncoKB', function($http, OncoKB) {
-    'use strict';
-
-    function getFromServer() {
-        return $http.get(OncoKB.config.apiLink + 'tumorType.json');
-    }
-
-    return {
-        getFromServer: getFromServer
-    };
-}]);
-
 angular.module('oncokbApp').factory('Gene', ['$http', 'OncoKB', function($http, OncoKB) {
     'use strict';
 
@@ -242,6 +230,17 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
             });
     }
 
+    function updateEvidenceRelevantCancerTypesBatch(data) {
+        return $http.post(
+            OncoKB.config.apiLink + 'evidences/updateRelevantCancerTypes',
+            data,
+            {
+                transformResponse: function(result) {
+                    return {status: result};
+                }
+            });
+    }
+
     function updateEvidenceTreatmentPriorityBatch(data) {
         return $http.post(
             OncoKB.config.apiLink + 'evidences/priority/update',
@@ -299,6 +298,7 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         updateVUS: updateVUS,
         updateEvidenceBatch: updateEvidenceBatch,
         updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+        updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
         getEvidencesByUUID: getEvidencesByUUID,
         getEvidencesByUUIDs: getEvidencesByUUIDs,
         getPubMedArticle: getPubMedArticle,
@@ -373,18 +373,30 @@ angular.module('oncokbApp').factory('OncoTree', ['$http', 'OncoKB', '_', functio
             'tumorTypes/search/maintype/' + mainType + '?exactMatch=true&version=' + OncoKB.config.oncoTreeVersion);
     }
 
-    function getMainTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/mainTypes');
+    function getTumorTypes() {
+        return $http.get(OncoKB.config.privateApiLink + 'utils/tumorTypes');
     }
 
-    function getSubTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/subtypes');
+    function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+        var queryStr = [];
+        if (levelOfEvidence) {
+            queryStr.push('levelOfEvidence=' + levelOfEvidence);
+        }
+        if (onlyDetailedCancerType) {
+            queryStr.push('onlyDetailedCancerType=TRUE');
+        }
+        if (queryStr.length > 0) {
+            queryStr = '?' + queryStr.join('&');
+        } else {
+            queryStr = '';
+        }
+        return $http.post(OncoKB.config.privateApiLink + 'utils/relevantCancerTypes' + queryStr, cancerTypes);
     }
 
     return {
         getTumorTypeByMainType: getTumorTypeByMainType,
-        getMainTypes: getMainTypes,
-        getSubTypes: getSubTypes
+        getTumorTypes: getTumorTypes,
+        getRelevantCancerTypes: getRelevantCancerTypes,
     };
 }]);
 

@@ -176,7 +176,7 @@ angular.module('oncokbApp')
                     var item = {
                         link: $scope.input.link,
                         mainType: $scope.input.mainType ? $scope.input.mainType : '',
-                        subType: $scope.input.subType ? $scope.input.subType.name : '',
+                        subType: $scope.input.subType ? $scope.input.subType.subtype : '',
                         section: $scope.input.section ? $scope.input.section.join() : '',
                         curator: $scope.input.curator ? $scope.input.curator.name : '',
                         curated: false,
@@ -263,7 +263,7 @@ angular.module('oncokbApp')
                     }
                     if ($scope.data.modifiedMainType && queueItem.subType) {
                         for (var i = 0;i < $scope.data.subTypes[$scope.data.modifiedMainType].length; i++) {
-                            if ($scope.data.subTypes[$scope.data.modifiedMainType][i].name === queueItem.subType) {
+                            if ($scope.data.subTypes[$scope.data.modifiedMainType][i].mainType === queueItem.subType) {
                                 $scope.data.modifiedSubType = $scope.data.subTypes[$scope.data.modifiedMainType][i];
                                 break;
                             }
@@ -313,7 +313,7 @@ angular.module('oncokbApp')
                         if (currentQueues[i].addedAt === queueItem.addedAt) {
                             item = angular.copy(queueItem);
                             item.link = $scope.input.link;
-                            item.subType = $scope.input.subType ? $scope.input.subType.name : '';
+                            item.subType = $scope.input.subType ? $scope.input.subType.subtype : '';
                             item.section = $scope.input.section ? $scope.input.section.join() : '';
                             item.dueDay = $scope.input.dueDay ? new Date($scope.input.dueDay).getTime() : '';
                             item.comment = $scope.input.comment;
@@ -480,27 +480,14 @@ angular.module('oncokbApp')
                         return annotationLocation[x.article].join('; ');
                     }
                 };
-                function getOncoTreeMainTypes() {
-                    mainUtils.getOncoTreeMainTypes().then(function(result) {
-                        var mainTypesReturned = result.mainTypes,
-                            tumorTypesReturned = result.tumorTypes;
-                        if (mainTypesReturned) {
-                            $scope.data.mainTypes = _.map(mainTypesReturned, function(item) {
-                                return item.name;
-                            });
-                            if (_.isArray(tumorTypesReturned)) {
-                                var tumorTypes = {};
-                                var allTumorTypes = [];
-                                _.each(mainTypesReturned, function(mainType, i) {
-                                    tumorTypes[mainType.name] = tumorTypesReturned[i];
-                                });
-                                $scope.data.subTypes = tumorTypes;
-                            }
-                        }
+                function getTumorTypes() {
+                    mainUtils.getTumorTypes().then(function(result) {
+                        $scope.data.mainTypes = result.mainTypes;
+                        $scope.data.subTypes = _.groupBy(result.subtypes, 'mainType');
                     }, function(error) {
                     });
                 }
-                getOncoTreeMainTypes();
+                getTumorTypes();
                 $scope.toggleForm = function() {
                     $scope.data.formExpanded = !$scope.data.formExpanded;
                     $timeout(function() {

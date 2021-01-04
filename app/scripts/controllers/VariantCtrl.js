@@ -31,21 +31,13 @@ angular.module('oncokbApp')
             }
 
             function separateTumorTypes(tumorTypes) {
-                var subtypes = {};
-                var cancerTypes = {};
-                _.each(tumorTypes, function(tumorType) {
-                    if (tumorType) {
-                        if (tumorType.name) {
-                            subtypes[tumorType.name] = tumorType;
-                        }
-                        if (!tumorType.name && tumorType.mainType && tumorType.mainType.name) {
-                            cancerTypes[tumorType.mainType.name] = tumorType;
-                        }
-                    }
-                });
                 return {
-                    subtypes: _.values(subtypes),
-                    cancerTypes: _.values(cancerTypes)
+                    subtypes: tumorTypes.filter(function(tumorType) {
+                        return !!tumorType.code;
+                    }),
+                    cancerTypes: tumorTypes.filter(function(tumorType) {
+                        return !tumorType.code;
+                    })
                 };
             }
 
@@ -128,8 +120,8 @@ angular.module('oncokbApp')
                 }
                 if (hasSelectedCancerType) {
                     params.cancerType = $scope.view.selectedCancerType.name;
-                    if ($scope.view.selectedSubtype && $scope.view.selectedSubtype.name) {
-                        params.tumorType = $scope.view.selectedSubtype.name;
+                    if ($scope.view.selectedSubtype && $scope.view.selectedSubtype.subtype) {
+                        params.tumorType = $scope.view.selectedSubtype.subtype;
                     } else {
                         params.tumorType = params.cancerType;
                     }
@@ -154,10 +146,10 @@ angular.module('oncokbApp')
                 });
                 $scope.alteration = 'BCR-ABL1 Fusion';
                 $scope.view.selectedCancerType = {
-                    name: 'B-Lymphoblastic Leukemia/Lymphoma'
+                    mainType: 'B-Lymphoblastic Leukemia/Lymphoma'
                 };
                 $scope.view.selectedSubtype = {
-                    name: 'B-Lymphoblastic Leukemia/Lymphoma with t(9;22)(q34.1;q11.2);BCR-ABL1'
+                    subtype: 'B-Lymphoblastic Leukemia/Lymphoma with t(9;22)(q34.1;q11.2);BCR-ABL1'
                 };
                 $scope.search();
             };

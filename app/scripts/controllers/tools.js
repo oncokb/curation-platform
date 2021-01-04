@@ -402,11 +402,9 @@ angular.module('oncokbApp')
                         });
                         finishLoadingReviewedData();
                     } else {
-                        mainUtils.getOncoTreeMainTypes().then(function(result) {
-                            _.each(result.tumorTypes, function(items) {
-                                _.each(items, function(item) {
-                                    subtypeMapping[item.code] = item.name;
-                                });
+                        mainUtils.getTumorTypes().then(function(result) {
+                            result.subtype.each(function(subtype) {
+                                subtypeMapping[subtype.code] = subtype.subtype;
                             });
                             if ($scope.data.evidenceType === 'tumorSummary') {
                                 _.each(response.data, function (item) {
