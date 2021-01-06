@@ -55,7 +55,7 @@
                             chosen allow-single-deselect="true"
                             ng-model="pureContent.text"
                             ng-change="updateContent(pureContent.text, data[key])"
-                            ng-options="opt.value as opt.label for opt in o">
+                            ng-options="opt.value as opt.label for opt in o | orderBy : 'value'">
                         <option disabled></option>
                     </select>
                 </div>

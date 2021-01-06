@@ -122,7 +122,7 @@ angular.module('oncokbApp').run(
                     'R3': '',
                     'Px1': 'FDA and/or professional guideline-recognized biomarker prognostic in this indication based on well-powered studie(s)',
                     'Px2': 'FDA and/or professional guideline-recognized biomarker prognostic in this indication based on a single or multiple small studies',
-                    'Px3': 'Biomarker prognostic in this indication based on clinical evidence in well powered studies',
+                    'Px3': 'Biomarker is prognostic in this indication based on clinical evidence in well-powered studies',
                     'Dx1': 'FDA and/or professional guideline-recognized biomarker required for diagnosis in this indication',
                     'Dx2': 'FDA and/or professional guideline-recognized biomarker that supports diagnosis in this indication',
                     'Dx3': 'Biomarker that may assist disease diagnosis in this indication based on clinical evidence',

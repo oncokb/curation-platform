@@ -3132,26 +3132,23 @@ angular.module('oncokbApp')
                 });
                 levels.prognostic = [{
                     value: 'Px1',
-                    label: 'Px1 - FDA and/or professional guideline-recognized biomarker prognostic in this indication based on well-powered studies'
+                    label: 'Px1 - ' + $rootScope.meta.levelsDesc.Px1
                 }, {
                     value: 'Px2',
-                    label: 'Px2 - FDA and/or professional guideline-recognized biomarker prognostic in this indication based on a single or multiple small studies'
+                    label: 'Px2 - ' + $rootScope.meta.levelsDesc.Px2
                 }, {
                     value: 'Px3',
-                    label: 'Px3 - Clinical evidence based on well-powered studies that supports the biomarker as being prognostic in this indication'
-                }, {
-                    value: 'Px4',
-                    label: 'Px4 - Clinical evidence based on single or multiple small studies that supports the biomarker as being prognostic in this indication'
+                    label: 'Px3 - '  + $rootScope.meta.levelsDesc.Px3
                 }];
                 levels.diagnostic = [{
                     value: 'Dx1',
-                    label: 'Dx1 - FDA and/or professional guideline-recognized biomarker indicative of diagnosis in this indication'
+                    label: 'Dx1 - ' + $rootScope.meta.levelsDesc.Dx1
                 }, {
                     value: 'Dx2',
-                    label: 'Dx2 - FDA and/or professional guideline-recognized biomarker that strongly supports diagnosis in this indication'
+                    label: 'Dx2 - ' + $rootScope.meta.levelsDesc.Dx2
                 }, {
                     value: 'Dx3',
-                    label: 'Dx3 - Biomarker that may assist disease diagnosis in this indication based on clinical evidence'
+                    label: 'Dx3 - ' + $rootScope.meta.levelsDesc.Dx3
                 }];
                 return levels;
             }
