@@ -1092,6 +1092,10 @@ angular.module('oncokbApp')
                             historyData.new = tumor.diagnosticSummary;
                             historyData.old = tumor.diagnosticSummary_review.lastReviewed;
                             reviewObj = tumor.diagnosticSummary_review;
+                            // the diagnostic summary should have the same relevant cancer types as of diagnostic implications
+                            if (tumor.diagnostic.relevantCancerTypes) {
+                                data.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
+                            }
                         }
                         break;
                     case 'PROGNOSTIC_SUMMARY':
