@@ -7,7 +7,6 @@ angular.module('oncokbApp')
         '$rootScope',
         'Gene',
         'Alteration',
-        'TumorType',
         'Evidence',
         'SearchVariant',
         'DriveAnnotation',
@@ -27,7 +26,6 @@ angular.module('oncokbApp')
                  $rootScope,
                  Gene,
                  Alteration,
-                 TumorType,
                  Evidence,
                  SearchVariant,
                  DriveAnnotation,
@@ -112,7 +110,7 @@ angular.module('oncokbApp')
             }
 
             function getAllTumorType(callback, timestamp) {
-                TumorType.getFromServer()
+                getTumorTypes()
                     .then(function(data) {
                         if (timestamp) {
                             numOfLocks[timestamp]--;
@@ -310,6 +308,10 @@ angular.module('oncokbApp')
                 }
             }
 
+            function updateEvidenceRelevantCancerTypesBatch(data) {
+                return DriveAnnotation.updateEvidenceRelevantCancerTypesBatch(data);
+            }
+
             function sendEmail(params, success, fail) {
                 if (testing || !inProduction) {
                     success(true);
@@ -394,6 +396,17 @@ angular.module('oncokbApp')
                         deferred.resolve(data);
                     })
                     .error(function(result) {
+                        deferred.reject(result);
+                    });
+                return deferred.promise;
+            }
+
+            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+                var deferred = $q.defer();
+                OncoTree.getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes)
+                    .then(function(data) {
+                        deferred.resolve(data);
+                    }, function(result) {
                         deferred.reject(result);
                     });
                 return deferred.promise;
@@ -491,9 +504,9 @@ angular.module('oncokbApp')
                     });
                 return deferred.promise;
             }
-            function getMainTypes() {
+            function getTumorTypes() {
                 var deferred = $q.defer();
-                OncoTree.getMainTypes()
+                OncoTree.getTumorTypes()
                     .then(function(result) {
                         deferred.resolve(result.data);
                     }, function(error) {
@@ -521,7 +534,7 @@ angular.module('oncokbApp')
                     data[timestamp].genes = d.data;
                 }, timestamp);
                 getAllTumorType(function(d) {
-                    data[timestamp].tumorTypes = d.data;
+                    data[timestamp].tumorTypes = d;
                 }, timestamp);
 
                 timeout(callback, timestamp);
@@ -562,6 +575,7 @@ angular.module('oncokbApp')
                 updateVUS: updateVUS,
                 updateEvidenceBatch: updateEvidenceBatch,
                 updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+                updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
                 addHisotryRecord: addHisotryRecord,
                 sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
@@ -577,6 +591,7 @@ angular.module('oncokbApp')
                 },
                 getAllInternalGenes: getAllInternalGenes,
                 getOncoTreeTumorTypesByMainType: getOncoTreeTumorTypesByMainType,
+                getRelevantCancerTypes: getRelevantCancerTypes,
                 testAccess: testAccess,
                 getIsoforms: getIsoforms,
                 getOncogeneTSG: getOncogeneTSG,
@@ -590,7 +605,7 @@ angular.module('oncokbApp')
                 getPubMedArticle: getPubMedArticle,
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
-                getMainTypes: getMainTypes,
+                getTumorTypes: getTumorTypes,
                 getSubTypes: getSubTypes,
                 getEvidenceLevels: getEvidenceLevels,
                 getDataValidateWebSocket: function(){

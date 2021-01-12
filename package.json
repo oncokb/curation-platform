@@ -37,7 +37,7 @@
     "@bower_components/file-saver.js": "Teleborder/FileSaver.js#~1.20150304.1",
     "@bower_components/firebase": "firebase/firebase-bower#3.x.x",
     "@bower_components/fontawesome": "FortAwesome/Font-Awesome#~4.4.0",
-    "@bower_components/google-diff-match-patch-js": "tanaka-de-silva/google-diff-match-patch-js#^1.0.0",
+    "@bower_components/google-diff-match-patch-js": "oncokb/google-diff-match-patch-js#^1.0.0",
     "@bower_components/imagesloaded": "desandro/imagesloaded#>=3.0.0",
     "@bower_components/jquery": "jquery/jquery-dist#~2.1.1",
     "@bower_components/jquery-autosize": "jackmoore/autosize#^4.0.2",

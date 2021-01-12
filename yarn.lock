@@ -162,9 +162,9 @@
   version "4.4.0"
   resolved "https://codeload.github.com/FortAwesome/Font-Awesome/tar.gz/e554555d73a44e0a7d11b0361ad7a5325a5f551c"
 
-"@bower_components/google-diff-match-patch-js@tanaka-de-silva/google-diff-match-patch-js#^1.0.0":
+"@bower_components/google-diff-match-patch-js@oncokb/google-diff-match-patch-js#^1.0.0":
   version "0.0.0"
-  resolved "https://codeload.github.com/tanaka-de-silva/google-diff-match-patch-js/tar.gz/7843d8804fc2553ddd9d2131b9fa68708ac69580"
+  resolved "https://codeload.github.com/oncokb/google-diff-match-patch-js/tar.gz/7843d8804fc2553ddd9d2131b9fa68708ac69580"
 
 "@bower_components/imagesloaded@desandro/imagesloaded#>=3.0.0":
   version "4.1.4"

@@ -14,7 +14,7 @@
                                 data-placeholder="Choose a main tumor type"
                                 no-results-text="'Could not find any'"
                                 ng-model="cancerType.mainType"
-                                ng-options="tt.name for tt in meta.oncoTree.mainTypes | orderBy: 'name' track by tt.name">
+                                ng-options="tt.mainType for tt in meta.oncoTree.mainTypes | orderBy: 'mainType' track by tt.mainType">
                             <option value=""></option>
                         </select>
                     </div>
@@ -27,7 +27,7 @@
                                 data-placeholder="Choose a tumor type"
                                 no-results-text="'Could not find any'"
                                 ng-model="cancerType.subtype"
-                                ng-options="tt.name for tt in cancerType.oncoTreeTumorTypes | orderBy: 'name' track by tt.code">
+                                ng-options="tt.subtype for tt in cancerType.oncoTreeTumorTypes | orderBy: 'subtype' track by tt.code">
                             <option value=""></option>
                         </select>
                     </div>
