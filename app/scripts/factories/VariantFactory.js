@@ -658,7 +658,9 @@ angular.module('oncokbApp')
                 hugoSymbol: _.isUndefined(item.gene) ? item.hugoSymbol: item.gene.hugoSymbol,
                 uuid: item.uuid,
                 mutation: mutation,
-                tumorType: item.cancerType,
+                tumorType: item.cancerTypes.map(function(cancerType) {
+                    return cancerType.subtype ? cancerType.subtype : cancerType.mainType;
+                }).join(", "),
                 drugs: drugs,
                 lastReview: item.lastReview,
                 oncogene: _.isUndefined(item.gene) ? item.oncogene : item.gene.oncogene,
