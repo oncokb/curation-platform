@@ -132,7 +132,7 @@ angular.module('oncokbApp')
                     $scope.addTherapyError = false;
                     var therapyVali = [];
                     drugUuids.map(function (element) {
-                        var tem = element.sort().join(' ');
+                        var tem = element.join(' ');
                         if (tem !== '')
                             therapyVali.push(tem);
                     });
