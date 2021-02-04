@@ -24,12 +24,12 @@ angular.module('oncokbApp')
                 var my = attrs.hasOwnProperty('my') ? attrs.my : 'bottom center';
                 var at = attrs.hasOwnProperty('at') ? attrs.at : 'top center';
 
-                if (attrs.type && ['pmid', 'nct', 'abstract'].indexOf(attrs.type) !== -1) {
+                if (attrs.qtipType && ['pmid', 'nct', 'abstract'].indexOf(attrs.qtipType) !== -1) {
                     src = '<iframe width="600px" height="400px" src=\'';
-                    if (attrs.type && attrs.number) {
-                        switch (attrs.type) {
+                    if (attrs.qtipType && attrs.number) {
+                        switch (attrs.qtipType) {
                         case 'pmid':
-                            src += 'https://www.ncbi.nlm.nih.gov/pubmed/' + attrs.number;
+                            src += 'https://www.ncbi.nlm.nih.gov/research/pubtator/index.html?view=docsum&query=' + attrs.number;
                             break;
                         case 'nct':
                             src += 'https://clinicaltrials.gov/show/' + attrs.number;
@@ -46,11 +46,11 @@ angular.module('oncokbApp')
                     hideEvent = 'unfocus';
                     my = 'top left';
                     at = 'bottom right';
-                } else if (attrs.type === 'vusItem') {
+                } else if (attrs.qtipType === 'vusItem') {
                     content = '<span>Last edit: ' + new Date(scope.time).toLocaleDateString() + '</span><br/><span>By: ' + scope.by + '</span>';
-                } else if (attrs.type === 'map') {
-                    content = attrs.content;
-                } else if (attrs.type === 'evidence') {
+                } else if (attrs.qtipType === 'map') {
+                    content = attrs.qtipContent;
+                } else if (attrs.qtipType === 'evidence') {
                     content = '<img src="images/loader.gif" />';
                     events = {
                         show: function(event, qtipApi) {
@@ -60,8 +60,8 @@ angular.module('oncokbApp')
                             DatabaseConnector.getPubMedArticle(pmids, function(articles) {
                                 var articlesData = articles.result;
                                 var content = [];
-                                if (attrs.content) {
-                                    content.push('<p>' + attrs.content + '</p>');
+                                if (attrs.qtipContent) {
+                                    content.push('<p>' + attrs.qtipContent + '</p>');
                                 }
                                 content.push('<ul class="list-group">');
                                 if (articlesData !== undefined && articlesData.uids.length > 0) {
@@ -116,7 +116,7 @@ angular.module('oncokbApp')
                             });
                         }
                     };
-                } else if (attrs.type === 'level') {
+                } else if (attrs.qtipType === 'level') {
                     content = '<img src="resources/images/loader.gif" />';
                     events = {
                         show: function(event, qtipApi) {
@@ -132,9 +132,9 @@ angular.module('oncokbApp')
                     };
                 }
 
-                if (!attrs.type) {
+                if (!attrs.qtipType) {
                     hideEvent = 'mouseleave';
-                    content = attrs.content;
+                    content = attrs.qtipContent;
                 }
 
                 var options = {
@@ -156,8 +156,8 @@ angular.module('oncokbApp')
                     }
                 };
 
-                if (['vusItem', 'map', 'evidence', 'level'].indexOf(attrs.type) !== -1 ||
-                    (attrs.number !== undefined && attrs.number.length > 0) || (attrs.content !== undefined && attrs.content.length > 0)) {
+                if (['vusItem', 'map', 'evidence', 'level'].indexOf(attrs.qtipType) !== -1 ||
+                    (attrs.number !== undefined && attrs.number.length > 0) || (attrs.qtipContent !== undefined && attrs.qtipContent.length > 0)) {
                     $(element).qtip(options);
                 }
 

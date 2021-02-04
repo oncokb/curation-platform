@@ -7,7 +7,6 @@ angular.module('oncokbApp')
         '$rootScope',
         'Gene',
         'Alteration',
-        'TumorType',
         'Evidence',
         'SearchVariant',
         'DriveAnnotation',
@@ -19,7 +18,7 @@ angular.module('oncokbApp')
         'OncoTree',
         'InternalAccess',
         'ApiUtils',
-        'PrivateApiUtils',
+        'PrivateApi',
         'DataValidation',
         '$firebaseArray',
         function($timeout,
@@ -27,7 +26,6 @@ angular.module('oncokbApp')
                  $rootScope,
                  Gene,
                  Alteration,
-                 TumorType,
                  Evidence,
                  SearchVariant,
                  DriveAnnotation,
@@ -39,7 +37,7 @@ angular.module('oncokbApp')
                  OncoTree,
                  InternalAccess,
                  ApiUtils,
-                 PrivateApiUtils,
+                 PrivateApi,
                  DataValidation,
                  $firebaseArray) {
             var numOfLocks = {};
@@ -112,7 +110,7 @@ angular.module('oncokbApp')
             }
 
             function getAllTumorType(callback, timestamp) {
-                TumorType.getFromServer()
+                getTumorTypes()
                     .then(function(data) {
                         if (timestamp) {
                             numOfLocks[timestamp]--;
@@ -164,8 +162,8 @@ angular.module('oncokbApp')
                         .updateGene(data)
                         .then(function(data) {
                             success(data);
-                        }, function() {
-                            fail();
+                        }, function(error) {
+                            fail(error);
                         });
                 }
             }
@@ -310,6 +308,10 @@ angular.module('oncokbApp')
                 }
             }
 
+            function updateEvidenceRelevantCancerTypesBatch(data) {
+                return DriveAnnotation.updateEvidenceRelevantCancerTypesBatch(data);
+            }
+
             function sendEmail(params, success, fail) {
                 if (testing || !inProduction) {
                     success(true);
@@ -369,51 +371,6 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function setCache(operation) {
-                var deferred = $q.defer();
-                if (testing) {
-                    if (operation === 'enable') {
-                        deferred.resolve('enabled');
-                    }
-                    if (operation === 'disable') {
-                        deferred.resolve('disabled');
-                    }
-                } else {
-                    switch (operation) {
-                    case 'disable':
-                        Cache.disable()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    case 'enable':
-                        Cache.enable()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    case 'reset':
-                        Cache.reset()
-                            .success(function(data) {
-                                deferred.resolve(data);
-                            })
-                            .error(function(result) {
-                                deferred.reject(result);
-                            });
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                return deferred.promise;
-            }
-
             function updateGeneCache(hugoSymbol) {
                 var deferred = $q.defer();
                 if (testing) {
@@ -444,9 +401,20 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function getIsoforms(type) {
+            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
                 var deferred = $q.defer();
-                ApiUtils.getIsoforms(type)
+                OncoTree.getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes)
+                    .then(function(data) {
+                        deferred.resolve(data);
+                    }, function(result) {
+                        deferred.reject(result);
+                    });
+                return deferred.promise;
+            }
+
+            function getIsoforms(hugoSymbol) {
+                var deferred = $q.defer();
+                PrivateApi.getTranscripts(hugoSymbol)
                     .then(function(data) {
                         deferred.resolve(data.data);
                     }, function(result) {
@@ -474,7 +442,7 @@ angular.module('oncokbApp')
                         data: ['Fusion']
                     });
                 } else {
-                    PrivateApiUtils.getSuggestedVariants()
+                    PrivateApi.getSuggestedVariants()
                         .then(function(data) {
                             deferred.resolve(data);
                         }, function(result) {
@@ -492,7 +460,7 @@ angular.module('oncokbApp')
                         data: false
                     });
                 } else {
-                    PrivateApiUtils.isHotspot(hugoSymbol, variant)
+                    PrivateApi.isHotspot(hugoSymbol, variant)
                         .then(function(data) {
                             deferred.resolve(data);
                         }, function(result) {
@@ -536,9 +504,9 @@ angular.module('oncokbApp')
                     });
                 return deferred.promise;
             }
-            function getMainTypes() {
+            function getTumorTypes() {
                 var deferred = $q.defer();
-                OncoTree.getMainTypes()
+                OncoTree.getTumorTypes()
                     .then(function(result) {
                         deferred.resolve(result.data);
                     }, function(error) {
@@ -566,7 +534,7 @@ angular.module('oncokbApp')
                     data[timestamp].genes = d.data;
                 }, timestamp);
                 getAllTumorType(function(d) {
-                    data[timestamp].tumorTypes = d.data;
+                    data[timestamp].tumorTypes = d;
                 }, timestamp);
 
                 timeout(callback, timestamp);
@@ -607,18 +575,10 @@ angular.module('oncokbApp')
                 updateVUS: updateVUS,
                 updateEvidenceBatch: updateEvidenceBatch,
                 updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+                updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
                 addHisotryRecord: addHisotryRecord,
                 sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
-                disableCache: function() {
-                    return setCache('disable');
-                },
-                enableCache: function() {
-                    return setCache('enable');
-                },
-                resetCache: function() {
-                    return setCache('reset');
-                },
                 updateGeneCache: function(hugoSymbol) {
                     return updateGeneCache(hugoSymbol);
                 },
@@ -631,6 +591,7 @@ angular.module('oncokbApp')
                 },
                 getAllInternalGenes: getAllInternalGenes,
                 getOncoTreeTumorTypesByMainType: getOncoTreeTumorTypesByMainType,
+                getRelevantCancerTypes: getRelevantCancerTypes,
                 testAccess: testAccess,
                 getIsoforms: getIsoforms,
                 getOncogeneTSG: getOncogeneTSG,
@@ -644,7 +605,7 @@ angular.module('oncokbApp')
                 getPubMedArticle: getPubMedArticle,
                 getReviewedData: getReviewedData,
                 lookupVariants: lookupVariants,
-                getMainTypes: getMainTypes,
+                getTumorTypes: getTumorTypes,
                 getSubTypes: getSubTypes,
                 getEvidenceLevels: getEvidenceLevels,
                 getDataValidateWebSocket: function(){

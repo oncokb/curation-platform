@@ -337,7 +337,7 @@ angular.module('oncokbApp')
             };
             $scope.loadingReviewed = false;
             $scope.displayReviewedData = false;
-            var subtypeMapping = {};
+
             function finishLoadingReviewedData() {
                 $scope.loadingReviewed = false;
                 $scope.displayReviewedData = true;
@@ -402,18 +402,9 @@ angular.module('oncokbApp')
                         });
                         finishLoadingReviewedData();
                     } else {
-                        mainUtils.getOncoTreeMainTypes().then(function(result) {
-                            _.each(result.tumorTypes, function(items) {
-                                _.each(items, function(item) {
-                                    subtypeMapping[item.code] = item.name;
-                                });
-                            });
                             if ($scope.data.evidenceType === 'tumorSummary') {
                                 _.each(response.data, function (item) {
                                     var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
-                                    if (item.subtype) {
-                                        reviewedData.tumorType = subtypeMapping[item.subtype];
-                                    }
                                     $scope.reviewedData.tumorSummary.body.push(reviewedData);
                                 });
                             } else if ($scope.data.evidenceType === 'drugs') {
@@ -424,10 +415,13 @@ angular.module('oncokbApp')
                                             drugs.push(treatment.drugs.map(function(drug){ return drug.drugName}).join('+'));
                                         });
                                         var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugs.join());
-                                        reviewedData['citations'] = getCitations(item.description);
-                                        if (item.subtype) {
-                                            reviewedData.tumorType = subtypeMapping[item.subtype];
-                                        }
+                                        reviewedData['citations'] = item.articles.map(function(article) {
+                                            if(article.pmid) {
+                                                return article.pmid;
+                                            }else{
+                                                return article.abstract;
+                                            }
+                                        }).join(', ');
                                         $scope.reviewedData.drugs.body.push(reviewedData);
                                     }
                                 });
@@ -435,8 +429,7 @@ angular.module('oncokbApp')
                                 var drugsMapping = {};
                                 _.each(response.data, function(item) {
                                     if (item.evidenceType !== 'TUMOR_TYPE_SUMMARY') {
-                                        var tempTT = item.subtype ? subtypeMapping[item.subtype] : item.cancerType;
-                                        var key = item.gene.hugoSymbol + getAlterations(item.alterations) + tempTT;
+                                        var key = item.gene.hugoSymbol + getAlterations(item.alterations) + item.tumorType;
                                         var drugs = [];
                                         _.each(item.treatments, function (treatment) {
                                             _.each(treatment.drugs, function (drug) {
@@ -462,20 +455,17 @@ angular.module('oncokbApp')
                                 });
                                 _.each(response.data, function(item) {
                                     if (item.evidenceType === 'TUMOR_TYPE_SUMMARY') {
-                                        var tempTT = item.subtype ? subtypeMapping[item.subtype] : item.cancerType;
-                                        var key = item.gene.hugoSymbol + getAlterations(item.alterations) + tempTT;
+                                        var key = item.gene.hugoSymbol + getAlterations(item.alterations) + item.tumorType;
                                         var reviewedData = {};
                                         if (drugsMapping[key]) {
                                             _.each(drugsMapping[key], function(drugItem) {
                                                 reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations), drugItem.drugs);
-                                                reviewedData.tumorType = tempTT;
                                                 reviewedData.treatmentNameUuid = drugItem.uuid;
                                                 reviewedData.level = drugItem.level;
                                                 $scope.reviewedData.ttsDrugs.body.push(reviewedData);
                                             });
                                         } else {
                                             reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
-                                            reviewedData.tumorType = tempTT;
                                             $scope.reviewedData.ttsDrugs.body.push(reviewedData);
                                         }
                                     }
@@ -484,14 +474,10 @@ angular.module('oncokbApp')
                                 || $scope.data.evidenceType === 'diagnosticImplication' || $scope.data.evidenceType === 'prognosticImplication') {
                                 _.each(response.data, function (item) {
                                     var reviewedData = new FirebaseModel.ReviewedData(item, getAlterations(item.alterations));
-                                    if (item.subtype) {
-                                        reviewedData.tumorType = subtypeMapping[item.subtype];
-                                    }
                                     $scope.reviewedData[$scope.data.evidenceType].body.push(reviewedData);
                                 });
                             }
                             finishLoadingReviewedData();
-                        });
                     }
                 });
             }

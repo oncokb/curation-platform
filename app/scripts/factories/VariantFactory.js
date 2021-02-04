@@ -14,18 +14,6 @@ angular.module('oncokbApp').factory('errorHttpInterceptor', ['$q', function($q) 
     };
 }]);
 
-angular.module('oncokbApp').factory('TumorType', ['$http', 'OncoKB', function($http, OncoKB) {
-    'use strict';
-
-    function getFromServer() {
-        return $http.get(OncoKB.config.apiLink + 'tumorType.json');
-    }
-
-    return {
-        getFromServer: getFromServer
-    };
-}]);
-
 angular.module('oncokbApp').factory('Gene', ['$http', 'OncoKB', function($http, OncoKB) {
     'use strict';
 
@@ -242,6 +230,17 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
             });
     }
 
+    function updateEvidenceRelevantCancerTypesBatch(data) {
+        return $http.post(
+            OncoKB.config.apiLink + 'evidences/updateRelevantCancerTypes',
+            data,
+            {
+                transformResponse: function(result) {
+                    return {status: result};
+                }
+            });
+    }
+
     function updateEvidenceTreatmentPriorityBatch(data) {
         return $http.post(
             OncoKB.config.apiLink + 'evidences/priority/update',
@@ -299,6 +298,7 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         updateVUS: updateVUS,
         updateEvidenceBatch: updateEvidenceBatch,
         updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
+        updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
         getEvidencesByUUID: getEvidencesByUUID,
         getEvidencesByUUIDs: getEvidencesByUUIDs,
         getPubMedArticle: getPubMedArticle,
@@ -360,12 +360,6 @@ angular.module('oncokbApp').factory('Cache', ['$http', 'OncoKB', function($http,
         reset: function() {
             return setStatus('reset');
         },
-        enable: function() {
-            return setStatus('enable');
-        },
-        disable: function() {
-            return setStatus('disable');
-        },
         getStatus: getStatus,
         updateGene: updateGene
     };
@@ -379,18 +373,30 @@ angular.module('oncokbApp').factory('OncoTree', ['$http', 'OncoKB', '_', functio
             'tumorTypes/search/maintype/' + mainType + '?exactMatch=true&version=' + OncoKB.config.oncoTreeVersion);
     }
 
-    function getMainTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/mainTypes');
+    function getTumorTypes() {
+        return $http.get(OncoKB.config.privateApiLink + 'utils/tumorTypes');
     }
 
-    function getSubTypes() {
-        return $http.get(OncoKB.config.privateApiLink + 'utils/oncotree/subtypes');
+    function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+        var queryStr = [];
+        if (levelOfEvidence) {
+            queryStr.push('levelOfEvidence=' + levelOfEvidence);
+        }
+        if (onlyDetailedCancerType) {
+            queryStr.push('onlyDetailedCancerType=TRUE');
+        }
+        if (queryStr.length > 0) {
+            queryStr = '?' + queryStr.join('&');
+        } else {
+            queryStr = '';
+        }
+        return $http.post(OncoKB.config.privateApiLink + 'utils/relevantCancerTypes' + queryStr, cancerTypes);
     }
 
     return {
         getTumorTypeByMainType: getTumorTypeByMainType,
-        getMainTypes: getMainTypes,
-        getSubTypes: getSubTypes
+        getTumorTypes: getTumorTypes,
+        getRelevantCancerTypes: getRelevantCancerTypes,
     };
 }]);
 
@@ -424,7 +430,7 @@ angular.module('oncokbApp').factory('DataValidation', function(OncoKB) {
 });
 
 angular.module('oncokbApp')
-    .factory('PrivateApiUtils', ['$http', 'OncoKB', function($http, OncoKB) {
+    .factory('PrivateApi', ['$http', 'OncoKB', function($http, OncoKB) {
         'use strict';
 
         function getSuggestedVariants() {
@@ -437,6 +443,13 @@ angular.module('oncokbApp')
             }
             return $http.get(OncoKB.config.privateApiLink + 'utils/isHotspot?hugoSymbol=' +
                 hugoSymbol + '&variant=' + variant);
+        }
+
+        function getTranscripts(hugoSymbol) {
+            if (!hugoSymbol) {
+                return null;
+            }
+            return $http.get(OncoKB.config.privateApiLink + 'transcripts/' + hugoSymbol);
         }
 
         function getVariantAnnotation(entrezGeneId, alteration, tumorType) {
@@ -457,6 +470,7 @@ angular.module('oncokbApp')
         return {
             getSuggestedVariants: getSuggestedVariants,
             getVariantAnnotation: getVariantAnnotation,
+            getTranscripts: getTranscripts,
             isHotspot: isHotspot
         };
     }]);
@@ -476,6 +490,7 @@ angular.module('oncokbApp')
             added: [], // newly added sections
             removed: [], // deleted sections
             precise: [], // the exact item that has been changed
+            openInReviewMode: [], // Store uuids for updated and added evidences
             reviewObjs: {}
         };
     }]);
@@ -518,7 +533,9 @@ angular.module('oncokbApp')
             this.background = '';
             this.background_uuid = getUUID();
             this.isoform_override = '';
+            this.isoform_override_grch38 = '';
             this.dmp_refseq_id = '';
+            this.dmp_refseq_id_grch38 = '';
             this.type = {
                 tsg: '',
                 tsg_uuid: getUUID(),
@@ -641,7 +658,9 @@ angular.module('oncokbApp')
                 hugoSymbol: _.isUndefined(item.gene) ? item.hugoSymbol: item.gene.hugoSymbol,
                 uuid: item.uuid,
                 mutation: mutation,
-                tumorType: item.cancerType,
+                tumorType: item.cancerTypes.map(function(cancerType) {
+                    return cancerType.subtype ? cancerType.subtype : cancerType.mainType;
+                }).join(", "),
                 drugs: drugs,
                 lastReview: item.lastReview,
                 oncogene: _.isUndefined(item.gene) ? item.oncogene : item.gene.oncogene,

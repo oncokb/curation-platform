@@ -49,17 +49,85 @@
                 </span>
             </div>
         </div>
-        <div ng-show="!reviewMode">
-            <span ng-if="::gene.isoform_override" style="margin-right: 10px">Isoform: {{::gene.isoform_override}}
-                <a href="https://www.ensembl.org/id/{{gene.curatedIsoform}}" target="_blank">
-                    <i class="fa fa-external-link"></i>
-                </a>
-            </span>
-            <span ng-if="::gene.dmp_refseq_id">RefSeq: {{::gene.dmp_refseq_id}}
-                <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id}}" target="_blank">
-                    <i class="fa fa-external-link"></i>
-                </a>
-            </span>
+        <div ng-show="!reviewMode" style="margin-top: 5px">
+            <div class="gene-grch37">
+                <span><b>GRCh37</b></span>
+                <span> Isoform:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.isoform_override"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.isoform_override ? gene.isoform_override : '???'}}
+                        <a
+                            ng-if="gene.isoform_override"
+                            href="https://www.ensembl.org/id/{{gene.isoform_override}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+                <span> RefSeq:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.dmp_refseq_id"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.dmp_refseq_id ? gene.dmp_refseq_id : '???'}}
+                        <a
+                            ng-if="gene.dmp_refseq_id"
+                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+            </div>
+            <div class="gene-grch38" style="margin-top: 5px">
+                <span><b>GRCh38</b></span>
+                <span> Isoform:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.isoform_override_grch38"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.isoform_override_grch38 ? gene.isoform_override_grch38 : '???'}}
+                        <a
+                            ng-if="gene.isoform_override_grch38"
+                            href="https://www.ensembl.org/id/{{gene.isoform_override_grch38}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+                <span> RefSeq:
+                    <input
+                        ng-show="developerCheck()"
+                        type="text"
+                        ng-model="gene.dmp_refseq_id_grch38"
+                    />
+                    <span
+                        ng-show="!developerCheck()"
+                    >
+                        {{gene.dmp_refseq_id_grch38 ? gene.dmp_refseq_id_grch38 : '???'}}
+                        <a
+                            ng-if="gene.dmp_refseq_id_grch38"
+                            href="https://www.ncbi.nlm.nih.gov/nuccore/{{::gene.dmp_refseq_id_grch38}}"
+                            target="_blank">
+                            <i class="fa fa-external-link"></i>
+                        </a>
+                    </span>
+                </span>
+            </div>
         </div>
         <div ng-if="reviewMode">
             <br/>
@@ -346,6 +414,7 @@
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
+                                        <i class="fa fa-edit" ng-if="fileEditable && tumor.diagnostic && tumor.diagnostic.level && tumor.diagnostic.level ==='Dx1'" qtip qtip-content="Click to see the cancer types this evidence applies to" ng-click="modifyDx1ApplicableCancerType(path)"></i>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
                                         </span>
@@ -600,7 +669,7 @@
                                                  no-results-text="'Could not find any'"
                                                  ng-model="cancerType.mainType"
                                                  ng-disabled="!fileEditable"
-                                                 ng-options="tt.name for tt in oncoTree.mainTypes | orderBy: 'name'"
+                                                 ng-options="tt.mainType for tt in oncoTree.mainTypes | orderBy: 'mainType'"
                                                  ng-change="subIsSameWithMain(cancerType, 'main')">
                                             <option value=""></option>
                                         </select>
@@ -611,7 +680,7 @@
                                     allow-single-deselect="true"
                                     ng-model="cancerType.subtype"
                                     ng-disabled="!fileEditable"
-                                    ng-options="tt.name for tt in cancerType.oncoTreeTumorTypes | orderBy: 'name' track by tt.code"
+                                    ng-options="tt.subtype for tt in cancerType.oncoTreeTumorTypes | orderBy: 'subtype' track by tt.code"
                                     ng-change="subIsSameWithMain(cancerType, 'sub')">
                                 <option value=""></option>
                             </select>
@@ -648,21 +717,14 @@
                 </button>
             </h3>
             <div ng-repeat="variant in vusItems">
-                <div class="input-group  input-group-sm vusGroup">
-            <span class="input-group-addon" ng-class="getVUSClass(variant.time.value)" qtip type="vusItem" time="variant.time.value" by="variant.time.by.name">{{::variant.name}}</span>
-                    <span class="input-group-btn" ng-show="fileEditable">
-                        <button class="btn btn-default" type="button" style="text-align:left">
-                            <comments-dict key="'name'" path="getObservePath({type: 'vus', variant: variant})"></comments-dict>
-                        </button>
-                        <button class="btn btn-default"
-                                type="button" ng-click="refreshVUS(variant)" qtip content="Recheck: set the date to today">
-                            <i class="fa fa-refresh"></i>
-                        </button>
-                        <button class="btn btn-default" type="button" ng-click="removeVUS(variant)">
-                            <i class="fa fa-trash-o"></i>
-                        </button>
-                    </span>
-                </div>
+                <vus-item
+                    file-editable="fileEditable"
+                    vus="variant"
+                    comments-path="getObservePath({type: 'vus', variant: variant})"
+                    on-delete="removeVUS(variant)"
+                    on-update="editVUSItem(variant, newName)"
+                    on-refresh="refreshVUS(variant)"
+                />
             </div>
             <div class="input-group input-group-sm vusGroup">
                 <input type="text" class="form-control" ng-model="newVUSName" placeholder="Variant Name"/>
