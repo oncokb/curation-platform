@@ -132,6 +132,153 @@ angular.module('oncokbApp')
                     $scope.loading = false;
                 });
             };
+
+            function getLocationTarget(location) {
+                // return gene/alteration/evidence
+                var geneLocations = ['Gene Summary', 'Gene Background'];
+                var alterationLocations = ['Mutation Effect'];
+                if (geneLocations.indexOf(location) !== -1) {
+                    return 'gene';
+                } else if (_.filter(alterationLocations, function (altLoc) {
+                    return _.endsWith(location, altLoc);
+                }).length > 0) {
+                    return 'alteration';
+                } else if (location.indexOf(',') === -1) {
+                    return 'alteration';
+                } else {
+                    return 'evidence';
+                }
+            }
+
+            function getPastTense(operation) {
+                switch (operation) {
+                    case 'add':
+                     return 'Added';
+                    case 'delete':
+                     return 'Deleted';
+                    case 'update':
+                     return 'Updated';
+                    case 'name change':
+                     return 'Name Changed';
+                    default:
+                     return '';
+                }
+            }
+
+            function addRecordToFile(content, records) {
+                _.sortBy(records, ['gene', 'timestamp']).forEach(function (record) {
+                    var isTreatmentRecord = false;
+                    var updatedLocation = record.record.location
+                        .split(',')
+                        .map(function (item) {
+                            return item.trim().split('+').map(function (drug) {
+                                drug = drug.trim();
+                                if ($rootScope.drugList[drug]) {
+                                    return $rootScope.drugList[drug].drugName;
+                                } else {
+                                    return drug;
+                                }
+                            }).join(' + ');
+                        })
+                        .filter(function (locationItem) {
+                            if (new RegExp([
+                                'Standard implications for sensitivity to therapy',
+                                'Standard implications for resistance to therapy',
+                                'Investigational implications for sensitivity to therapy',
+                                'Investigational implications for resistance to therapy',
+                                'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_SENSITIVITY',
+                                'STANDARD_THERAPEUTIC_IMPLICATIONS_FOR_DRUG_RESISTANCE',
+                                'INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_SENSITIVITY',
+                                'INVESTIGATIONAL_THERAPEUTIC_IMPLICATIONS_DRUG_RESISTANCE',
+                            ].join("|")).test(locationItem)) {
+                                isTreatmentRecord = true;
+                                return false;
+                            }
+                            return locationItem !== 'null' && !!locationItem;
+                        })
+                        .join(', ');
+
+                    // remove the evidence type from the location
+                    // var recordDate = new Date(record.timeStamp);
+                    if (isTreatmentRecord) {
+                        var level = record.record.operation === 'delete' ? record.record.old.level : record.record.new.level;
+                        content.push([record.gene, updatedLocation, level, getPastTense(record.record.operation)].join(' '));
+                    } else if (_.endsWith(updatedLocation, 'Mutation Effect')) {
+                        var targetKey = record.record.operation === 'deleted' ? 'old' : 'new';
+                        var target = record.record[targetKey];
+                        var location = '';
+                        var localTargetField = '';
+                        if (target.oncogenic) {
+                            location = 'Oncogenicity';
+                            localTargetField = 'oncogenic';
+                        } else if (target.effect) {
+                            location = 'Mutation Effect';
+                            localTargetField = 'effect';
+                        } else if (target.description) {
+                            location = 'Mutation Effect Description';
+                        } else{
+                            location = 'Mutation Effect';
+                            record.record.operation = 'delete';
+                        }
+                        content.push([record.gene, updatedLocation.replace('Mutation Effect', location), getPastTense(record.record.operation)].join(' '));
+                        if (localTargetField) {
+                            content.push(['\t', 'New:', record.record.new[localTargetField]].join(' '));
+                            content.push(['\t', 'Old:', record.record.old[localTargetField]].join(' '));
+                        }
+                    } else if (record.record.operation === 'name change') {
+                        if (record.record.new !== record.record.old) {
+                            content.push([record.gene, updatedLocation, getPastTense(record.record.operation)].join(' '));
+                            content.push(['\t', 'New:', record.record.new].join(' '));
+                            content.push(['\t', 'Old:', record.record.old].join(' '));
+                        }
+                    } else {
+                        content.push([record.gene, updatedLocation, getPastTense(record.record.operation)].join(' '));
+                    }
+                });
+                return _.uniq(content);
+            }
+            $scope.downloadHistoryDiff = function() {
+                var result = {
+                    gene : [],
+                    alteration: [],
+                    evidence: []
+                };
+                $scope.historySearchResults.forEach(function(recordByTime){
+                    recordByTime.records.forEach(function (record) {
+                        var locationTarget = getLocationTarget(record.location);
+                        result[locationTarget].push({
+                            gene: recordByTime.gene,
+                            timeStamp: recordByTime.timeStamp,
+                            record: record
+                        });
+                    });
+                });
+
+                var content = [];
+                if (result.gene.length > 0) {
+                    content.push('Gene:');
+                    content = addRecordToFile(content, result.gene);
+                    content.push('');
+                }
+                if (result.alteration.length > 0) {
+                    content.push('Alteration:');
+                    content = addRecordToFile(content, result.alteration);
+                    content.push('');
+                }
+                if (result.evidence.length > 0) {
+                    content.push('Evidence:');
+                    content = addRecordToFile(content, result.evidence);
+                    content.push('');
+                }
+                var blob = new Blob([content.join('\n')], {
+                    type: 'text/plain;charset=utf-8;'
+                });
+                saveAs(blob, 'history_diff_note.txt');
+
+            };
+
+
+
             function filterHistoryRecord(record) {
                 _.map(record, function(value, key) {
                     if (key.match(/(_review|_uuid)+/g)) {
