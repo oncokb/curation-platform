@@ -2,9 +2,9 @@
 
 angular.module('oncokbApp')
     .controller('ToolsCtrl', ['$scope', 'dialogs', 'OncoKB', 'DatabaseConnector', '$timeout', '_', 'FindRegex',
-        'mainUtils', 'loadFiles', '$rootScope', 'DTColumnDefBuilder', 'DTOptionsBuilder', 'FirebaseModel', '$q',
+        'mainUtils', 'loadFiles', '$rootScope', 'DTColumnDefBuilder', 'DTOptionsBuilder', 'FirebaseModel', '$q', '$firebaseObject',
         function($scope, dialogs, OncoKB, DatabaseConnector, $timeout, _, FindRegex, mainUtils, loadFiles, $rootScope,
-                 DTColumnDefBuilder, DTOptionsBuilder, FirebaseModel, $q) {
+                 DTColumnDefBuilder, DTOptionsBuilder, FirebaseModel, $q, $firebaseObject) {
             $scope.init = function() {
                 $scope.newGenes = [];
                 $scope.loading = false;
@@ -18,6 +18,7 @@ angular.module('oncokbApp')
                         'Last 30 Days': [moment().subtract(29, 'days'), moment()]
                     }
                 };
+                $scope.ugtData = {};
                 loadFiles.load('history').then(function() {
                     $scope.geneNames = _.keys($rootScope.historyData);
                 }, function() {
@@ -43,6 +44,59 @@ angular.module('oncokbApp')
                 DTColumnDefBuilder.newColumnDef(2).withOption('sType', 'date'),
                 DTColumnDefBuilder.newColumnDef(3)
             ];
+            $scope.$watch('ugtData.gene', function (n) {
+                if (n) {
+                    $firebaseObject(firebase.database().ref('Genes/' + n))
+                        .$bindTo($scope, "ugtData.firebaseGene")
+                        .then(function () {
+                            if ($scope.ugtData.firebaseGene) {
+                                $scope.ugtData.grch37Isoform = $scope.ugtData.firebaseGene.isoform_override;
+                                $scope.ugtData.grch37RefSeq = $scope.ugtData.firebaseGene.dmp_refseq_id;
+                                $scope.ugtData.grch38Isoform = $scope.ugtData.firebaseGene.isoform_override_grch38;
+                                $scope.ugtData.grch38RefSeq = $scope.ugtData.firebaseGene.dmp_refseq_id_grch38;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.error("Error:", error);
+                        });
+                } else {
+                    $scope.ugtData = {
+                        updating: false,
+                        gene: '',
+                        grch37Isoform: '',
+                        grch37RefSeq: '',
+                        grch38Isoform: '',
+                        grch38RefSeq: '',
+                    };
+                }
+            });
+            $scope.updateGeneTranscript = function () {
+                $scope.ugtData.updating = true;
+                DatabaseConnector
+                    .updateGeneTranscript(
+                        $scope.ugtData.gene,
+                        null,
+                        $scope.ugtData.grch37Isoform,
+                        $scope.ugtData.grch37RefSeq,
+                        $scope.ugtData.grch38Isoform,
+                        $scope.ugtData.grch38RefSeq,
+                    )
+                    .then(function () {
+                        // successfully updated the transcript in the production
+                        // update the transcript in the firebase
+                        $scope.ugtData.firebaseGene.isoform_override = $scope.ugtData.grch37Isoform;
+                        $scope.ugtData.firebaseGene.dmp_refseq_id = $scope.ugtData.grch37RefSeq;
+                        $scope.ugtData.firebaseGene.isoform_override_grch38 = $scope.ugtData.grch38Isoform;
+                        $scope.ugtData.firebaseGene.dmp_refseq_id_grch38 = $scope.ugtData.grch38RefSeq;
+                        dialogs.notify('Successful', 'Successfully updated gene transcript');
+                    })
+                    .catch(function (error) {
+                        dialogs.error('Failed to update gene transcript', error.data);
+                    })
+                    .finally(function () {
+                        $scope.ugtData.updating = false;
+                    });
+            };
 
             $scope.searchHistory = function(genesForHistory) {
                 $scope.errorMessage = '';

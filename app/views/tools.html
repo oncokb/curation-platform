@@ -12,6 +12,58 @@
     </div>
     <hr/>
 
+    <h3>Update Gene Transcript</h3>
+    <div>
+        <div class="row">
+            <div class="col-sm-2">Select Gene:</div>
+            <div class="col-sm-6"  style="max-width: 400px;">
+                <select chosen
+                        data-placeholder="Enter A Gene"
+                        ng-model="ugtData.gene"
+                        ng-options="m as m for m in hugoSymbols"
+                        class="chosen-select">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div ng-if="ugtData.gene">
+            <br/>
+            <div class="row">
+                <div class="col-sm-2">
+                    <input type="text" class="form-control input-sm" placeholder="GRCh37 Isoform"
+                           ng-model="ugtData.grch37Isoform"
+                    >
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control input-sm" placeholder="GRCh37 RefSeq"
+                           ng-model="ugtData.grch37RefSeq"
+                    >
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control input-sm" placeholder="GRCh38 Isoform"
+                           ng-model="ugtData.grch38Isoform"
+                    >
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control input-sm" placeholder="GRCh38 RefSeq"
+                           ng-model="ugtData.grch38RefSeq"
+                    >
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-12">
+                    <button ng-disabled="!ugtData.grch37Isoform || geneForUpdatingTranscript" type="button"
+                            class="btn btn-default" ng-click="updateGeneTranscript()">
+                        <span ng-show="ugtData.updating"><i class="fa fa-spinner fa-spin"></i></span>
+                        <span ng-show="!ugtData.updating">Update</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+
     <h3>Review History</h3>
     <div class="row first-row-margin">
         <div class="col-sm-1">Genes:</div>
