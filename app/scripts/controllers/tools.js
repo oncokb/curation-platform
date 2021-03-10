@@ -45,11 +45,15 @@ angular.module('oncokbApp')
                 DTColumnDefBuilder.newColumnDef(3)
             ];
             $scope.$watch('ugtData.gene', function (n) {
+                if($scope.ugtData.firebaseGeneUnbind) {
+                    $scope.ugtData.firebaseGeneUnbind();
+                }
                 if (n) {
                     $firebaseObject(firebase.database().ref('Genes/' + n))
                         .$bindTo($scope, "ugtData.firebaseGene")
-                        .then(function () {
+                        .then(function (unbind) {
                             if ($scope.ugtData.firebaseGene) {
+                                $scope.ugtData.firebaseGeneUnbind = unbind;
                                 $scope.ugtData.grch37Isoform = $scope.ugtData.firebaseGene.isoform_override;
                                 $scope.ugtData.grch37RefSeq = $scope.ugtData.firebaseGene.dmp_refseq_id;
                                 $scope.ugtData.grch38Isoform = $scope.ugtData.firebaseGene.isoform_override_grch38;
@@ -61,6 +65,9 @@ angular.module('oncokbApp')
                         });
                 } else {
                     $scope.ugtData = {
+                        validating: false,
+                        validated: false,
+                        validationResult: '',
                         updating: false,
                         gene: '',
                         grch37Isoform: '',
@@ -91,10 +98,42 @@ angular.module('oncokbApp')
                         dialogs.notify('Successful', 'Successfully updated gene transcript');
                     })
                     .catch(function (error) {
+                        // reset back to the original content
+                        $scope.ugtData.grch37Isoform = $scope.ugtData.firebaseGene.isoform_override;
+                        $scope.ugtData.grch37RefSeq = $scope.ugtData.firebaseGene.dmp_refseq_id;
+                        $scope.ugtData.grch38Isoform = $scope.ugtData.firebaseGene.isoform_override_grch38;
+                        $scope.ugtData.grch38RefSeq = $scope.ugtData.firebaseGene.dmp_refseq_id_grch38;
+
                         dialogs.error('Failed to update gene transcript', error.data);
                     })
                     .finally(function () {
                         $scope.ugtData.updating = false;
+                    });
+            };
+            $scope.validateGeneTranscriptUpdate = function () {
+                $scope.ugtData.validating = true;
+                DatabaseConnector
+                    .validateGeneTranscriptUpdate(
+                        $scope.ugtData.gene,
+                        null,
+                        $scope.ugtData.grch37Isoform,
+                        $scope.ugtData.grch38Isoform,
+                    )
+                    .then(function (content) {
+                        // successfully updated the transcript in the production
+                        // update the transcript in the firebase
+                        $scope.ugtData.validationResult = content.data;
+                        $scope.ugtData.validated = true;
+                    })
+                    .catch(function (error) {
+                        if (error && error.data) {
+                            $scope.ugtData.validationResult = 'Error:\n' + error.data;
+                        } else {
+                            $scope.ugtData.validationResult = 'Error:\n' + JSON.stringify(error);
+                        }
+                    })
+                    .finally(function () {
+                        $scope.ugtData.validating = false;
                     });
             };
 

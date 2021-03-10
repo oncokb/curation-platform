@@ -427,6 +427,10 @@ angular.module('oncokbApp')
                 return PrivateApi.updateGeneTranscript(hugoSymbol, entrezGeneId, grch37Isoform, grch37RefSeq, grch38Isoform, grch38RefSeq)
             }
 
+            function validateGeneTranscriptUpdate(hugoSymbol, entrezGeneId, grch37Isoform, grch38Isoform) {
+                return PrivateApi.validateGeneTranscriptUpdate(hugoSymbol, entrezGeneId, grch37Isoform, grch38Isoform)
+            }
+
             function getOncogeneTSG() {
                 var deferred = $q.defer();
                 ApiUtils.getOncogeneTSG()
@@ -599,6 +603,7 @@ angular.module('oncokbApp')
                 testAccess: testAccess,
                 getIsoforms: getIsoforms,
                 updateGeneTranscript: updateGeneTranscript,
+                validateGeneTranscriptUpdate: validateGeneTranscriptUpdate,
                 getOncogeneTSG: getOncogeneTSG,
                 getSuggestedVariants: getSuggestedVariants,
                 isHotspot: isHotspot,
