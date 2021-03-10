@@ -478,6 +478,26 @@ angular.module('oncokbApp')
             return null;
         }
 
+        function validateGeneTranscriptUpdate(hugoSymbol, entrezGeneId, grch37Isoform, grch38Isoform) {
+            if ((hugoSymbol || entrezGeneId) && grch37Isoform) {
+                var urlParams = [];
+                if (hugoSymbol) {
+                    urlParams.push('hugoSymbol=' + hugoSymbol);
+                }
+                if (entrezGeneId) {
+                    urlParams.push('entrezGeneId=' + entrezGeneId);
+                }
+                if (grch37Isoform) {
+                    urlParams.push('grch37Isoform=' + grch37Isoform);
+                }
+                if (grch38Isoform) {
+                    urlParams.push('grch38Isoform=' + grch38Isoform);
+                }
+                return $http.get(OncoKB.config.privateApiLink + 'utils/validateTranscriptUpdate?' + urlParams.join('&'));
+            }
+            return null;
+        }
+
         function getVariantAnnotation(entrezGeneId, alteration, tumorType) {
             var params = {
                 entrezGeneId: entrezGeneId,
@@ -498,6 +518,7 @@ angular.module('oncokbApp')
             getVariantAnnotation: getVariantAnnotation,
             getTranscripts: getTranscripts,
             updateGeneTranscript: updateGeneTranscript,
+            validateGeneTranscriptUpdate: validateGeneTranscriptUpdate,
             isHotspot: isHotspot
         };
     }]);
