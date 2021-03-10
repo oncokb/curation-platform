@@ -12,6 +12,7 @@
     </div>
     <hr/>
 
+    <div ng-if="internal">
     <h3>Update Gene Transcript</h3>
     <div>
         <div class="row">
@@ -65,10 +66,11 @@
                 </div>
                 <div class="col-sm-12" ng-if="!!ugtData.validationResult">
                     <div>Validation Result:</div>
-                    <div>{{ugtData.validationResult}}</div>
+                    <div style="font-family: monospace; overflow: auto">{{ugtData.validationResult}}</div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <hr/>
 
