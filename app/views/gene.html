@@ -414,9 +414,12 @@
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
-                                        <i class="fa fa-edit" ng-if="fileEditable && tumor.diagnostic && tumor.diagnostic.level && tumor.diagnostic.level ==='Dx1'" qtip qtip-content="Click to see the cancer types this evidence applies to" ng-click="modifyDx1ApplicableCancerType(path)"></i>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
+                                        </span>
+                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.diagnostic && tumor.diagnostic.level">
+                                            RCTs:
+                                            <i class="fa fa-edit" ng-click="modifyEvidenceRelevantCancerTypes(path+'/diagnostic', tumor.diagnostic_uuid, tumor.diagnostic.level)"></i>
                                         </span>
                                         <review-panel hugo-symbol="gene.name" uuid="tumor.diagnostic_uuid"
                                                       review-obj="tumor.diagnostic_review"
@@ -460,6 +463,10 @@
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'prognostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'prognostic'" path="path"></comments-dict>
+                                        </span>
+                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.prognostic && tumor.prognostic.level">
+                                            RCTs:
+                                            <i class="fa fa-edit" ng-click="modifyEvidenceRelevantCancerTypes(path+'/prognostic', tumor.prognostic_uuid, tumor.prognostic.level)"></i>
                                         </span>
                                         <review-panel hugo-symbol="gene.name" uuid="tumor.prognostic_uuid"
                                                       review-obj="tumor.prognostic_review"
@@ -529,6 +536,10 @@
                                                                 </span>
                                                             </div>
                                                             <span style="float:right" ng-show="!reviewMode && fileEditable">
+                                                                <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && treatment.level">
+                                                                    RCTs:
+                                                                    <i class="fa fa-edit" ng-click="modifyEvidenceRelevantCancerTypes(path, treatment.name_uuid, treatment.level)"></i>
+                                                                </span>
                                                                 <span ng-if="me.admin && internal">
                                                                     <i class="fa fa-arrows" uib-tooltip-placement="top"
                                                                        uib-tooltip="{{movingInfo.message}}"
