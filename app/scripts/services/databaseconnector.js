@@ -401,9 +401,9 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+            function getRelevantCancerTypes(levelOfEvidence, cancerTypes) {
                 var deferred = $q.defer();
-                OncoTree.getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes)
+                OncoTree.getRelevantCancerTypes(levelOfEvidence, cancerTypes)
                     .then(function(data) {
                         deferred.resolve(data);
                     }, function(result) {

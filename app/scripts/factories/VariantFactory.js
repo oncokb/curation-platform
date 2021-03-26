@@ -377,13 +377,10 @@ angular.module('oncokbApp').factory('OncoTree', ['$http', 'OncoKB', '_', functio
         return $http.get(OncoKB.config.privateApiLink + 'utils/tumorTypes');
     }
 
-    function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes) {
+    function getRelevantCancerTypes(levelOfEvidence, cancerTypes) {
         var queryStr = [];
         if (levelOfEvidence) {
             queryStr.push('levelOfEvidence=' + levelOfEvidence);
-        }
-        if (onlyDetailedCancerType) {
-            queryStr.push('onlyDetailedCancerType=TRUE');
         }
         if (queryStr.length > 0) {
             queryStr = '?' + queryStr.join('&');

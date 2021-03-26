@@ -2264,13 +2264,12 @@ angular.module('oncokbApp')
                 });
             };
 
-            function getRelevantCancerTypes(levelOfEvidence, onlyDetailedCancerType, cancerTypes, relevantCancerTypes) {
+            function getRelevantCancerTypes(levelOfEvidence, cancerTypes, relevantCancerTypes) {
                 var deferred = $q.defer();
                 // When the relevant cancer types is empty, it means there is no special list. We need to fetch the relevant cancer types from database
                 if (!relevantCancerTypes || relevantCancerTypes.length == 0) {
                     DatabaseConnector.getRelevantCancerTypes(
                         levelOfEvidence,
-                        onlyDetailedCancerType,
                         _.map(cancerTypes, function(cancerType) {
                             return {
                                 mainType: cancerType.mainType,
@@ -2293,13 +2292,13 @@ angular.module('oncokbApp')
                 var tumorRef = $scope.gene.mutations[indices[0]].tumors[indices[1]];
                 var obj = $firebaseObject(firebase.database().ref(path));
                 obj.$loaded().then(function() {
-                    getRelevantCancerTypes('LEVEL_' + level, true, tumorRef.cancerTypes, obj.relevantCancerTypes)
+                    getRelevantCancerTypes('LEVEL_' + level, tumorRef.cancerTypes, obj.relevantCancerTypes)
                         .then(function (data) {
                             var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
                                 parentNodeRefType: 'ref',
                                 parentNodeRef: $firebaseObject(firebase.database().ref(path)),
                                 uuid: uuid,
-                                cancerTypes: data.map(function (cancerType) {
+                                cancerTypes: _.sortBy(data, 'mainType').map(function (cancerType) {
                                     return {
                                         mainType: cancerType.mainType,
                                         subtype: cancerType.subtype,
