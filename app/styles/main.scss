@@ -1186,3 +1186,10 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
         min-width: 100px;
     }
 }
+
+.change-relevant-cancer-types {
+    border: 1px dashed grey;
+    border-radius: 5px;
+    padding-left: 5px;
+    margin: 0 5px;
+}
