@@ -2182,23 +2182,23 @@ angular.module('oncokbApp')
 
                     // remove all relevant cancer types
                     if (tumorRef.diagnostic && tumorRef.diagnostic.relevantCancerTypes) {
-                        $scope.updateRelevantCancerTypes(tumorRef.diagnostic_uuid, tumorRefType, tumorRef.diagnostic, previousCancerTypes, []);
+                        $scope.updateRelevantCancerTypes([tumorRef.diagnostic_uuid, tumorRef.diagnosticSummary_uuid], tumorRefType, tumorRef.diagnostic, previousCancerTypes, []);
                     }
                     if (tumorRef.prognostic && tumorRef.prognostic.relevantCancerTypes) {
-                        $scope.updateRelevantCancerTypes(tumorRef.prognostic_uuid, tumorRefType, tumorRef.prognostic, previousCancerTypes, []);
+                        $scope.updateRelevantCancerTypes([tumorRef.prognostic_uuid, tumorRef.prognosticSummary_uuid], tumorRefType, tumorRef.prognostic, previousCancerTypes, []);
                     }
 
                     _.forEach(tumorRef.TIs, function (ti) {
                         _.forEach(ti.treatments, function (treatment) {
                             if (!!treatment.relevantCancerTypes) {
-                                $scope.updateRelevantCancerTypes(treatment.name_uuid, tumorRefType, treatment, previousCancerTypes, []);
+                                $scope.updateRelevantCancerTypes([treatment.name_uuid], tumorRefType, treatment, previousCancerTypes, []);
                             }
                         });
                     });
                 }
             }
 
-            $scope.updateRelevantCancerTypes = function (uuid, objRefType, objRef, previousCancerTypes, newCancerTypes) {
+            $scope.updateRelevantCancerTypes = function (uuids, objRefType, objRef, previousCancerTypes, newCancerTypes) {
                 if (!_.isEqual(previousCancerTypes, newCancerTypes)) {
                     if (_.isUndefined(objRef.relevantCancerTypes_review)) {
                         objRef.relevantCancerTypes_review = {};
@@ -2208,22 +2208,32 @@ angular.module('oncokbApp')
 
                     mainUtils.setUUIDInReview(objRef.relevantCancerTypes_uuid);
                     objRef.relevantCancerTypes = newCancerTypes;
+
+                    if(uuids) {
+                        uuids = _.filter(uuids, function (uuid) {
+                            return !!uuid
+                        });
+                    }
                     if (objRefType === 'ref') {
                         objRef.$save().then(function (ref) {
                             DatabaseConnector
-                                .updateEvidenceRelevantCancerTypesBatch([{
-                                    uuid: uuid,
-                                    relevantCancerTypes: objRef.relevantCancerTypes
-                                }]);
+                                .updateEvidenceRelevantCancerTypesBatch(uuids.map(function (uuid) {
+                                    return {
+                                        uuid: uuid,
+                                        relevantCancerTypes: objRef.relevantCancerTypes
+                                    }
+                                }));
                         }, function (error) {
                             dialogs.error('Error', 'Failed to update relevant cancer types.' + JSON.stringify(error));
                         });
                     } else if (objRefType === 'scope') {
                         DatabaseConnector
-                            .updateEvidenceRelevantCancerTypesBatch([{
-                                uuid: uuid,
-                                relevantCancerTypes: objRef.relevantCancerTypes
-                            }]);
+                            .updateEvidenceRelevantCancerTypesBatch(uuids.map(function (uuid) {
+                                return {
+                                    uuid: uuid,
+                                    relevantCancerTypes: objRef.relevantCancerTypes
+                                }
+                            }));
                     }
                 }
             }
@@ -2254,7 +2264,7 @@ angular.module('oncokbApp')
                 var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
                     parentNodeRef: tumorRef,
                     parentNodeRefType: 'scope',
-                    uuid: tumor.name_uuid,
+                    uuids: [tumor.name_uuid],
                     cancerTypes: tumor.cancerTypes,
                     oncoTree: $scope.oncoTree,
                     message: sectionsWithRCT.length > 0 ? 'Cautious before modifying, the following sections have customize relevant cancer types which will be reset to default once you change the cancer type.<br/>' + sectionsWithRCT.join('<br/>') : '',
@@ -2287,17 +2297,22 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            $scope.modifyEvidenceRelevantCancerTypes = function(path, uuid, level) {
+            $scope.modifyEvidenceRelevantCancerTypes = function(path, uuids, level) {
                 var indices = getIndexByPath(path);
                 var tumorRef = $scope.gene.mutations[indices[0]].tumors[indices[1]];
                 var obj = $firebaseObject(firebase.database().ref(path));
+                if(uuids) {
+                    uuids = _.filter(uuids, function (uuid) {
+                        return !!uuid
+                    });
+                }
                 obj.$loaded().then(function() {
                     getRelevantCancerTypes('LEVEL_' + level, tumorRef.cancerTypes, obj.relevantCancerTypes)
                         .then(function (data) {
                             var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
                                 parentNodeRefType: 'ref',
                                 parentNodeRef: $firebaseObject(firebase.database().ref(path)),
-                                uuid: uuid,
+                                uuids: uuids,
                                 cancerTypes: _.sortBy(data, 'mainType').map(function (cancerType) {
                                     return {
                                         mainType: cancerType.mainType,
@@ -3737,7 +3752,7 @@ angular.module('oncokbApp')
                     cancerTypes.push(cancerType);
                 }
             });
-            data.save(data.uuid, data.parentNodeRefType, data.parentNodeRef, data.cancerTypes, cancerTypes);
+            data.save(data.uuids, data.parentNodeRefType, data.parentNodeRef, data.cancerTypes, cancerTypes);
             $modalInstance.close();
         };
         $scope.$watch('meta.newCancerTypes', function (n) {
