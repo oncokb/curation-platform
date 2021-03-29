@@ -417,7 +417,7 @@
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
                                         </span>
-                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.diagnostic && tumor.diagnostic.level" ng-click="modifyEvidenceRelevantCancerTypes(path+'/diagnostic', tumor.diagnostic_uuid, tumor.diagnostic.level)">
+                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.diagnostic && tumor.diagnostic.level" ng-click="modifyEvidenceRelevantCancerTypes(path+'/diagnostic', [tumor.diagnosticSummary_uuid, tumor.diagnostic_uuid], tumor.diagnostic.level)">
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
@@ -464,7 +464,7 @@
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'prognostic'" path="path"></comments-dict>
                                         </span>
-                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.prognostic && tumor.prognostic.level" ng-click="modifyEvidenceRelevantCancerTypes(path+'/prognostic', tumor.prognostic_uuid, tumor.prognostic.level)">
+                                        <span style="float: right" class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && !reviewMode && tumor.prognostic && tumor.prognostic.level" ng-click="modifyEvidenceRelevantCancerTypes(path+'/prognostic', [tumor.prognosticSummary_uuid, tumor.prognostic_uuid], tumor.prognostic.level)">
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
@@ -536,7 +536,7 @@
                                                                 </span>
                                                             </div>
                                                             <span style="float:right" ng-show="!reviewMode && fileEditable">
-                                                                <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && treatment.level" ng-click="modifyEvidenceRelevantCancerTypes(path, treatment.name_uuid, treatment.level)">
+                                                                <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types this evidence applies to" ng-if="fileEditable && treatment.level" ng-click="modifyEvidenceRelevantCancerTypes(path, [treatment.name_uuid], treatment.level)">
                                                                     RCTs:
                                                                     <i class="fa fa-edit"></i>
                                                                 </span>
