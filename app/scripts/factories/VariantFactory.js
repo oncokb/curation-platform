@@ -470,7 +470,7 @@ angular.module('oncokbApp')
                 if (grch38RefSeq) {
                     urlParams.push('grch38RefSeq=' + grch38RefSeq);
                 }
-                return $http.get(OncoKB.config.privateApiLink + 'utils/updateTranscript?' + urlParams.join('&'));
+                return $http.get(OncoKB.config.internalPrivateApiLink + 'utils/updateTranscript?' + urlParams.join('&'));
             }
             return null;
         }
