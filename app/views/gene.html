@@ -312,6 +312,7 @@
                                         <p class="margin-bottom-0">New Content: </p>
                                     </span>
                                     <span>{{getCancerTypesNameInReview(tumor, tumor.cancerTypes_uuid, reviewMode)}}</span>
+                                    <span ng-if="tumor.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.relevantCancerTypes)}})</span>
                                 </span>
                                 <span ng-show="!reviewMode">
                                     <i class="fa fa-edit" ng-if="fileEditable" ng-click="modifyTumorType(mutation, tumor, path)"></i>
@@ -320,6 +321,10 @@
                                     </span>
                                     <span style="margin-left:5px" ng-bind-html="tumorContent[tumor.cancerTypes_uuid].result"></span>
                                     <span style="float:right" ng-if="fileEditable">
+                                        <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types for all evidences under this section." ng-if="fileEditable && !reviewMode" ng-click="modifyEvidenceRelevantCancerTypes(path)">
+                                            RCTs:
+                                            <i class="fa fa-edit"></i>
+                                        </span>
                                         <span ng-if="me.admin">
                                             <i class="fa fa-arrows" uib-tooltip-placement="top"
                                                uib-tooltip="{{movingInfo.message}}"
