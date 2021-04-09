@@ -1080,6 +1080,9 @@ angular.module('oncokbApp')
                             historyData.new = tumor.summary;
                             historyData.old = tumor.summary_review.lastReviewed;
                             reviewObj = tumor.summary_review;
+                            if(tumor.relevantCancerTypes) {
+                                data.relevantCancerTypes = tumor.relevantCancerTypes;
+                            }
                         }
                         break;
                     case 'DIAGNOSTIC_SUMMARY':
@@ -1094,6 +1097,8 @@ angular.module('oncokbApp')
                             // the diagnostic summary should have the same relevant cancer types as of diagnostic implications
                             if (tumor.diagnostic.relevantCancerTypes) {
                                 data.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
+                            } else if(tumor.relevantCancerTypes) {
+                                data.relevantCancerTypes = tumor.relevantCancerTypes;
                             }
                         }
                         break;
@@ -1109,6 +1114,8 @@ angular.module('oncokbApp')
                             // the prognostic summary should have the same relevant cancer types as of prognostic implications
                             if (tumor.prognostic.relevantCancerTypes) {
                                 data.relevantCancerTypes = tumor.prognostic.relevantCancerTypes;
+                            } else if(tumor.relevantCancerTypes) {
+                                data.relevantCancerTypes = tumor.relevantCancerTypes;
                             }
                         }
                         break;
@@ -1138,6 +1145,8 @@ angular.module('oncokbApp')
                         }
                         if (tumor.prognostic.relevantCancerTypes) {
                             data.relevantCancerTypes = tumor.prognostic.relevantCancerTypes;
+                        } else if(tumor.relevantCancerTypes) {
+                            data.relevantCancerTypes = tumor.relevantCancerTypes;
                         }
                         break;
                     case 'DIAGNOSTIC_IMPLICATION':
@@ -1166,6 +1175,8 @@ angular.module('oncokbApp')
                         }
                         if (tumor.diagnostic.relevantCancerTypes) {
                             data.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
+                        } else if(tumor.relevantCancerTypes) {
+                            data.relevantCancerTypes = tumor.relevantCancerTypes;
                         }
                         break;
                     case 'Standard implications for sensitivity to therapy':
@@ -1306,6 +1317,8 @@ angular.module('oncokbApp')
                     }
                     if (treatment.relevantCancerTypes) {
                         data.relevantCancerTypes = treatment.relevantCancerTypes;
+                    } else if(tumor.relevantCancerTypes) {
+                        data.relevantCancerTypes = tumor.relevantCancerTypes;
                     }
                     historyData.location = historyStr(mutation, tumor) + ', ' + data.evidenceType + ', ' + treatment.name;
                 }
@@ -2167,7 +2180,7 @@ angular.module('oncokbApp')
                 }
             };
 
-            $scope.updateCancerTypes = function(uuid, tumorRefType, tumorRef, previousCancerTypes, newCancerTypes) {
+            $scope.updateCancerTypes = function(uuid, tumorRefType, tumorRef, isTumorTypeLevel, previousCancerTypes, newCancerTypes) {
                 if (!_.isEqual(previousCancerTypes, newCancerTypes)) {
                     if (_.isUndefined(tumorRef.cancerTypes_review)) {
                         tumorRef.cancerTypes_review = {};
@@ -2181,24 +2194,28 @@ angular.module('oncokbApp')
                     tumorRef.cancerTypes = newCancerTypes;
 
                     // remove all relevant cancer types
+                    $scope.updateRelevantCancerTypes(getEvidenceUuidsUnderTumorType(tumorRef), tumorRefType, tumorRef, true, previousCancerTypes, []);
+                    delete tumorRef.relevantCancerTypes;
+
+                    // remove all relevant cancer types
                     if (tumorRef.diagnostic && tumorRef.diagnostic.relevantCancerTypes) {
-                        $scope.updateRelevantCancerTypes([tumorRef.diagnostic_uuid, tumorRef.diagnosticSummary_uuid], tumorRefType, tumorRef.diagnostic, previousCancerTypes, []);
+                        delete tumorRef.diagnostic.relevantCancerTypes;
                     }
                     if (tumorRef.prognostic && tumorRef.prognostic.relevantCancerTypes) {
-                        $scope.updateRelevantCancerTypes([tumorRef.prognostic_uuid, tumorRef.prognosticSummary_uuid], tumorRefType, tumorRef.prognostic, previousCancerTypes, []);
+                        delete tumorRef.diagnostic.relevantCancerTypes;
                     }
 
                     _.forEach(tumorRef.TIs, function (ti) {
                         _.forEach(ti.treatments, function (treatment) {
                             if (!!treatment.relevantCancerTypes) {
-                                $scope.updateRelevantCancerTypes([treatment.name_uuid], tumorRefType, treatment, previousCancerTypes, []);
+                                delete treatment.relevantCancerTypes
                             }
                         });
                     });
                 }
             }
 
-            $scope.updateRelevantCancerTypes = function (uuids, objRefType, objRef, previousCancerTypes, newCancerTypes) {
+            $scope.updateRelevantCancerTypes = function (uuids, objRefType, objRef, isTumorTypeLevel, previousCancerTypes, newCancerTypes) {
                 if (!_.isEqual(previousCancerTypes, newCancerTypes)) {
                     if (_.isUndefined(objRef.relevantCancerTypes_review)) {
                         objRef.relevantCancerTypes_review = {};
@@ -2209,6 +2226,24 @@ angular.module('oncokbApp')
                     mainUtils.setUUIDInReview(objRef.relevantCancerTypes_uuid);
                     objRef.relevantCancerTypes = newCancerTypes;
 
+                    // if this is on tumor type level, we should remove all relevant cancer types underneth
+                    if (isTumorTypeLevel) {
+                        if (objRef.diagnostic) {
+                            delete objRef.diagnostic.relevantCancerTypes;
+                        }
+                        if (objRef.prognostic) {
+                            delete objRef.prognostic.relevantCancerTypes;
+                        }
+
+                        for (var i = 0; i < 4; i++) {
+                            var ti = objRef.TIs[i];
+                            if (_.isArray(ti.treatments)) {
+                                for (var j = 0; j < ti.treatments.length; j++) {
+                                    delete ti.treatments[j].relevantCancerTypes;
+                                }
+                            }
+                        }
+                    }
                     if(uuids) {
                         uuids = _.filter(uuids, function (uuid) {
                             return !!uuid
@@ -2267,7 +2302,8 @@ angular.module('oncokbApp')
                     uuids: [tumor.name_uuid],
                     cancerTypes: tumor.cancerTypes,
                     oncoTree: $scope.oncoTree,
-                    message: sectionsWithRCT.length > 0 ? 'Cautious before modifying, the following sections have customize relevant cancer types which will be reset to default once you change the cancer type.<br/>' + sectionsWithRCT.join('<br/>') : '',
+                    isTumorTypeLevel: true,
+                    message: getRCTMessage(sectionsWithRCT),
                     save: $scope.updateCancerTypes
                 }, {
                     size: 'lg'
@@ -2297,22 +2333,58 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            $scope.modifyEvidenceRelevantCancerTypes = function(path, uuids, level) {
+            function getRCTMessage(sectionsWithRCT) {
+                return sectionsWithRCT.length > 0 ? 'Cautious before modifying, the following sections have customize relevant cancer types which will be reset to default once you change the cancer type.<br/>' + sectionsWithRCT.join('<br/>') : '';
+            }
+
+            function getEvidenceUuidsUnderTumorType(tumorRef) {
+                var uuids = [];
+                uuids.push(tumorRef.summary_uuid);
+                uuids.push(tumorRef.diagnostic_uuid);
+                uuids.push(tumorRef.diagnosticSummary_uuid);
+                uuids.push(tumorRef.prognostic_uuid);
+                uuids.push(tumorRef.prognosticSummary_uuid);
+
+                for (var i = 0; i < 4; i++) {
+                    var ti = tumorRef.TIs[i];
+                    if (_.isArray(ti.treatments)) {
+                        for (var j = 0; j < ti.treatments.length; j++) {
+                            uuids.push(ti.treatments[j].name_uuid);
+                        }
+                    }
+                }
+                if (uuids) {
+                    uuids = _.filter(uuids, function (uuid) {
+                        return !!uuid
+                    });
+                }
+                return uuids;
+            }
+
+            $scope.modifyEvidenceRelevantCancerTypes = function (path, uuids, level) {
                 var indices = getIndexByPath(path);
                 var tumorRef = $scope.gene.mutations[indices[0]].tumors[indices[1]];
+                var tumorLevel = indices[2] === -1 && uuids === undefined;
                 var obj = $firebaseObject(firebase.database().ref(path));
+                var sectionsWithRCT = getSectionWithRelevantCancerTypesCurated(tumorRef);
+
+                if (tumorLevel && !(_.isArray(uuids) && uuids.length > 0)) {
+                    uuids = getEvidenceUuidsUnderTumorType(tumorRef);
+                }
                 if(uuids) {
                     uuids = _.filter(uuids, function (uuid) {
                         return !!uuid
                     });
                 }
                 obj.$loaded().then(function() {
-                    getRelevantCancerTypes('LEVEL_' + level, tumorRef.cancerTypes, obj.relevantCancerTypes)
+                    getRelevantCancerTypes(level ? ('LEVEL_' + level) : undefined, tumorRef.cancerTypes, obj.relevantCancerTypes ? obj.relevantCancerTypes : tumorRef.relevantCancerTypes)
                         .then(function (data) {
                             var dlg = dialogs.create('views/modifyTumorTypes.html', 'ModifyTumorTypeCtrl', {
                                 parentNodeRefType: 'ref',
                                 parentNodeRef: $firebaseObject(firebase.database().ref(path)),
                                 uuids: uuids,
+                                isTumorTypeLevel: tumorLevel,
+                                message: tumorLevel ? getRCTMessage(sectionsWithRCT) : '',
                                 cancerTypes: _.sortBy(data, 'mainType').map(function (cancerType) {
                                     return {
                                         mainType: cancerType.mainType,
@@ -2474,6 +2546,10 @@ angular.module('oncokbApp')
 
             $scope.getCancerTypesName = function (tumor) {
                 return mainUtils.getCancerTypesName(tumor.cancerTypes);
+            };
+
+            $scope.getRelevantCancerTypesName = function (cancerTypes) {
+                return mainUtils.getCancerTypesName(cancerTypes);
             };
 
             $scope.getLastReviewedCancerTypesName = function (tumor) {
@@ -3752,7 +3828,7 @@ angular.module('oncokbApp')
                     cancerTypes.push(cancerType);
                 }
             });
-            data.save(data.uuids, data.parentNodeRefType, data.parentNodeRef, data.cancerTypes, cancerTypes);
+            data.save(data.uuids, data.parentNodeRefType, data.parentNodeRef, data.isTumorTypeLevel, data.cancerTypes, cancerTypes);
             $modalInstance.close();
         };
         $scope.$watch('meta.newCancerTypes', function (n) {
