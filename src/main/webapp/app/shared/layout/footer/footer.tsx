@@ -2,16 +2,14 @@ import './footer.scss';
 
 import React from 'react';
 
-import { Col, Row } from 'reactstrap';
+import { Container, Row } from 'react-bootstrap';
 
 const Footer = props => (
-  <div className="footer page-content">
-    <Row>
-      <Col md="12">
-        <p>Your footer</p>
-      </Col>
-    </Row>
-  </div>
+  <footer className="footer">
+    <Container>
+      <Row>My Footer</Row>
+    </Container>
+  </footer>
 );
 
 export default Footer;

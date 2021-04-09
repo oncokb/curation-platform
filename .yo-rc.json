@@ -1,36 +1,44 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "6.10.5",
-    "applicationType": "monolith",
-    "baseName": "Curation_Platform",
-    "useSass": true,
-    "clientPackageManager": "npm",
-    "clientFramework": "react",
-    "clientTheme": "none",
-    "clientThemeVariant": "",
-    "authenticationType": "jwt",
-    "cacheProvider": "no",
+    "skipServer": true,
     "databaseType": "sql",
     "devDatabaseType": "sql",
     "prodDatabaseType": "sql",
-    "creationTimestamp": 1612400933981,
-    "testFrameworks": [],
+    "authenticationType": "jwt",
+    "blueprints": [],
+    "otherModules": [],
+    "applicationType": "monolith",
+    "baseName": "curation_platform",
+    "jhipsterVersion": "7.0.0-beta.1",
+    "skipClient": false,
+    "skipUserManagement": false,
+    "skipCheckLengthOfIdentifier": false,
+    "skipFakeData": false,
     "jhiPrefix": "jhi",
     "entitySuffix": "",
     "dtoSuffix": "DTO",
-    "otherModules": [
-      {
-        "name": "generator-jhipster-react-mobx",
-        "version": "0.4.0"
-      }
-    ],
+    "testFrameworks": [],
+    "pages": [],
+    "creationTimestamp": 1613015411311,
+    "clientFramework": "react",
+    "withAdminUi": true,
+    "clientTheme": "none",
     "enableTranslation": false,
-    "blueprints": [
-      {
-        "name": "generator-jhipster-react-mobx",
-        "version": "0.4.0"
-      }
-    ],
-    "skipServer": true
+    "nativeLanguage": "en",
+    "promptValues": {
+      "nativeLanguage": "en"
+    },
+    "clientPackageManager": "npm",
+    "clientThemeVariant": "",
+    "packageName": "com.mycompany.myapp",
+    "cacheProvider": "ehcache",
+    "websocket": false,
+    "searchEngine": false,
+    "buildTool": "maven",
+    "serverPort": "8080",
+    "serviceDiscoveryType": false,
+    "enableHibernateCache": true,
+    "reactive": false,
+    "languages": ["en", "fr"]
   }
 }

@@ -1,184 +1,152 @@
-# Curation_Platform
-
-This application was generated using JHipster 6.10.5, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.10.5](https://www.jhipster.tech/documentation-archive/v6.10.5).
+# curation_platform
 
 ## Development
 
-Before you can build this project, you must install and configure the following dependencies on your machine:
+- [curation_platform](#curation_platform)
+  - [Development](#development)
+  - [Configuration](#configuration)
+  - [Testing](#testing)
+    - [Firebase Test](#firebase-test)
+  - [Refactorings](#refactorings)
+  - [Continuous Integration](#continuous-integration)
 
-1. [Node.js][]: We use Node to run a development web server and build the project.
-   Depending on your system, you can install Node either from source or as a pre-packaged bundle.
+OncoKB Curation Platform is built with lots of great open source JS libraries. AngularJS is used as framework. Bower is used to manage denpendencies. Yeoman is used to initiate project and angular-generator is used to create angular directive/service/factory etc.
 
-After installing Node, you should be able to run the following command to install development tools.
-You will only need to run this command when dependencies change in [package.json](package.json).
+We use Google Firebase Realtime Database to store all information curators generated.
 
-```
-npm install
-```
-
-We use npm scripts and [Webpack][] as our build system.
-
-Run the following commands in two separate terminals to create a blissful development experience where your browser
-auto-refreshes when files change on your hard drive.
+Install project
 
 ```
-
-
-npm start
+install npm
+install yarn
+yarn install
 ```
 
-Npm is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
-specifying a newer version in [package.json](package.json). You can also run `npm update` and `npm install` to manage dependencies.
-Add the `help` flag on any command to see how you can use it. For example, `npm help update`.
+Tip: the version of node should be >= 14.15.0
 
-The `npm run` command will list all of the scripts available to run for this project.
+## Configuration
 
-### PWA Support
-
-JHipster ships with PWA (Progressive Web App) support, and it's turned off by default. One of the main components of a PWA is a service worker.
-
-The service worker initialization code is commented out by default. To enable it, uncomment the following code in `src/main/webapp/index.html`:
-
-```html
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(function () {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
-```
-
-Note: [Workbox](https://developers.google.com/web/tools/workbox/) powers JHipster's service worker. It dynamically generates the `service-worker.js` file.
-
-### Managing dependencies
-
-For example, to add [Leaflet][] library as a runtime dependency of your application, you would run following command:
+Create an config file `.env` within root folder
 
 ```
-npm install --save --save-exact leaflet
+# Firebase
+REACT_APP_FIREBASE_API_KEY=""
+REACT_APP_FIREBASE_AUTH_DOMAIN=""
+REACT_APP_FIREBASE_DATABASE_URL=""
+REACT_APP_FIREBASE_PROJECT_ID=""
+REACT_APP_FIREBASE_STORAGE_BUCKET=""
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=""
+REACT_APP_FIREBASE_APP_ID=""
+REACT_APP_FIREBASE_MEASUREMENT_ID=""
+
+# Endpoints
+REACT_APP_ENDPOINT_CURATION_LINK="legacy-api/" // Your endpoints URL
+REACT_APP_ENDPOINT_API_LINK="legacy-api/" // Your endpoints URL.
+REACT_APP_ENDPOINT_INTERNAL_PRIVATE_API_LINK="api/private/" // Endpoints are specifically designed to use internally.
+REACT_APP_ENDPOINT_PRIVATE_API_LINK="api/private/"
+REACT_APP_ENDPOINT_PUBLIC_API_LINK="api/v1/"
+REACT_APP_ENDPOINT_WEBSOCKET_API_LINK="api/websocket/"
+REACT_APP_ENDPOINT_TESTING=false // If the testing is set to ture, all endpoints will be disabled and will use the files from web/yo/app/data folder.
+REACT_APP_ENDPOINT_PRODUCTION=false // If the production is set to ture, all endpoints will be enabled and reviewed data will be updated to MySQL database.
 ```
 
-To benefit from TypeScript type definitions from [DefinitelyTyped][] repository in development, you would run following command:
+**Tips**
+
+It needs to be ran with oncokb-core. If you run locally, endpoint URLs need to be modified based on the URL of oncokb-core.
+
+For example, if concokb-core runs at http://localhost:8888/oncokb, you should modify config as
 
 ```
-npm install --save-dev --save-exact @types/leaflet
-```
+  "REACT_APP_ENDPOINT_CURATION_LINK": "http://localhost:8888/oncokb/legacy-api/",
+  "REACT_APP_ENDPOINT_API_LINK": "http://localhost:8888/oncokb/legacy-api/",
+  "REACT_APP_ENDPOINT_INTERNAL_PRIVATE_API_LINK": "http://localhost:8888/oncokb/api/private/",
+  "REACT_APP_ENDPOINT_PRIVATE_API_LINK": "http://localhost:8888/oncokb/api/private/",
+  "REACT_APP_ENDPOINT_PUBLIC_API_LINK": "http://localhost:8888/oncokb/api/v1/",
+  "REACT_APP_ENDPOINT_WEBSOCKET_API_LINK": "localhost:8888/oncokb/api/websocket/",
 
-Then you would import the JS and CSS files specified in library's installation instructions so that [Webpack][] knows about them:
-Note: There are still a few other things remaining to do for Leaflet that we won't detail here.
-
-For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
-
-## Building for production
-
-### Packaging as jar
-
-To build the final jar and optimize the Curation_Platform application for production, run:
-
-```
-
-
-```
-
-This will concatenate and minify the client CSS and JavaScript files. It will also modify `index.html` so it references these new files.
-To ensure everything worked, run:
-
-```
-
-
-```
-
-Then navigate to [http://localhost:](http://localhost:) in your browser.
-
-Refer to [Using JHipster in production][] for more details.
-
-### Packaging as war
-
-To package your application as a war in order to deploy it to an application server, run:
-
-```
-
-
+  ...
 ```
 
 ## Testing
 
-To launch your application's tests, run:
+### Firebase Test
+
+We used [Jest][] and [Firebase Local Emulator Suite][] to implement this feature. The test can be executed locally or during CI process.
+
+To execute this test locally, first you need to install Firebase Local Emulator Suite globally.
 
 ```
-./gradlew test integrationTest jacocoTestReport
+npm install -g firebase-tools
 ```
 
-### Client tests
-
-Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
+Then you should make sure there is an firebase.json file within root folder, which should include infomation:
 
 ```
-npm test
+{
+  "functions": {
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ],
+    "source": "functions"
+  },
+  "emulators": {
+    "database": {
+      "port": 9000
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}
 ```
 
-For more information, refer to the [Running tests page][].
-
-### Code quality
-
-Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+The you can start the emulator.
 
 ```
-docker-compose -f src/main/docker/sonar.yml up -d
+firebase emulators:start --only database --project [ProjectID] --import=./seed
 ```
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner).
+The _ProjectID_ should be the local firebase emulator project ID. The default one in this repo is `firebase-local-test`.
 
-Then, run a Sonar analysis:
+`./seed` folder stores the mock data for local test.
 
-For more information, refer to the [Code quality page][].
-
-## Using Docker to simplify development (optional)
-
-You can use Docker to improve your JHipster development experience. A number of docker-compose configuration are available in the [src/main/docker](src/main/docker) folder to launch required third party services.
-
-For example, to start a sql database in a docker container, run:
+At last, you can run the test by
 
 ```
-docker-compose -f src/main/docker/sql.yml up -d
+yarn test-firebase
 ```
 
-To stop it and remove the container, run:
+If you wanna modify the mock data of local emulator, there are two ways to change.
+
+1. Modify the data file `firebase-local-test.json` under `./seed/database_export`
+2. After start the emulator, you could visit a UI tool of mock database by `http://localhost:4000/database`. You can modify data there and export them by `firebase emulators:export ./seed`
+
+## Refactorings
+
+The structure of Users collection in Firebase has been changed. For example,
 
 ```
-docker-compose -f src/main/docker/sql.yml down
+    "admin@testemail": {
+      "role": "admin"
+    },
 ```
 
-You can also fully dockerize your application and all the services that it depends on.
-To achieve this, first build a docker image of your app by running:
+The value of "role" has three options: admin, curator and user.
 
-```
-
-```
-
-Then run:
-
-```
-docker-compose -f src/main/docker/app.yml up -d
-```
-
-For more information refer to [Using Docker and Docker-Compose][], this page also contains information on the docker-compose sub-generator (`jhipster docker-compose`), which is able to generate docker configurations for one or several JHipster applications.
-
-## Continuous Integration (optional)
+## Continuous Integration
 
 To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`), this will let you generate configuration files for a number of Continuous Integration systems. Consult the [Setting up Continuous Integration][] page for more information.
 
 [jhipster homepage and latest documentation]: https://www.jhipster.tech
-[jhipster 6.10.5 archive]: https://www.jhipster.tech/documentation-archive/v6.10.5
-[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v6.10.5/development/
-[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v6.10.5/docker-compose
-[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v6.10.5/production/
-[running tests page]: https://www.jhipster.tech/documentation-archive/v6.10.5/running-tests/
-[code quality page]: https://www.jhipster.tech/documentation-archive/v6.10.5/code-quality/
-[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v6.10.5/setting-up-ci/
+[jhipster 7.0.0-beta.1 archive]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1
+[using jhipster in development]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/development/
+[using docker and docker-compose]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/docker-compose
+[using jhipster in production]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/production/
+[running tests page]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/running-tests/
+[code quality page]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/code-quality/
+[setting up continuous integration]: https://www.jhipster.tech/documentation-archive/v7.0.0-beta.1/setting-up-ci/
 [node.js]: https://nodejs.org/
-[yarn]: https://yarnpkg.org/
 [webpack]: https://webpack.github.io/
 [angular cli]: https://cli.angular.io/
 [browsersync]: https://www.browsersync.io/
@@ -187,3 +155,4 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [protractor]: https://angular.github.io/protractor/
 [leaflet]: https://leafletjs.com/
 [definitelytyped]: https://definitelytyped.org/
+[firebase local emulator suite]: https://firebase.google.com/docs/emulator-suite

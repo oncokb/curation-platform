@@ -1,31 +1,17 @@
+import { UserRole } from 'app/config/constants';
+
 export interface IUser {
-  id?: any;
-  login?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  activated?: boolean;
-  langKey?: string;
-  authorities?: any[];
-  createdBy?: string;
-  createdDate?: Date;
-  lastModifiedBy?: string;
-  lastModifiedDate?: Date;
-  password?: string;
+  name: string;
+  email: string;
+  photoURL: string;
+  key: string;
+  role: UserRole | undefined;
 }
 
 export const defaultValue: Readonly<IUser> = {
-  id: '',
-  login: '',
-  firstName: '',
-  lastName: '',
+  name: '',
   email: '',
-  activated: true,
-  langKey: '',
-  authorities: [],
-  createdBy: '',
-  createdDate: null,
-  lastModifiedBy: '',
-  lastModifiedDate: null,
-  password: '',
+  photoURL: '',
+  key: '',
+  role: undefined,
 };

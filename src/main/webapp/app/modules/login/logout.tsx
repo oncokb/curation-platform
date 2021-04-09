@@ -1,38 +1,29 @@
+import { PAGE_ROUTE } from 'app/config/constants';
+import { useStores } from 'app/shared/stores';
+import { observer } from 'mobx-react-lite';
 import React, { useLayoutEffect } from 'react';
-import { connect } from 'app/shared/util/typed-inject';
+import { Row } from 'react-bootstrap';
 
-import { IRootStore } from 'app/shared/stores';
-
-export interface ILogoutProps extends StoreProps {
-  idToken: string;
-  logoutUrl: string;
-}
-
-export const Logout = (props: ILogoutProps) => {
+export const Logout = () => {
+  const { authenticationStore, routerStore } = useStores();
   useLayoutEffect(() => {
-    props.logout();
-    const logoutUrl = props.logoutUrl;
+    authenticationStore.logout();
+    const logoutUrl = authenticationStore.logoutUrl;
     if (logoutUrl) {
       // if Keycloak, logoutUrl has protocol/openid-connect in it
       window.location.href = logoutUrl.includes('/protocol')
         ? logoutUrl + '?redirect_uri=' + window.location.origin
-        : logoutUrl + '?id_token_hint=' + props.idToken + '&post_logout_redirect_uri=' + window.location.origin;
+        : logoutUrl + '?id_token_hint=' + authenticationStore.idToken + '&post_logout_redirect_uri=' + window.location.origin;
     }
+    setTimeout(() => {
+      routerStore.history.push(PAGE_ROUTE.WELCOME_PAGE);
+    }, 1000);
   });
-
   return (
-    <div className="p-5">
+    <Row className="p-5 justify-content-center">
       <h4>Logged out successfully!</h4>
-    </div>
+    </Row>
   );
 };
 
-const mapStoreToProps = (storeState: IRootStore) => ({
-  logoutUrl: storeState.authStore.logoutUrl,
-  idToken: storeState.authStore.idToken,
-  logout: storeState.authStore.logout,
-});
-
-type StoreProps = ReturnType<typeof mapStoreToProps>;
-
-export default connect(mapStoreToProps)(Logout);
+export default observer(Logout);

@@ -1,46 +1,36 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
-import Loadable from 'react-loadable';
-
-import Login from 'app/modules/login/login';
-import Register from 'app/modules/account/register/register';
-import Activate from 'app/modules/account/activate/activate';
-import PasswordResetInit from 'app/modules/account/password-reset/init/password-reset-init';
-import PasswordResetFinish from 'app/modules/account/password-reset/finish/password-reset-finish';
-import Logout from 'app/modules/login/logout';
-import Home from 'app/modules/home/home';
-import Entities from 'app/entities';
+import Welcome from 'app/modules/welcome/welcome';
 import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import PageNotFound from 'app/shared/error/page-not-found';
-import { AUTHORITIES } from 'app/config/constants';
+import { Drugs } from './modules/drugs/drugs';
+import { Feedback } from './modules/feedback/feedback';
+import Genes from './modules/genes/genes';
+import { Variant } from './modules/variant/variant';
+import { Tools } from './modules/tools/tools';
+import { Gene } from './modules/gene/gene';
+import { Queues } from './modules/qeues/queues';
+import { PAGE_ROUTE } from './config/constants';
+import { Logout } from './modules/login/logout';
 
-const Account = Loadable({
-  loader: () => import(/* webpackChunkName: "account" */ 'app/modules/account'),
-  loading: () => <div>loading ...</div>,
-});
-
-const Admin = Loadable({
-  loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
-  loading: () => <div>loading ...</div>,
-});
-
-const Routes = () => (
-  <div className="view-routes">
-    <Switch>
-      <ErrorBoundaryRoute path="/login" component={Login} />
-      <ErrorBoundaryRoute path="/logout" component={Logout} />
-      <ErrorBoundaryRoute path="/account/register" component={Register} />
-      <ErrorBoundaryRoute path="/account/activate/:key?" component={Activate} />
-      <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
-      <ErrorBoundaryRoute path="/account/reset/finish/:key?" component={PasswordResetFinish} />
-      <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
-      <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
-      <ErrorBoundaryRoute path="/" exact component={Home} />
-      <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER]} />
-      <ErrorBoundaryRoute component={PageNotFound} />
-    </Switch>
-  </div>
-);
+const Routes = () => {
+  return (
+    <div className="view-routes">
+      <Switch>
+        <ErrorBoundaryRoute path={PAGE_ROUTE.WELCOME_PAGE} exact component={Welcome} />
+        <PrivateRoute path="/genes" exact component={Genes} />
+        <PrivateRoute path="/variant" exact component={Variant} />
+        <PrivateRoute path="/tools" exact component={Tools} />
+        <PrivateRoute path="/gene/:geneName" exact component={Gene} />
+        <PrivateRoute path="/feedback" exact component={Feedback} />
+        <PrivateRoute path="/queues" exact component={Queues} />
+        <PrivateRoute path="/drugs" exact component={Drugs} />
+        <ErrorBoundaryRoute path={PAGE_ROUTE.LOGOUT} exact component={Logout} />
+        <ErrorBoundaryRoute component={PageNotFound} />
+      </Switch>
+    </div>
+  );
+};
 
 export default Routes;

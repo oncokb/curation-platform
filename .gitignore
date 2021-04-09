@@ -2,8 +2,9 @@
 # Project Specific
 ######################
 /src/main/webapp/content/css/main.css
-/build/resources/main/static/**
+/target/classes/static/**
 /src/test/javascript/coverage/
+.env
 
 ######################
 # Node

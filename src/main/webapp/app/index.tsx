@@ -1,33 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'mobx-react';
-import { createStores } from 'app/shared/stores';
-import { createBrowserHistory } from 'history';
-
-import setupAxiosInterceptors from './config/axios-interceptor';
 import ErrorBoundary from './shared/error/error-boundary';
 import AppComponent from './app';
 import { loadIcons } from './config/icon-loader';
-
-const browserHistory = createBrowserHistory();
-const mobxStores = createStores(browserHistory);
-
-setupAxiosInterceptors(() => mobxStores.authStore.clearAuthentication('login.error.unauthorized'));
+import Firebase from './shared/services/firebase';
+import { createStores, StoresProvider } from './shared/stores';
+import { createBrowserHistory } from 'history';
+import { FIREBASE_DEV_CONFIG } from './config/constants';
 
 loadIcons();
+
+const browserHistory = createBrowserHistory();
+const firebase = new Firebase(FIREBASE_DEV_CONFIG);
+const rootStore = createStores(browserHistory, firebase);
 
 const rootEl = document.getElementById('root');
 
 const render = Component =>
   // eslint-disable-next-line react/no-render-return-value
   ReactDOM.render(
-    <ErrorBoundary>
-      <Provider {...mobxStores}>
+    <StoresProvider value={rootStore}>
+      <ErrorBoundary>
         <div>
           <Component />
         </div>
-      </Provider>
-    </ErrorBoundary>,
+      </ErrorBoundary>
+    </StoresProvider>,
     rootEl
   );
 

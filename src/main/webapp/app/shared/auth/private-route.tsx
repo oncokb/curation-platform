@@ -1,82 +1,29 @@
+import { PAGE_ROUTE } from 'app/config/constants';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { connect } from 'app/shared/util/typed-inject';
-import { Route, Redirect, RouteProps } from 'react-router-dom';
+import { Redirect, Route, RouteProps } from 'react-router-dom';
+import ErrorBoundary from '../error/error-boundary';
+import { useStores } from '../stores';
+import { getRedirectLoginState } from '../util/common.utils';
 
-import { IRootStore } from 'app/shared/stores';
-import ErrorBoundary from 'app/shared/error/error-boundary';
-
-interface IOwnProps extends RouteProps {
-  hasAnyAuthorities?: string[];
-}
-
-export interface IPrivateRouteProps extends IOwnProps, StoreProps {}
-
-export const hasAnyAuthority = (authorities: string[], hasAnyAuthorities: string[]) => {
-  if (authorities && authorities.length !== 0) {
-    if (hasAnyAuthorities.length === 0) {
-      return true;
-    }
-    return hasAnyAuthorities.some(auth => authorities.includes(auth));
-  }
-  return false;
-};
-
-export const PrivateRouteComponent = ({
-  component: Component,
-  isAuthenticated,
-  sessionHasBeenFetched,
-  account,
-  hasAnyAuthorities = [],
-  ...rest
-}: IPrivateRouteProps) => {
-  const isAuthorized = hasAnyAuthority(account.authorities, hasAnyAuthorities);
-  const checkAuthorities = props =>
-    isAuthorized ? (
-      <ErrorBoundary>
-        <Component {...props} />
-      </ErrorBoundary>
+export const PrivateRoute = ({ component, ...rest }: RouteProps) => {
+  const { authenticationStore, routerStore } = useStores();
+  const renderRedirect = (props: any) => {
+    return authenticationStore.isAuthenticated ? (
+      <ErrorBoundary>{React.createElement(component, props)}</ErrorBoundary>
     ) : (
-      <div className="insufficient-authority">
-        <div className="alert alert-danger">You are not authorized to access this page.</div>
-      </div>
+      <Redirect
+        to={{
+          pathname: PAGE_ROUTE.WELCOME_PAGE,
+          state: getRedirectLoginState(routerStore.location.pathname, routerStore.location.search, routerStore.location.hash),
+        }}
+      />
     );
-
-  const renderRedirect = props => {
-    if (!sessionHasBeenFetched) {
-      return <div></div>;
-    } else {
-      return isAuthenticated ? (
-        checkAuthorities(props)
-      ) : (
-        <Redirect
-          to={{
-            pathname: '/login',
-            search: props.location.search,
-            state: { from: props.location },
-          }}
-        />
-      );
-    }
   };
 
-  if (!Component) throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
+  if (!component) throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
 
   return <Route {...rest} render={renderRedirect} />;
 };
 
-const mapStoreToProps = ({ authStore }: IRootStore) => ({
-  isAuthenticated: authStore.isAuthenticated,
-  account: authStore.account,
-  sessionHasBeenFetched: authStore.sessionHasBeenFetched,
-});
-
-type StoreProps = ReturnType<typeof mapStoreToProps>;
-
-/**
- * A route wrapped in an authentication check so that routing happens only when you are authenticated.
- * Accepts same props as React router Route.
- * The route also checks for authorization if hasAnyAuthorities is specified.
- */
-export const PrivateRoute = connect(mapStoreToProps)(PrivateRouteComponent);
-
-export default PrivateRoute;
+export default observer(PrivateRoute);

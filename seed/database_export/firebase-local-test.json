@@ -1,0 +1,52 @@
+{
+  "Drugs": {
+    "00000000-1111-2222-3333-444444444444": {
+      "description": "A test drug",
+      "drugName": "TestDrug",
+      "ncitCode": "T00001",
+      "ncitName": "TestDrug",
+      "priority": 1,
+      "synonyms": [
+        "S-001",
+        "S-002",
+        "S-003",
+        "Mock"
+      ],
+      "uuid": "00000000-1111-2222-3333-444444444444"
+    },
+    "11111111-2222-3333-4444-555555555555": {
+      "description": "test drug to be removed",
+      "drugName": "TestDrug",
+      "ncitCode": "T00002",
+      "ncitName": "TestDrug",
+      "priority": 3,
+      "synonyms": [
+        "S-001",
+        "S-002",
+        "S-003",
+        "Mock"
+      ],
+      "uuid": "11111111-2222-3333-4444-555555555555"
+    }
+  },
+  "Genes": {},
+  "History": {},
+  "Map": {},
+  "Meta": {},
+  "Queues": {},
+  "Setting": {
+    "enableReview": true
+  },
+  "Users": {
+    "admin@testemail": {
+      "role": "admin"
+    },
+    "curator@testemail": {
+      "role": "curator"
+    },
+    "user@testemail": {
+      "role": "user"
+    }
+  },
+  "VUS": {}
+}
