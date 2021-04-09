@@ -1,7 +1,5 @@
 # curation_platform
 
-## Development
-
 - [curation_platform](#curation_platform)
   - [Development](#development)
   - [Configuration](#configuration)
@@ -9,6 +7,8 @@
     - [Firebase Test](#firebase-test)
   - [Refactorings](#refactorings)
   - [Continuous Integration](#continuous-integration)
+
+## Development
 
 OncoKB Curation Platform is built with lots of great open source JS libraries. AngularJS is used as framework. Bower is used to manage denpendencies. Yeoman is used to initiate project and angular-generator is used to create angular directive/service/factory etc.
 
