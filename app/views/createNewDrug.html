@@ -2,8 +2,8 @@
     <div class="flexRow">
         <h5 class="nameLabel">Default NCI Drug Name:</h5>
         <input type="text" class="form-control search-box" ng-model="suggestedDrug"
-               uib-typeahead="drug as drug.drugName for drug in processSearchDrugs($viewValue)" typeahead-min-length="1"
-               typeahead-template-url="drugsDropdown.html" typeahead-wait-ms="200"/>
+               uib-typeahead="drug as drug.name for drug in processSearchDrugs($viewValue)" typeahead-min-length="2"
+               typeahead-template-url="drugsDropdown.html" typeahead-wait-ms="500"/>
         <button class="btn btn-success" ng-click="addDrug(suggestedDrug, preferName)">Add Drug</button>
     </div>
     <div class="flexRow" ng-hide="(suggestedDrug == null) || (suggestedDrug === '')">
@@ -13,8 +13,8 @@
                 data-placeholder="Choose a prefer name or Leave it blank"
                 class="form-control searchbox preferNameDropdown"
                 id="preferNameDropdownChosen"
-                ng-options="synonyms for synonyms in suggestedDrug.synonyms">
-            <option value="suggetedDrug.drugName"></option>
+                ng-options="synonym.name for synonym in suggestedDrug.synonyms">
+            <option value="synonyms.name"></option>
         </select>
     </div>
     <div>
@@ -29,12 +29,12 @@
 
 <script type="text/ng-template" id="drugsDropdown.html">
     <a id="drugsDropdown" style="display: flex; flex-direction: column">
-        <div class="basicName" ng-bind-html="match.model.drugName | uibTypeaheadHighlight:query"></div>
+        <div class="basicName" ng-bind-html="match.model.name | uibTypeaheadHighlight:query"></div>
         <div class="alsoKnownAs">NCI Thesaurus Code:
-            <span ng-bind-html="match.model.ncitCode | uibTypeaheadHighlight:query"></span>
+            <span ng-bind-html="match.model.code | uibTypeaheadHighlight:query"></span>
         </div>
         <div class="alsoKnownAs" ng-show="match.model.synonyms">Also known as:
-            <span ng-bind-html="match.model.synonyms | uibTypeaheadHighlight:query"></span>
+            <div ng-repeat="synonym in match.model.synonyms" ng-bind-html="synonym.name | uibTypeaheadHighlight:query"></div>
         </div>
     </a>
 </script>
