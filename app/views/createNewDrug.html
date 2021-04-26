@@ -1,13 +1,18 @@
 <div class="createNewDrug">
     <div class="flexRow">
-        <h5 class="nameLabel">Default NCI Drug Name:</h5>
+        <div class="nameLabel">
+            <div>Search for NCI drug:</div>
+            <div>(free text is no longer allowed)</div>
+        </div>
         <input type="text" class="form-control search-box" ng-model="suggestedDrug"
                uib-typeahead="drug as drug.name for drug in processSearchDrugs($viewValue)" typeahead-min-length="2"
                typeahead-template-url="drugsDropdown.html" typeahead-wait-ms="500"/>
-        <button class="btn btn-success" ng-click="addDrug(suggestedDrug, preferName)">Add Drug</button>
+        <button class="btn btn-success" ng-click="addDrug(suggestedDrug, preferName)"
+                ng-show="suggestedDrug && suggestedDrug.code">Add Drug
+        </button>
     </div>
-    <div class="flexRow" ng-hide="(suggestedDrug == null) || (suggestedDrug === '')">
-        <h5 class="nameLabel">Preferred Drug Name: </h5>
+    <div class="flexRow" ng-show="suggestedDrug && suggestedDrug.code">
+        <h5 class="nameLabel">Change preferred drug name to: </h5>
         <select chosen
                 ng-model="preferName"
                 data-placeholder="Choose a prefer name or Leave it blank"
