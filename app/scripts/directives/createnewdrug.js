@@ -18,14 +18,15 @@ angular.module('oncokbApp')
 
                 function createDrug(drugName, ncitCode, synonyms, ncitName) {
                     ncitCode = undefinedToEmptyString(ncitCode);
-                    synonyms = undefinedToEmptyString(synonyms);
                     ncitName = undefinedToEmptyString(ncitName);
                     var deferred = $q.defer();
-                    if (($scope.drugList === undefined) || (checkSameDrug(drugName, ncitCode) === false)) {
-                        var drug = new FirebaseModel.Drug(drugName, ncitCode, synonyms, ncitName);
-                        if(!ncitCode){
+                    if (($scope.drugList === undefined) || (checkSameDrug(drugName, ncitCode) === false && (!ncitName || checkSameDrug(ncitName, ncitCode) === false))) {
+                        var drug = new FirebaseModel.Drug(drugName, ncitCode, synonyms ? synonyms.map(function (synonym) {
+                            return synonym.name;
+                        }) : null, ncitName);
+                        if (!ncitCode) {
                             var content = drugName + " has been added. It doesn't have NCI treasure code.";
-                        }else{
+                        } else {
                             var content = drugName + " has been added. Its NCI treasure code is " + ncitCode + ".";
                         }
                         firebaseConnector.addDrug(drug.uuid, drug).then(function (result) {
@@ -54,7 +55,7 @@ angular.module('oncokbApp')
 
                 $scope.addDrug = function (drug, preferName) {
                     if(drug !== ''){
-                        if (!drug.ncitCode) {
+                        if (!drug.code) {
                             preferName = drug;
                             createDrug(preferName).then(function (result) {
                                     $scope.suggestedDrug = '';
@@ -62,9 +63,11 @@ angular.module('oncokbApp')
                         }
                         else {
                             if (!preferName) {
-                                preferName = drug.drugName;
+                                preferName = drug.name;
+                            } else {
+                                preferName = preferName.name;
                             }
-                            createDrug(preferName, drug.ncitCode, drug.synonyms, drug.drugName).then(function (result) {
+                            createDrug(preferName, drug.code, drug.synonyms, drug.name).then(function (result) {
                                     $scope.suggestedDrug = '';
                                     $scope.preferName = '';});
                         }

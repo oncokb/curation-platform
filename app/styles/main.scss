@@ -928,7 +928,10 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
 
 .createNewDrug {
   .nameLabel{
-    width: 170px;
+      display: flex;
+      flex-direction: column;
+      margin-right: 10px;
+      font-weight: bold;
   }
   .search-box {
     width: 500px;
