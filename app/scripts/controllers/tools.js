@@ -294,8 +294,10 @@ angular.module('oncokbApp')
                     // remove the evidence type from the location
                     // var recordDate = new Date(record.timeStamp);
                     if (isTreatmentRecord) {
-                        var level = record.record.operation === 'delete' ? record.record.old.level : record.record.new.level;
-                        content.push([record.gene, updatedLocation, level, getPastTense(record.record.operation)].join(' '));
+                        if (record.record.old || record.record.new) {
+                            var level = record.record.operation === 'delete' ? record.record.old.level : record.record.new.level;
+                            content.push([record.gene, updatedLocation, level, getPastTense(record.record.operation)].join(' '));
+                        }
                     } else if (_.endsWith(updatedLocation, 'Mutation Effect')) {
                         var targetKey = record.record.operation === 'deleted' ? 'old' : 'new';
                         var target = record.record[targetKey];
