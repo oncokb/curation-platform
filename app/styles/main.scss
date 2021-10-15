@@ -350,6 +350,8 @@ input.editableBox {
     margin: 5px 0;
   }
   .content{
+      cursor: text;
+      user-select: all;
     font-weight: 600;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     width: 100%;
