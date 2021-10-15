@@ -292,6 +292,26 @@ angular.module('oncokbApp')
                     });
                 }, 2000);
             };
+
+            function getCommentContent(comment) {
+                return `[${comment.resolved === 'true' ? 'Resolved' : 'Unresolved'}] ${comment.userName} at ${new Date(Number(comment.date)).toLocaleString()}:\n${comment.content}`;
+            }
+
+            $scope.downloadVus = function () {
+                var vusData = mainUtils.getVUSData($scope.vusItems, false);
+                var content = [['Variant', 'Last Reviewed', 'Last Reviewed By', 'Comments'].join('\t')];
+
+                _.each(vusData, function (vus) {
+                    const comment = _.map(vus.name_comments, function (comment) {
+                        return getCommentContent(comment);
+                    }).join('\n\n');
+                    content.push([vus.name, new Date(Number(vus.time.value)).toLocaleString(), vus.time.by.name, `"${comment}"`].join('\t'));
+                })
+                var blob = new Blob([content.join('\n')], {
+                    type: 'text/plain;charset=utf-8;'
+                });
+                saveAs(blob, $scope.gene.name + '_all_variants_of_unknown_significance.tsv');
+            };
             function parseMutationString(mutationStr) {
                 var parts = _.map(mutationStr.split(','), function(item) {
                     return item.trim();

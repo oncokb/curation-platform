@@ -728,8 +728,11 @@
             <br/>
             <br/>
             <h3>Variants of Unknown Significance (Investigated and data not found)
-                <button class="btn btn-default btn-sm" ng-click="vusUpdate()" ng-if="developerCheck() && internal">
+                <button class="btn btn-default btn-sm" ng-click="vusUpdate()" ng-if="me.admin && internal">
                     Update to database
+                </button>
+                <button class="btn btn-default btn-sm" ng-click="downloadVus()" ng-if="me.admin">
+                    Download all VUSs
                 </button>
             </h3>
             <div ng-repeat="variant in vusItems">
