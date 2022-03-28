@@ -340,12 +340,16 @@ angular.module('oncokbApp')
                 };
                 $scope.historySearchResults.forEach(function(recordByTime){
                     recordByTime.records.forEach(function (record) {
-                        var locationTarget = getLocationTarget(record.location);
-                        result[locationTarget].push({
-                            gene: recordByTime.gene,
-                            timeStamp: recordByTime.timeStamp,
-                            record: record
-                        });
+                        if (record.location) {
+                            var locationTarget = getLocationTarget(record.location);
+                            result[locationTarget].push({
+                                gene: recordByTime.gene,
+                                timeStamp: recordByTime.timeStamp,
+                                record: record
+                            });
+                        } else {
+                            console.log('no location', record);
+                        }
                     });
                 });
 
