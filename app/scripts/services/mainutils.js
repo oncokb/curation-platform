@@ -23,11 +23,12 @@ angular.module('oncokbApp')
             var hugoSymbol = gene.name;
             if (_.isString(hugoSymbol)) {
                 $q.all([getIsoform(hugoSymbol), getOncogeneTSG(hugoSymbol)]).then(function(result) {
+                    var note = '';
                     if (_.isArray(result)) {
                         var isoform = result[0];
                         var geneType = result[1];
                         if (isoform && isoform.error) {
-                            console.error('Error when getting isoforms.', hugoSymbol);
+                            note = 'Error when getting isoform: ' + hugoSymbol;
                         } else if (isoform) {
                             if (isoform.grch37Transcript) {
                                 gene.isoform_override = isoform.grch37Transcript.transcriptId;
@@ -38,11 +39,11 @@ angular.module('oncokbApp')
                                 gene.dmp_refseq_id_grch38 = isoform.grch38Transcript.refseqMrnaId;
                             }
                         } else {
-                            console.error('No isoform found!', hugoSymbol);
+                            note = 'No isoform found for: ' + hugoSymbol;
                         }
 
                         if (geneType && geneType.error) {
-                            console.error('Error when getting gene type.', hugoSymbol);
+                            note = 'Error when getting gene type: ' + hugoSymbol;
                         } else if (geneType && geneType.classification) {
                             switch (geneType.classification) {
                                 case 'TSG':
@@ -55,11 +56,16 @@ angular.module('oncokbApp')
                                     break;
                             }
                         } else {
-                            console.log('No gene type found.', hugoSymbol);
+                            note = 'No gene type found: ' + hugoSymbol;
                         }
+
                     }
-                    deferred.resolve();
+                    if (note) {
+                        console.error(note);
+                    }
+                    deferred.resolve(note);
                 }, function(error) {
+                    deferred.reject(error);
                     console.error('Failed to load isoform/geneType', error);
                 });
             }
@@ -232,8 +238,8 @@ angular.module('oncokbApp')
                 DatabaseConnector.getIsoforms(hugoSymbol)
                     .then(function(result) {
                         deferred.resolve(result);
-                    }, function() {
-                        deferred.reject();
+                    }, function(error) {
+                        deferred.reject(error);
                     });
             } else {
                 deferred.resolve(isoforms[hugoSymbol]);

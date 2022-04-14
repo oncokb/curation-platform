@@ -7,6 +7,8 @@ angular.module('oncokbApp')
                  DTColumnDefBuilder, DTOptionsBuilder, FirebaseModel, $q, $firebaseObject) {
             $scope.init = function() {
                 $scope.newGenes = [];
+                $scope.createdGenes = [];
+                $scope.createdGenesErrorMessages = [];
                 $scope.loading = false;
                 $scope.includeUUID = false;
                 $scope.typeCheckboxes = ['update', 'name change', 'add', 'delete'];
@@ -1000,6 +1002,7 @@ angular.module('oncokbApp')
             $scope.create = function() {
                 var promises = [];
                 $scope.createdGenes = [];
+                $scope.createdGenesErrorMessages = [];
                 _.each($scope.newGenes.split(","), function (geneName) {
                     promises.push(createGene(geneName.trim().toUpperCase()));
                 });
@@ -1009,27 +1012,30 @@ angular.module('oncokbApp')
             function createGene(geneName) {
                 var deferred = $q.defer();
                 if ($scope.hugoSymbols.includes(geneName)) {
-                    dialogs.notify('Warning', 'Sorry, the ' + geneName + ' gene already exists.');
+                    $scope.createdGenesErrorMessages.push('Sorry, the ' + geneName + ' gene already exists.');
                 } else {
                     var gene = new FirebaseModel.Gene(geneName);
-                    mainUtils.setIsoFormAndGeneType(gene).then(function () {
+                    mainUtils.setIsoFormAndGeneType(gene).then(function (note) {
                         firebase.database().ref('Genes/' + geneName).set(gene).then(function(result) {
                             var meta = new FirebaseModel.Meta();
                             firebase.database().ref('Meta/' + geneName).set(meta).then(function(result) {
                                 $scope.createdGenes.push(geneName);
+                                if (note) {
+                                    $scope.createdGenesErrorMessages.push(note);
+                                }
                                 deferred.resolve();
                             }, function(error) {
                                 // Delete saved new gene from Genes collection
                                 firebase.database().ref('Genes/' + geneName).remove();
-                                dialogs.notify('Warning', 'Failed to create a Meta record for the new gene ' + geneName + '!');
+                                $scope.createdGenesErrorMessages.push('Failed to create a Meta record for the new gene ' + geneName + '. with status ' + error.status);
                                 deferred.reject(error);
                             });
                         }, function(error) {
-                            dialogs.notify('Warning', 'Failed to create the  gene ' + geneName + '!');
+                            $scope.createdGenesErrorMessages.push('Failed to create the  gene ' + geneName + '. with status ' + error.status);
                             deferred.reject(error);
                         });
                     }, function(error) {
-                        dialogs.notify('Warning', 'Failed to create the  gene ' + geneName + '!');
+                        $scope.createdGenesErrorMessages.push('Failed to load isoform/geneType for ' + geneName + ' with status ' + error.status);
                         deferred.reject(error);
                     });
                 }

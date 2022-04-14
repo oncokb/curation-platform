@@ -8,7 +8,9 @@
                 <button type="button" class="btn btn-default btn-secondary" ng-click="create()">Create Genes</button>
             </span>
         </span>
-        <span ng-if="createdGenes.length > 0" class="success-info">Gene(s) {{ createdGenes.join(', ') }} have been successfully added to OncoKB.</span>
+        <div ng-if="createdGenes.length > 0" class="success-info">Gene(s) {{ createdGenes.join(', ') }} have been successfully added to OncoKB.</div>
+        <div ng-if="createdGenesErrorMessages.length > 0" class="error-info"
+              ng-repeat="message in createdGenesErrorMessages">{{message}}</div>
     </div>
     <hr/>
 
