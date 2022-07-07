@@ -540,11 +540,8 @@ angular.module('oncokbApp')
         };
     }]);
 angular.module('oncokbApp')
-    .factory('FirebaseModel', ['$rootScope', '_', function($rootScope, _) {
+    .factory('FirebaseModel', ['$rootScope', '_', 'mainUtils', function($rootScope, _, mainUtils) {
         'use strict';
-        function getUUID() {
-            return UUIDjs.create(4).toString();
-        };
         function createTIs() {
             var result = [];
             for (var i = 0; i < 4; i++) {
@@ -574,62 +571,64 @@ angular.module('oncokbApp')
         function Gene(name) {
             this.name = name;
             this.summary = '';
-            this.summary_uuid = getUUID();
+            this.summary_uuid = mainUtils.generateUUID();
             this.background = '';
-            this.background_uuid = getUUID();
+            this.background_uuid = mainUtils.generateUUID();
             this.isoform_override = '';
             this.isoform_override_grch38 = '';
             this.dmp_refseq_id = '';
             this.dmp_refseq_id_grch38 = '';
             this.type = {
                 tsg: '',
-                tsg_uuid: getUUID(),
+                tsg_uuid: mainUtils.generateUUID(),
                 ocg: '',
-                ocg_uuid: getUUID()
+                ocg_uuid: mainUtils.generateUUID()
             };
-            this.type_uuid = getUUID();
-            this.mutations_uuid = getUUID();
+            this.type_uuid = mainUtils.generateUUID();
+            this.mutations_uuid = mainUtils.generateUUID();
         }
         function Mutation(name) {
             this.name = name;
-            this.name_uuid = getUUID();
+            this.name_uuid = mainUtils.generateUUID();
             this.mutation_effect = {
                 oncogenic: '',
-                oncogenic_uuid: getUUID(),
+                oncogenic_uuid: mainUtils.generateUUID(),
+                resistance: '',
+                resistance_uuid: mainUtils.generateUUID(),
                 effect: '',
-                effect_uuid: getUUID(),
+                effect_uuid: mainUtils.generateUUID(),
                 description: '',
-                description_uuid: getUUID(),
+                description_uuid: mainUtils.generateUUID(),
                 short: ''
             };
-            this.mutation_effect_uuid = getUUID();
-            this.tumors_uuid = getUUID();
+            this.mutation_effect_uuid = mainUtils.generateUUID();
+            this.tumors_uuid = mainUtils.generateUUID();
         };
         function Tumor(cancerTypes) {
             this.cancerTypes = cancerTypes;
-            this.cancerTypes_uuid = getUUID();
+            this.cancerTypes_uuid = mainUtils.generateUUID();
             this.summary = '';
-            this.summary_uuid = getUUID();
+            this.summary_uuid = mainUtils.generateUUID();
             this.diagnosticSummary = '';
-            this.diagnosticSummary_uuid = getUUID();
+            this.diagnosticSummary_uuid = mainUtils.generateUUID();
             this.prognosticSummary = '';
-            this.prognosticSummary_uuid = getUUID();
+            this.prognosticSummary_uuid = mainUtils.generateUUID();
             this.prognostic = {
                 level: '',
-                level_uuid: getUUID(),
+                level_uuid: mainUtils.generateUUID(),
                 description: '',
-                description_uuid: getUUID(),
+                description_uuid: mainUtils.generateUUID(),
                 short: ''
             };
-            this.prognostic_uuid = getUUID();
+            this.prognostic_uuid = mainUtils.generateUUID();
             this.diagnostic = {
                 level: '',
-                level_uuid: getUUID(),
+                level_uuid: mainUtils.generateUUID(),
                 description: '',
-                description_uuid: getUUID(),
+                description_uuid: mainUtils.generateUUID(),
                 short: ''
             };
-            this.diagnostic_uuid = getUUID();
+            this.diagnostic_uuid = mainUtils.generateUUID();
             this.TIs = createTIs();
         };
         function Cancertype(mainType, subtype, code) {
@@ -639,24 +638,24 @@ angular.module('oncokbApp')
         }
         function TI() {
             this.name =  '';
-            this.name_uuid = getUUID();
+            this.name_uuid = mainUtils.generateUUID();
             this.type = '';
             this.treatments = [];
-            this.treatments_uuid = getUUID();
+            this.treatments_uuid = mainUtils.generateUUID();
         }
         function Treatment(name) {
             this.name = name;
-            this.name_uuid = getUUID();
+            this.name_uuid = mainUtils.generateUUID();
             this.level = '';
-            this.level_uuid = getUUID();
+            this.level_uuid = mainUtils.generateUUID();
             this.propagation = ''; // propagationSolid
-            this.propagation_uuid = getUUID();
+            this.propagation_uuid = mainUtils.generateUUID();
             this.propagationLiquid = '';
-            this.propagationLiquid_uuid = getUUID();
+            this.propagationLiquid_uuid = mainUtils.generateUUID();
             this.indication = '';
-            this.indication_uuid = getUUID();
+            this.indication_uuid = mainUtils.generateUUID();
             this.description = '';
-            this.description_uuid = getUUID();
+            this.description_uuid = mainUtils.generateUUID();
             this.short = '';
         };
         function Comment(userName, email, content) {
@@ -693,7 +692,7 @@ angular.module('oncokbApp')
         function Drug(drugName, ncitCode, synonyms, ncitName){
             this.drugName = drugName;
             this.ncitCode = ncitCode;
-            this.uuid = getUUID();
+            this.uuid = mainUtils.generateUUID();
             this.description = '';
             this.ncitName = ncitName;
             this.synonyms = synonyms || [];
@@ -731,7 +730,6 @@ angular.module('oncokbApp')
             Meta: Meta,
             Setting: Setting,
             Drug: Drug,
-            generateUUID: getUUID,
             ReviewedData: ReviewedData
         };
     }]);

@@ -509,7 +509,7 @@ angular.module('oncokbApp')
                     return true;
                 }
                 processData(mutation, ['name'], excludeComments, onlyReviewedContent);
-                processData(mutation.mutation_effect, ['oncogenic', 'effect', 'description'], excludeComments, onlyReviewedContent);
+                processData(mutation.mutation_effect, ['oncogenic', 'resistance', 'effect', 'description'], excludeComments, onlyReviewedContent);
                 tempTumors = [];
                 _.each(mutation.tumors, function(tumor, tumorIndex) {
                     if (shouldExclude(onlyReviewedContent, tumor.cancerTypes_review)) {
@@ -729,6 +729,10 @@ angular.module('oncokbApp')
             return true;
         }
 
+        function generateUUID() {
+            return UUIDjs.create(4).toString();
+        }
+
         return {
             setIsoFormAndGeneType: setIsoFormAndGeneType,
             getCancerTypesName: getCancerTypesName,
@@ -772,6 +776,7 @@ angular.module('oncokbApp')
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities,
             getTimestampClass: getTimestampClass,
+            generateUUID: generateUUID,
             getTumorFormsByCancerTypes: getTumorFormsByCancerTypes
         };
     });

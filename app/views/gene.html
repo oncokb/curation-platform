@@ -277,6 +277,16 @@
                                                      uuid="getUUID({type: 'mutation_effect', key: 'oncogenic', path: path})"></realtime-string>
                                 </div>
                             </div>
+                            <div ng-show="displayPrecisely(mutation.mutation_effect.resistance_uuid)">
+                                <strong style="float: left; margin-right: 5px;">Resistance:</strong>
+                                <div>
+                                    <realtime-string t="'checkbox'" key="'resistance'" path="effectPath"
+                                                     checkboxes="checkboxes['resistance']"
+                                                     uuid="getUUID({type: 'mutation_effect', key: 'resistance', path: path})"
+                                                     backfill-uuid
+                                    ></realtime-string>
+                                </div>
+                            </div>
                             <div class="mutationEffect"
                                  ng-show="displayPrecisely(mutation.mutation_effect.effect_uuid)">
                                 <strong class="header">Mutation effect:</strong>
