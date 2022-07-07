@@ -150,10 +150,6 @@
   version "1.1.1"
   resolved "https://codeload.github.com/metafizzy/ev-emitter/tar.gz/1baa3a03d8e07f665b0eb797661fcc2b0d2a5736"
 
-"@bower_components/file-saver.js@Teleborder/FileSaver.js#~1.20150304.1":
-  version "0.0.0"
-  resolved "https://codeload.github.com/Teleborder/FileSaver.js/tar.gz/382f170efa3370875f9aeed0e179ae7ec1d2d625"
-
 "@bower_components/firebase@firebase/firebase-bower#3.x.x":
   version "0.0.0"
   resolved "https://codeload.github.com/firebase/firebase-bower/tar.gz/6aa7a54ec489af2e6d1651bac04fbeb8a2d7a816"
