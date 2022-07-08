@@ -298,7 +298,9 @@ OncoKB.config = {
     "apiLink": "",
     "curationLink": "",
     "privateApiLink": "",
+    "internalPrivateApiLink": "",
     "publicApiLink": "",
+    "internalPublicApiLink": "",
     "testing": true,
     "production": false,
     "firebaseConfig": {

@@ -34,7 +34,6 @@
     "@bower_components/datatables": "DataTables/DataTables#>=1.10.0",
     "@bower_components/es5-shim": "es-shims/es5-shim#~3.1.0",
     "@bower_components/ev-emitter": "metafizzy/ev-emitter#^1.0.0",
-    "@bower_components/file-saver.js": "Teleborder/FileSaver.js#~1.20150304.1",
     "@bower_components/firebase": "firebase/firebase-bower#3.x.x",
     "@bower_components/fontawesome": "FortAwesome/Font-Awesome#~4.4.0",
     "@bower_components/google-diff-match-patch-js": "oncokb/google-diff-match-patch-js#^1.0.0",
@@ -99,7 +98,7 @@
     "time-grunt": "^0.3.1"
   },
   "engines": {
-    "node": ">=10.16.3",
+    "node": ">=12.22.6",
     "yarn": ">= 1.21.1"
   },
   "scripts": {

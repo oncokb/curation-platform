@@ -49,10 +49,10 @@ angular.module('oncokbApp').factory('DataSummary', ['$http', function($http) {
         return $http.get('data/summary.json');
     }
     function getGeneType() {
-        return $http.get(OncoKB.config.publicApiLink + 'genes');
+        return $http.get(OncoKB.config.internalPublicApiLink + 'genes');
     }
     function getEvidenceByType(type) {
-        return $http.get(OncoKB.config.publicApiLink + 'evidences/lookup?source=oncotree&evidenceTypes=' + type);
+        return $http.get(OncoKB.config.internalPublicApiLink + 'evidences/lookup?source=oncotree&evidenceTypes=' + type);
     }
 
     function getEvidenceLevels() {
@@ -110,7 +110,7 @@ angular.module('oncokbApp').factory('Alteration', ['$http', 'OncoKB', function($
         } else {
             query = 'hugoSymbol=' + gene;
         }
-        return $http.get(OncoKB.config.publicApiLink + 'variants/lookup?' + query);
+        return $http.get(OncoKB.config.internalPublicApiLink + 'variants/lookup?' + query);
     }
 
     return {
@@ -144,7 +144,7 @@ angular.module('oncokbApp').config(function($httpProvider) {
     }
 
     function lookupVariants(body) {
-        return $http.post(OncoKB.config.publicApiLink + 'variants/lookup', body);
+        return $http.post(OncoKB.config.internalPublicApiLink + 'variants/lookup', body);
     }
 
     return {
@@ -254,7 +254,7 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
 
     function getEvidencesByUUID(uuid) {
         return $http.get(
-            OncoKB.config.publicApiLink + 'evidences/' + uuid,
+            OncoKB.config.internalPublicApiLink + 'evidences/' + uuid,
             {
                 transformResponse: function(result) {
                     return {status: result};
@@ -264,7 +264,7 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
 
     function getEvidencesByUUIDs(uuids) {
         return $http.post(
-            OncoKB.config.publicApiLink + 'evidences',
+            OncoKB.config.internalPublicApiLink + 'evidences',
             uuids,
             {
                 transformResponse: function(result) {

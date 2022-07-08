@@ -5,7 +5,7 @@
 
     <groupId>org.mskcc.oncokb</groupId>
     <artifactId>oncokb-curation-platform</artifactId>
-    <version>0.6.13</version>
+    <version>0.7.0</version>
     <packaging>jar</packaging>
 
     <build>
@@ -23,7 +23,7 @@
                         </goals>
                         <configuration>
                             <!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
-                            <nodeVersion>v10.16.3</nodeVersion>
+                            <nodeVersion>v12.22.6</nodeVersion>
                             <yarnVersion>v1.21.1</yarnVersion>
                         </configuration>
                     </execution>
