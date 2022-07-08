@@ -3353,7 +3353,7 @@ angular.module('oncokbApp')
             $scope.gene = '';
             $rootScope.collaborators = {};
             $scope.checkboxes = {
-                oncogenic: ['Yes', 'Likely', 'Likely Neutral', 'Inconclusive', 'Resistance'],
+                oncogenic: ['Yes', 'Likely', 'Likely Neutral', 'Inconclusive'],
                 resistance: ['Yes'],
                 mutationEffect: ['Gain-of-function', 'Likely Gain-of-function', 'Loss-of-function', 'Likely Loss-of-function', 'Switch-of-function', 'Likely Switch-of-function', 'Neutral', 'Likely Neutral', 'Inconclusive'],
                 hotspot: ['TRUE', 'FALSE'],
