@@ -527,11 +527,11 @@ angular.module('oncokbApp')
                     evidenceTypes: 'geneType'
                 },
                 mutationEffect: {
-                    header:['Gene', 'Mutation', 'Oncogenic', 'Mutation Effect', 'Description', 'Citations'],
+                    header:['Gene', 'Mutation', 'Oncogenic', 'Resistance', 'Mutation Effect', 'Description', 'Citations'],
                     body: [],
-                    keys: ['hugoSymbol', 'mutation', 'oncogenic', 'mutationEffect', 'description', 'citations'],
+                    keys: ['hugoSymbol', 'mutation', 'oncogenic', 'resistance', 'mutationEffect', 'description', 'citations'],
                     fileName: 'MutationEffect.txt',
-                    evidenceTypes: 'MUTATION_EFFECT,ONCOGENIC'
+                    evidenceTypes: 'MUTATION_EFFECT,ONCOGENIC,RESISTANCE'
                 },
                 tumorSummary: {
                     header: ['Gene', 'Mutation', 'Tumor Type', 'Tumor Summary'],

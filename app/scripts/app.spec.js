@@ -39,6 +39,12 @@ var OncoKB = {
                     "updatedBy": "Debyani Chakravarty"
                 },
                 "oncogenic_uuid": "ef3e7a30-73e5-41b0-8b3e-f9f08b92c50a",
+                "resistance": "Yes",
+                "resistance_review": {
+                    "updateTime": 1490821090000,
+                    "updatedBy": "Debyani Chakravarty"
+                },
+                "resistance_uuid": "ef3e7a30-73e5-41b0-8b3e-f9f08b92c50b",
                 "short": ""
             },
             "mutation_effect_comments": [{

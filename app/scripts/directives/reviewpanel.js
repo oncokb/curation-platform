@@ -291,7 +291,7 @@ angular.module('oncokbApp')
                                 break;
                             case 'MUTATION_EFFECT':
                                 var mutation = $scope.getRefs($scope.mutation).mutation;
-                                _.each(['oncogenic', 'effect', 'description'], function(key) {
+                                _.each(['oncogenic', 'resistance', 'effect', 'description'], function(key) {
                                     rejectionItems.push({uuid: mutation.mutation_effect[key+'_uuid'], key: key, obj: mutation.mutation_effect});
                                 });
                                 break;

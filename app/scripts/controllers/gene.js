@@ -544,8 +544,8 @@ angular.module('oncokbApp')
                             mutationChanged: mutationChanged_
                         };
                     }
-                    if (isChangedSection([mutation.mutation_effect.oncogenic_uuid, mutation.mutation_effect.effect_uuid, mutation.mutation_effect.description_uuid])) {
-                        tempArr = [mutation.mutation_effect.oncogenic_review, mutation.mutation_effect.effect_review, mutation.mutation_effect.description_review];
+                    if (isChangedSection([mutation.mutation_effect.oncogenic_uuid, mutation.mutation_effect.resistance_uuid, mutation.mutation_effect.effect_uuid, mutation.mutation_effect.description_uuid])) {
+                        tempArr = [mutation.mutation_effect.oncogenic_review, mutation.mutation_effect.resistance_review, mutation.mutation_effect.effect_review, mutation.mutation_effect.description_review];
                         sectionUUIDs_.push(mutation.mutation_effect_uuid);
                         ReviewResource.updated.push(mutation.mutation_effect_uuid);
                         mutationChanged = true;
@@ -1062,6 +1062,15 @@ angular.module('oncokbApp')
                             historyData.new.oncogenic = MEObj.oncogenic;
                             historyData.old.oncogenic = MEObj.oncogenic_review.lastReviewed;
                             reviewObj = MEObj.oncogenic_review;
+                        } else if ($scope.geneMeta.review[MEObj.resistance_uuid]) {
+                            data.evidenceType = 'RESISTANCE';
+                            data.knownEffect = MEObj.resistance;
+                            dataUUID = MEObj.resistance_uuid;
+                            data.lastEdit = MEObj.resistance_review.updateTime;
+                            historyData.location = mutation.name + ', Mutation Effect';
+                            historyData.new.resistance = MEObj.resistance;
+                            historyData.old.resistance = MEObj.resistance_review.lastReviewed;
+                            reviewObj = MEObj.resistancec_review;
                         }
                         // tempFlag is set to true when MUTATION_EFFECT evidence exists which means either mutation effect or mutation description got changed.
                         var tempFlag = false;
@@ -1475,9 +1484,24 @@ angular.module('oncokbApp')
                         acceptItem([{ reviewObj: $scope.gene.type.tsg_review, uuid: $scope.gene.type.tsg_uuid }, { reviewObj: $scope.gene.type.ocg_review, uuid: $scope.gene.type.ocg_uuid }], $scope.gene.type_uuid);
                         break;
                     case 'MUTATION_EFFECT':
-                        acceptItem([{ reviewObj: mutation.mutation_effect.oncogenic_review, uuid: mutation.mutation_effect.oncogenic_uuid },
-                        { reviewObj: mutation.mutation_effect.effect_review, uuid: mutation.mutation_effect.effect_uuid },
-                        { reviewObj: mutation.mutation_effect.description_review, uuid: mutation.mutation_effect.description_uuid }], mutation.mutation_effect_uuid);
+                        acceptItem([
+                            {
+                                reviewObj: mutation.mutation_effect.oncogenic_review,
+                                uuid: mutation.mutation_effect.oncogenic_uuid
+                            },
+                            {
+                                reviewObj: mutation.mutation_effect.resistance_review,
+                                uuid: mutation.mutation_effect.resistance_uuid
+                            },
+                            {
+                                reviewObj: mutation.mutation_effect.effect_review,
+                                uuid: mutation.mutation_effect.effect_uuid
+                            },
+                            {
+                                reviewObj: mutation.mutation_effect.description_review,
+                                uuid: mutation.mutation_effect.description_uuid
+                            }
+                        ], mutation.mutation_effect_uuid);
                         break;
                     case 'TUMOR_TYPE_SUMMARY':
                         acceptItem([{ reviewObj: tumor.summary_review, uuid: tumor.summary_uuid }], tumor.summary_uuid);
@@ -1545,7 +1569,7 @@ angular.module('oncokbApp')
                     case 'GENE_BACKGROUND':
                         return [$scope.gene.background_uuid];
                     case 'MUTATION_EFFECT':
-                        return [mutation.mutation_effect.oncogenic_uuid, mutation.mutation_effect.effect_uuid, mutation.mutation_effect.description_uuid];
+                        return [mutation.mutation_effect.oncogenic_uuid, mutation.mutation_effect.resistance_uuid, mutation.mutation_effect.effect_uuid, mutation.mutation_effect.description_uuid];
                     case 'PROGNOSTIC_IMPLICATION':
                         return [tumor.prognostic_uuid];
                     case 'DIAGNOSTIC_IMPLICATION':
@@ -1660,7 +1684,7 @@ angular.module('oncokbApp')
                     case 'mutation':
                         ReviewResource.accepted.push(mutation.name_uuid);
                         delete mutation.name_review.added;
-                        clearReview([mutation.name_review, mutation.mutation_effect.oncogenic_review, mutation.mutation_effect.effect_review, mutation.mutation_effect.description_review]);
+                        clearReview([mutation.name_review, mutation.mutation_effect.oncogenic_review, mutation.mutation_effect.resistance_review, mutation.mutation_effect.effect_review, mutation.mutation_effect.description_review]);
                         _.each(mutation.tumors, function (tumor) {
                             acceptSectionItems('tumor', mutation, tumor, ti, treatment);
                         });
@@ -1951,7 +1975,7 @@ angular.module('oncokbApp')
                     acceptSection(type, mutation, tumor, ti, treatment);
                     numOfReviewItems.minus(updatedBy);
                     // Add history record for newly added empty mutation.
-                    DatabaseConnector.addHisotryRecord(historyData);
+                    DatabaseConnector.addHistoryRecord(historyData);
                     return;
                 }
                 if (loadingUUID) {
@@ -2670,11 +2694,13 @@ angular.module('oncokbApp')
                     switch(uuidType) {
                         case 'insideOnly':
                             uuids.push(obj.mutation_effect.oncogenic_uuid);
+                            uuids.push(obj.mutation_effect.resistance_uuid);
                             uuids.push(obj.mutation_effect.effect_uuid);
                             uuids.push(obj.mutation_effect.description_uuid);
                             break;
                         case 'evidenceOnly':
                             uuids.push(obj.mutation_effect.oncogenic_uuid);
+                            uuids.push(obj.mutation_effect.resistance_uuid);
                             uuids.push(obj.mutation_effect.effect_uuid);
                             break;
                         case 'sectionOnly':
@@ -2685,6 +2711,7 @@ angular.module('oncokbApp')
                             uuids.push(obj.name_uuid);
                             uuids.push(obj.mutation_effect_uuid);
                             uuids.push(obj.mutation_effect.oncogenic_uuid);
+                            uuids.push(obj.mutation_effect.resistance_uuid);
                             uuids.push(obj.mutation_effect.effect_uuid);
                             uuids.push(obj.mutation_effect.description_uuid);
                             break;
@@ -3151,12 +3178,12 @@ angular.module('oncokbApp')
                     return false;
                 }
                 if (type === 'mutation') {
-                    if (obj.mutation_effect.oncogenic || obj.mutation_effect.effect || obj.mutation_effect.description || obj.mutation_effect.short || !_.isUndefined(obj.tumors)) {
+                    if (obj.mutation_effect.oncogenic || obj.mutation_effect.resistance || obj.mutation_effect.effect || obj.mutation_effect.description || obj.mutation_effect.short || !_.isUndefined(obj.tumors)) {
                         return false;
                     }
                     emptySectionsUUIDs[obj.name_uuid] = true;
                 } else if (type === 'mutation_effect') {
-                    if (obj.oncogenic || obj.effect || obj.description || obj.short) {
+                    if (obj.oncogenic || obj.resistance || obj.effect || obj.description || obj.short) {
                         return false;
                     }
                     emptySectionsUUIDs[obj.mutation_effect_uuid] = true;
@@ -3327,6 +3354,7 @@ angular.module('oncokbApp')
             $rootScope.collaborators = {};
             $scope.checkboxes = {
                 oncogenic: ['Yes', 'Likely', 'Likely Neutral', 'Inconclusive', 'Resistance'],
+                resistance: ['Yes'],
                 mutationEffect: ['Gain-of-function', 'Likely Gain-of-function', 'Loss-of-function', 'Likely Loss-of-function', 'Switch-of-function', 'Likely Switch-of-function', 'Neutral', 'Likely Neutral', 'Inconclusive'],
                 hotspot: ['TRUE', 'FALSE'],
                 TSG: ['Tumor Suppressor'],

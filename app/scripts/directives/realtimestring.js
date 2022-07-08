@@ -26,8 +26,11 @@ angular.module('oncokbApp')
             },
             replace: true,
             link: {
-                pre: function preLink(scope) {
+                pre: function preLink(scope, elems, attrs) {
                     $firebaseObject(firebase.database().ref(scope.path)).$bindTo(scope, "data").then(function (success) {
+                        if(attrs.hasOwnProperty('backfillUuid') && !scope.uuid) {
+                            scope.data[scope.key + '_uuid'] = scope.uuid = mainUtils.generateUUID();
+                        }
                         scope.pureContent.text = scope.data[scope.key];
                         if (scope.t === 'treatment-select') {
                             scope.changePropagation(true);

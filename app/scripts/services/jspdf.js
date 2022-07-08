@@ -94,6 +94,9 @@ angular.module('oncokbApp')
             if (mutation.mutation_effect.oncogenic) {
                 drawFunc('Oncogenic: ' + mutation.mutation_effect.oncogenic, '4', 'Bold');
             }
+            if (mutation.mutation_effect.resistance) {
+                drawFunc('Resistance: ' + mutation.mutation_effect.resistance, '4', 'Bold');
+            }
             if (mutation.mutation_effect.effect) {
                 drawFunc('Mutation effect: ' + mutation.mutation_effect.effect, '4', 'Bold');
             }
@@ -113,7 +116,7 @@ angular.module('oncokbApp')
                 });
             }
         }
-        function drawFuncImplications(tumor) {            
+        function drawFuncImplications(tumor) {
             var keys = ['diagnostic', 'prognostic'];
             _.each(keys, function(key) {
                 var hasContent = tumor[key].level && tumor[key].description && tumor[key].short;
@@ -133,7 +136,7 @@ angular.module('oncokbApp')
                     }
                 }
             });
-            
+
         }
         function drawFuncTumorType(tumor) {
             drawFunc('Tumor Type: ' + mainUtils.getCancerTypesName(tumor.cancerTypes), '3', 'Bold');
