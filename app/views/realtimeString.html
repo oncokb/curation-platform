@@ -36,11 +36,24 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in content.propagationTypes"
+                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in ['solid', 'liquid']"
                          ng-if="content.propagationOpts[type].length > 0"
-                         ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
+                         ng-init="targetModelKey = getPropagationKey(type)"
                          style="margin-bottom:10px">
                         <span>Level of Evidence in other {{type}} tumor types: </span>
+                        <select ng-disabled="!fe"
+                                chosen allow-single-deselect="true"
+                                ng-model="data[targetModelKey]"
+                                ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}', type)"
+                                ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
+                            <option value="NA"></option>
+                        </select>
+                    </div>
+                    <div
+                        ng-init="type='fda'; targetModelKey = getPropagationKey(type)"
+                        ng-if="content.propagationOpts['fda'].length > 0"
+                        style="margin-bottom:10px">
+                        <div>FDA Level of Evidence:</div>
                         <select ng-disabled="!fe"
                                 chosen allow-single-deselect="true"
                                 ng-model="data[targetModelKey]"
@@ -128,10 +141,35 @@
                             <option value="NA"></option>
                         </select>
                     </div>
-                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in content.propagationTypes"
-                         ng-init="targetModelKey = type == 'solid' ? 'propagation': 'propagationLiquid'"
+                    <div ng-if="oType === 'SS' || oType === 'IS'" ng-repeat="type in ['solid', 'liquid']"
+                         ng-init="targetModelKey = getPropagationKey(type)"
                          style="margin-top:10px;">
                         <strong>Level of Evidence in {{type}} tumor types: </strong>
+                        <h4 ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">New Content:</h4>
+                        <div>
+                            <select ng-disabled="!reviewContentEditable('regular')"
+                                    chosen allow-single-deselect="true"
+                                    ng-model="data[targetModelKey]"
+                                    ng-change="updateContent(data[targetModelKey], '{{data[targetModelKey]}}',type)"
+                                    ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
+                                <option value="NA"></option>
+                            </select>
+                        </div>
+                        <div ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">
+                            <h4>Old Content:</h4>
+                            <div>
+                                <select ng-disabled="true"
+                                        chosen
+                                        ng-model="data[targetModelKey + '_review'].lastReviewed"
+                                        ng-options="opt.value as opt.name for opt in content.propagationOpts[type]">
+                                    <option value="NA"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-init="type='fda'; targetModelKey = getPropagationKey(type)"
+                         style="margin-top:10px;">
+                        <strong>FDA Level of Evidence: </strong>
                         <h4 ng-if="reviewLayout('regular') && data[targetModelKey + '_review'].lastReviewed">New Content:</h4>
                         <div>
                             <select ng-disabled="!reviewContentEditable('regular')"

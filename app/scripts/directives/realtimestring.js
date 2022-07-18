@@ -62,6 +62,17 @@ angular.module('oncokbApp')
                             scope.pureContent.text = n;
                         }
                     });
+                    scope.getPropagationKey = function (propagationType) {
+                        var key = '';
+                        if (propagationType === 'solid') {
+                            key = 'propagation';
+                        } else if (propagationType === 'liquid') {
+                            key = 'propagationLiquid';
+                        } else if (propagationType === 'fda') {
+                            key = 'fdaLevel';
+                        }
+                        return key;
+                    };
                     scope.setReviewRelatedContent = function(n, o, propagationType) {
                         var key = scope.key;
                         var uuid = scope.uuid;
@@ -69,9 +80,15 @@ angular.module('oncokbApp')
                             if (propagationType === 'solid') {
                                 key = 'propagation';
                                 uuid = scope.data.propagation_uuid;
-                            } else {
+                            } else if (propagationType === 'liquid') {
                                 key = 'propagationLiquid';
                                 uuid = scope.data.propagationLiquid_uuid;
+                            } else if (propagationType === 'fda') {
+                                key = 'fdaLevel';
+                                if (!scope.data.fdaLevel_uuid) {
+                                    scope.data.fdaLevel_uuid = UUIDjs.create(4).toString();
+                                }
+                                uuid = scope.data.fdaLevel_uuid;
                             }
                             if (_.isUndefined(o)) {
                                 // Even if propagation old content is undefined, i.e. Level 0 -> Level 2 Propagation 3B.
@@ -104,7 +121,7 @@ angular.module('oncokbApp')
                         if (scope.data[key] !== n) {
                             scope.data[key] = n;
                         }
-                    }
+                    };
                 }
             },
             controller: function ($scope) {
@@ -112,7 +129,7 @@ angular.module('oncokbApp')
                     text: ''
                 };
                 $scope.content = {
-                    propagationTypes: ['solid', 'liquid']
+                    propagationTypes: ['solid', 'liquid', 'fda']
                 };
                 $scope.content.propagationOpts = _.reduce($scope.content.propagationTypes, function(acc, next) {
                     acc[next] = [];
@@ -130,6 +147,14 @@ angular.module('oncokbApp')
                     '4': {
                         name: 'Level 4',
                         value: '4'
+                    },
+                    'fda2': {
+                        name: 'FDA Level 2',
+                        value: 'Fda2'
+                    },
+                    'fda3': {
+                        name: 'FDA Level 3',
+                        value: 'Fda3'
                     }
                 };
                 $scope.getMutationName = function(key, oldKey, uuid){
@@ -197,9 +222,39 @@ angular.module('oncokbApp')
                     }
                 }
 
+                function updateFdaLevelByType(initial) {
+                    var propagationKey = 'fdaLevel';
+                    var _propagationOpts = [];
+                    var _propagation = '';
+                    if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2' ||
+                        ($rootScope.reviewMode && ($scope.data[$scope.key + '_review'].lastReviewed === '1' ||
+                            $scope.data[$scope.key + '_review'].lastReviewed === '2')) || $scope.pureContent.text === 'R1' ||
+                        ($rootScope.reviewMode && $scope.data[$scope.key + '_review'].lastReviewed === 'R1')) {
+                        _propagationOpts = [
+                            $scope.propagationOpts.fda2,
+                            $scope.propagationOpts.fda3,
+                            $scope.propagationOpts.no
+                        ];
+                        _propagation = setDefaultPropagation(propagationKey, 'Fda2', initial);
+                    } else {
+                        _propagationOpts = [
+                            $scope.propagationOpts.fda3,
+                            $scope.propagationOpts.no
+                        ];
+                        _propagation = setDefaultPropagation(propagationKey, 'Fda3', initial);
+                    }
+                    $scope.content.propagationOpts.fda = _propagationOpts;
+                    if (_propagation !== '' && $scope.data[propagationKey] !== _propagation) {
+                        if (!initial) {
+                            $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], 'fda');
+                        }
+                        $scope.data[propagationKey] = _propagation;
+                    }
+                }
+
                 function setDefaultPropagation(propagationKey, defaultPropagation, initial) {
                     var _propagation = $scope.data[propagationKey];
-                    if ($scope.tumorForms.length === 1) {
+                    if ($scope.tumorForms.length === 1 || propagationKey === 'fdaLevel') {
                         if (!initial && !$scope.data[propagationKey] && !$rootScope.reviewMode) {
                             _propagation = defaultPropagation;
                         }
@@ -208,9 +263,13 @@ angular.module('oncokbApp')
                     }
                     return _propagation;
                 }
-                $scope.changePropagation = function(initial) {
-                    _.forEach($scope.content.propagationTypes, function(propagationType) {
-                        updatePropagationByType(propagationType, initial);
+                $scope.changePropagation = function (initial) {
+                    _.forEach($scope.content.propagationTypes, function (propagationType) {
+                        if (propagationType === 'fda') {
+                            updateFdaLevelByType(initial);
+                        } else {
+                            updatePropagationByType(propagationType, initial);
+                        }
                     });
                 };
                 $scope.inReviewMode = function () {
