@@ -63,6 +63,7 @@ describe('Gene Controller', function () {
 			treatments: null,
 			propagation: null,
             propagationLiquid: null
+            fdaLevel: null
 		};
 		// Test the function to prepare evidence model for API call in each type
 		it('GENE_SUMMARY type is wrong', function () {

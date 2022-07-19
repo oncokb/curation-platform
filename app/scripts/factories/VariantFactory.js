@@ -649,6 +649,8 @@ angular.module('oncokbApp')
             this.name_uuid = getUUID();
             this.level = '';
             this.level_uuid = getUUID();
+            this.fdaLevel = '';
+            this.fdaLevel_uuid = getUUID();
             this.propagation = ''; // propagationSolid
             this.propagation_uuid = getUUID();
             this.propagationLiquid = '';
@@ -658,7 +660,7 @@ angular.module('oncokbApp')
             this.description = '';
             this.description_uuid = getUUID();
             this.short = '';
-        };
+        }
         function Comment(userName, email, content) {
             this.date = (new Date()).getTime().toString();
             this.userName = userName;
