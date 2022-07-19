@@ -89,7 +89,7 @@ var OncoKB = {
                             "updateTime": 1493325255069
                         },
                         "level_uuid": "49fd8572-55aa-4b12-afe4-6672e4ac9399",
-                        "fdaLevel": "3A",
+                        "fdaLevel": "Fda2",
                         "fdaLevel_review": {
                             "updateTime": 1493325255069
                         },

@@ -222,7 +222,7 @@ angular.module('oncokbApp')
                     }
                 }
 
-                function updateFdaLevelByType(initial) {
+                function updateFdaLevel(initial) {
                     var propagationKey = 'fdaLevel';
                     var _propagationOpts = [];
                     var _propagation = '';
@@ -266,7 +266,7 @@ angular.module('oncokbApp')
                 $scope.changePropagation = function (initial) {
                     _.forEach($scope.content.propagationTypes, function (propagationType) {
                         if (propagationType === 'fda') {
-                            updateFdaLevelByType(initial);
+                            updateFdaLevel(initial);
                         } else {
                             updatePropagationByType(propagationType, initial);
                         }
