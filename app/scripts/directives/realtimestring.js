@@ -226,6 +226,7 @@ angular.module('oncokbApp')
                     var propagationKey = 'fdaLevel';
                     var _propagationOpts = [];
                     var _propagation = '';
+                    var isInitial = initial && !$scope.data['level'];
                     if ($scope.pureContent.text === '1' || $scope.pureContent.text === '2' ||
                         ($rootScope.reviewMode && ($scope.data[$scope.key + '_review'].lastReviewed === '1' ||
                             $scope.data[$scope.key + '_review'].lastReviewed === '2')) || $scope.pureContent.text === 'R1' ||
@@ -235,17 +236,17 @@ angular.module('oncokbApp')
                             $scope.propagationOpts.fda3,
                             $scope.propagationOpts.no
                         ];
-                        _propagation = setDefaultPropagation(propagationKey, 'Fda2', initial);
+                        _propagation = setDefaultPropagation(propagationKey, 'Fda2', isInitial);
                     } else {
                         _propagationOpts = [
                             $scope.propagationOpts.fda3,
                             $scope.propagationOpts.no
                         ];
-                        _propagation = setDefaultPropagation(propagationKey, 'Fda3', initial);
+                        _propagation = setDefaultPropagation(propagationKey, 'Fda3', isInitial);
                     }
                     $scope.content.propagationOpts.fda = _propagationOpts;
                     if (_propagation !== '' && $scope.data[propagationKey] !== _propagation) {
-                        if (!initial) {
+                        if (!isInitial) {
                             $scope.setReviewRelatedContent(_propagation, $scope.data[propagationKey], 'fda');
                         }
                         $scope.data[propagationKey] = _propagation;
