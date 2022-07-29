@@ -158,15 +158,11 @@ angular.module('oncokbApp')
         function validation(articles) {
             var deferred = $q.defer();
             var pubmedArticles = [];
-            var trials = [];
             var abstracts = [];
             _.each(articles, function(article) {
                 switch(article.type) {
                 case 'pmid':
                     pubmedArticles.push(article);
-                    break;
-                case 'nct':
-                    trials.push(article);
                     break;
                 case 'abstract':
                     abstracts.push(article);
@@ -174,18 +170,15 @@ angular.module('oncokbApp')
                 }
             });
             if ($rootScope.reviewMode === true) {
-                deferred.resolve(_.union(pubmedArticles, trials, abstracts));
+                deferred.resolve(_.union(pubmedArticles, abstracts));
             } else {
                 var apiCalls = [];
                 if(pubmedArticles.length > 0) {
                     apiCalls.push(validatePubmed(pubmedArticles));
                 }
-                if(trials.length > 0) {
-                    apiCalls.push(validateTrials(trials));
-                }
                 $q.all(apiCalls)
                     .then(function(result) {
-                        deferred.resolve(_.union(pubmedArticles, trials, abstracts));
+                        deferred.resolve(_.union(pubmedArticles, abstracts));
                     }, function(error) {
                         deferred.reject(error);
                     });

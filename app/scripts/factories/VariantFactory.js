@@ -283,14 +283,6 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         return $http.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=' + validPubMedIDs.join(','));
     }
 
-    function getClinicalTrial(nctIds) {
-        if (!nctIds || !_.isArray(nctIds) || nctIds.length === 0) {
-            return {};
-        } else {
-            return $http.get(OncoKB.config.privateApiLink + 'utils/validation/trials?nctIds=' + nctIds.join());
-        }
-    }
-
     return {
         updateGene: updateGene,
         updateGeneType: updateGeneType,
@@ -302,7 +294,6 @@ angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', 
         getEvidencesByUUID: getEvidencesByUUID,
         getEvidencesByUUIDs: getEvidencesByUUIDs,
         getPubMedArticle: getPubMedArticle,
-        getClinicalTrial: getClinicalTrial
     };
 }]);
 
@@ -649,6 +640,8 @@ angular.module('oncokbApp')
             this.name_uuid = getUUID();
             this.level = '';
             this.level_uuid = getUUID();
+            this.fdaLevel = '';
+            this.fdaLevel_uuid = getUUID();
             this.propagation = ''; // propagationSolid
             this.propagation_uuid = getUUID();
             this.propagationLiquid = '';
@@ -658,7 +651,7 @@ angular.module('oncokbApp')
             this.description = '';
             this.description_uuid = getUUID();
             this.short = '';
-        };
+        }
         function Comment(userName, email, content) {
             this.date = (new Date()).getTime().toString();
             this.userName = userName;

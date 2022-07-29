@@ -640,10 +640,10 @@ angular.module('oncokbApp')
                                         mutationChanged: mutationChanged_
                                     };
                                 }
-                                if (isChangedSection([treatment.level_uuid, treatment.propagation_uuid, treatment.propagationLiquid_uuid, treatment.indication_uuid, treatment.description_uuid])) {
-                                    tempArr = [treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review];
+                                if (isChangedSection([treatment.level_uuid, treatment.fdaLevel_uuid, treatment.propagation_uuid, treatment.propagationLiquid_uuid, treatment.indication_uuid, treatment.description_uuid])) {
+                                    tempArr = [treatment.name_review, treatment.level_review, treatment.fdaLevel_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review];
                                     treatmentChanged = true;
-                                    setUpdatedSignature([treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
+                                    setUpdatedSignature([treatment.level_review, treatment.fdaLevel_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
                                     ReviewResource.updated.push(treatment.name_uuid);
                                 } else if (isChangedSection([treatment.name_uuid])) {
                                     treatmentChanged = true;
@@ -1006,7 +1006,8 @@ angular.module('oncokbApp')
                     articles: [],
                     treatments: null,
                     solidPropagationLevel: null,
-                    liquidPropagationLevel: null
+                    liquidPropagationLevel: null,
+                    fdaLevel: null
                 };
                 if ($scope.meta.gene) {
                     data.gene.entrezGeneId = $scope.meta.gene.entrezGeneId;
@@ -1025,7 +1026,10 @@ angular.module('oncokbApp')
                     'Px3': 'LEVEL_Px3',
                     'Dx1': 'LEVEL_Dx1',
                     'Dx2': 'LEVEL_Dx2',
-                    'Dx3': 'LEVEL_Dx3'
+                    'Dx3': 'LEVEL_Dx3',
+                    'Fda1': 'LEVEL_Fda1',
+                    'Fda2': 'LEVEL_Fda2',
+                    'Fda3': 'LEVEL_Fda3',
                 };
                 var extraData = _.clone(data);
                 var i = 0;
@@ -1273,7 +1277,7 @@ angular.module('oncokbApp')
                 if (TI) {
                     dataUUID = treatment.name_uuid;
                     if (!ReviewResource.mostRecent[dataUUID]) {
-                        setUpdatedSignature([treatment.name_review, treatment.level_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
+                        setUpdatedSignature([treatment.name_review, treatment.level_review, treatment.fdaLevel_review, treatment.indication_review, treatment.description_review], treatment.name_uuid);
                     }
                     historyData.new = {};
                     historyData.old = {};
@@ -1289,6 +1293,11 @@ angular.module('oncokbApp')
                         !_.isUndefined(treatment.level) && !_.isUndefined(treatment.level_review.lastReviewed)) {
                         historyData.new.level = treatment.level;
                         historyData.old.level = treatment.level_review.lastReviewed;
+                    }
+                    if ($scope.geneMeta.review[treatment.fdaLevel_uuid] &&
+                        !_.isUndefined(treatment.fdaLevel) && !_.isUndefined(treatment.fdaLevel_review.lastReviewed)) {
+                        historyData.new.fdaLevel = treatment.fdaLevel;
+                        historyData.old.fdaLevel = treatment.fdaLevel_review.lastReviewed;
                     }
                     if ($scope.geneMeta.review[treatment.propagation_uuid]) {
                         if (!_.isUndefined(treatment.propagation)) {
@@ -1311,6 +1320,7 @@ angular.module('oncokbApp')
                     data.description = treatment.description;
                     data.solidPropagationLevel = levelMapping[treatment.propagation];
                     data.liquidPropagationLevel = levelMapping[treatment.propagationLiquid];
+                    data.fdaLevel = levelMapping[treatment.fdaLevel];
                     data.treatments = [];
                     var treatments = treatment.name.split(',');
                     var priorities = getNewPriorities(TI.treatments, [dataUUID]);
@@ -1502,6 +1512,7 @@ angular.module('oncokbApp')
                     case 'Investigational implications for resistance to therapy':
                         acceptItem([{ reviewObj: treatment.name_review, uuid: treatment.name_uuid },
                             { reviewObj: treatment.level_review, uuid: treatment.level_uuid },
+                            { reviewObj: treatment.fdaLevel_review, uuid: treatment.fdaLevel_uuid },
                             { reviewObj: treatment.propagation_review, uuid: treatment.propagation_uuid },
                             { reviewObj: treatment.propagationLiquid_review, uuid: treatment.propagationLiquid_uuid },
                             { reviewObj: treatment.indication_review, uuid: treatment.indication_uuid },
@@ -1679,7 +1690,7 @@ angular.module('oncokbApp')
                         $scope.updateDrugMap('accept', 'add', type, mutation, tumor, treatment);
                         ReviewResource.accepted.push(treatment.name_uuid);
                         delete treatment.name_review.added;
-                        clearReview([treatment.name_review, treatment.level_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review]);
+                        clearReview([treatment.name_review, treatment.level_review, treatment.fdaLevel_review, treatment.propagation_review, treatment.propagationLiquid_review, treatment.indication_review, treatment.description_review]);
                         if (firstLayer) {
                             $scope.updatePriority(ti.treatments);
                         }
