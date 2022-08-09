@@ -445,9 +445,11 @@ angular.module('oncokbApp')
             });
         }
         function setUUIDInReview(uuid) {
-            var tempObj = {};
-            tempObj[uuid] = true;
-            firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            if (uuid) {
+                var tempObj = {};
+                tempObj[uuid] = true;
+                firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            }
         }
         function deleteUUID(uuid) {
             firebase.database().ref('Meta/' + $routeParams.geneName + '/review/' + uuid).remove();

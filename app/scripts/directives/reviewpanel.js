@@ -145,8 +145,8 @@ angular.module('oncokbApp')
                         $scope.updateTime = ReviewResource.mostRecent[$scope.uuid].updateTime;
                     } else if ($scope.adjustedEvidenceType === 'TUMOR_NAME_CHANGE') {
                         // For tumor name change, the review info is stored in cancerTypes_review
-                        $scope.updatedBy = $scope.tumor.cancerTypes_review.updatedBy;
-                        $scope.updateTime = $scope.tumor.cancerTypes_review.updateTime;
+                        $scope.updatedBy = $scope.tumor.cancerTypes_review ? $scope.tumor.cancerTypes_review.updatedBy : '';
+                        $scope.updateTime = $scope.tumor.cancerTypes_review ? $scope.tumor.cancerTypes_review.updateTime : '';
                     } else {
                         $scope.updatedBy = $scope.reviewObj && $scope.reviewObj.updatedBy ? $scope.reviewObj.updatedBy : '';
                         $scope.updateTime = $scope.reviewObj && $scope.reviewObj.updateTime ? $scope.reviewObj.updateTime : '';
@@ -270,6 +270,16 @@ angular.module('oncokbApp')
                         }
                     });
                 }
+                $scope.getTumorUuids = function (tumor) {
+                    var uuids = [];
+                    if (tumor.cancerTypes_uuid) {
+                        uuids.push(tumor.cancerTypes_uuid);
+                    }
+                    if (tumor.excludedCancerTypes_uuid) {
+                        uuids.push(tumor.excludedCancerTypes_uuid);
+                    }
+                    return uuids.join(',');
+                };
                 $scope.reject = function() {
                     var dlg = dialogs.confirm('Reminder', 'Are you sure you want to reject this change?');
                     dlg.result.then(function() {
@@ -335,6 +345,8 @@ angular.module('oncokbApp')
                             case 'TUMOR_NAME_CHANGE':
                                 var tumor = $scope.getRefs($scope.mutation, $scope.tumor, $scope.ti, $scope.treatment).tumor;
                                 rejectionItems.push({uuid: tumor.cancerTypes_uuid, key: 'cancerTypes', obj: tumor});
+                                rejectionItems.push({uuid: tumor.excludedCancerTypes_uuid, key: 'excludedCancerTypes', obj: tumor});
+                                rejectionItems.push({uuid: $scope.getTumorUuids(tumor), key: '', obj: tumor});
                                 break;
                             case 'TREATMENT_NAME_CHANGE':
                                 var treatment = $scope.getRefs($scope.mutation, $scope.tumor, $scope.ti, $scope.treatment).treatment;
