@@ -681,10 +681,10 @@ angular.module('oncokbApp')
                         if (isChangedSection([$scope.getTumorUuids(tumor)])) {
                             tumorChanged = true;
                             ReviewResource.nameChanged.push($scope.getTumorUuids(tumor));
-                            sectionUUIDs_.push($scope.getTumorUuids(tumor));
-                            ReviewResource.openInReviewMode.push($scope.getTumorUuids(tumor));
                         }
                         if (tumorChanged) {
+                            sectionUUIDs_.push($scope.getTumorUuids(tumor));
+                            ReviewResource.openInReviewMode.push($scope.getTumorUuids(tumor));
                             mutationChanged = true;
                         }
                         tumorChanged = false;
