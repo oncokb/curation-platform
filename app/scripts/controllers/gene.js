@@ -2853,6 +2853,7 @@ angular.module('oncokbApp')
                     switch(uuidType) {
                         case 'insideOnly':
                             uuids.push(obj.level_uuid);
+                            uuids.push(obj.levelLevel_uuid);
                             uuids.push(obj.propagation_uuid);
                             uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
@@ -2867,6 +2868,7 @@ angular.module('oncokbApp')
                         default:
                             uuids.push(obj.name_uuid);
                             uuids.push(obj.level_uuid);
+                            uuids.push(obj.fdaLevel_uuid);
                             uuids.push(obj.propagation_uuid);
                             uuids.push(obj.propagationLiquid_uuid);
                             uuids.push(obj.indication_uuid);
@@ -3934,15 +3936,25 @@ angular.module('oncokbApp')
             type: data.type,
             cancerTypes: data.cancerTypes || [],
             originalTumorName: mainUtils.getFullCancerTypesNames(data.cancerTypes),
-            newCancerTypes: [],
+            newCancerTypes: data.type === 'modifyRelevant' ? data.cancerTypes : [],
             excludedCancerTypes: data.excludedCancerTypes || [],
             oncoTree: data.oncoTree,
             invalid: {
-                newCancerTypes: true,
-                excludedCancerTypes: true,
+                newCancerTypes: data.type !== 'modifyRelevant',
+                excludedCancerTypes: data.type !== 'modifyRelevant',
+                relevantCancerTypes: data.type === 'modifyRelevant',
             },
             externalMessage: data.message,
         };
+        $scope.getNewCancerTypes = function () {
+            return data.type === 'modifyRelevant' ? $scope.meta.newCancerTypes.filter(function (cancerType) {
+                return !cancerType.deleted;
+            }) : $scope.meta.newCancerTypes;
+        };
+        $scope.toggleDeleteRelevantCancerType = function (index) {
+            $scope.meta.newCancerTypes[index].deleted = !$scope.meta.newCancerTypes[index].deleted;
+            $scope.meta.invalid.relevantCancerTypes = _.isEqual($scope.getNewCancerTypes(), $scope.meta.newCancerTypes);
+        }
         $scope.onChangeNewCancerTypes = function (cancerTypes, invalid) {
             $scope.meta.newCancerTypes = cancerTypes;
             $scope.meta.invalid.newCancerTypes = invalid;
@@ -3981,7 +3993,7 @@ angular.module('oncokbApp')
 
         $scope.save = function () {
             data.save(data.uuids, data.parentNodeRefType, data.parentNodeRef, data.isTumorTypeLevel,
-                data.cancerTypes, $scope.mapCancerTypes($scope.meta.newCancerTypes),
+                data.cancerTypes, data.type === 'modifyRelevant' ? $scope.getNewCancerTypes() : $scope.mapCancerTypes($scope.getNewCancerTypes()),
                 data.excludedCancerTypes, $scope.mapCancerTypes($scope.meta.excludedCancerTypes)
             );
             $modalInstance.close();

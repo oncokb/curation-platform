@@ -22,10 +22,22 @@
             ></select-cancer-types>
         </span>
         <span ng-if="meta.type === 'modifyRelevant'">
-            <div ng-repeat="cancerType in meta.cancerTypes">
-                <span>{{cancerType}}</span>
-                <i class="fa fa-delete" onclick=""></i>
-            </div>
+            <table class="table table-striped">
+                <thead>
+                    <th>Cancer Type</th>
+                    <th>Cancer Type Details</th>
+                    <th>Code</th>
+                    <th style="text-align: center">Delete</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="cancerType in meta.newCancerTypes" ng-style="cancerType.deleted ? { 'text-decoration': 'line-through'} : undefined">
+                        <td>{{cancerType.mainType}}</td>
+                        <td>{{cancerType.subtype}}</td>
+                        <td>{{cancerType.code}}</td>
+                        <td style="text-align: center" style="cursor: pointer"><i ng-class="cancerType.deleted ? 'fa fa-undo' : 'fa fa-trash-o'" ng-click="toggleDeleteRelevantCancerType($index)"></i></td>
+                    </tr>
+                </tbody>
+            </table>
         </span>
     </div>
     <div class="modal-footer">
