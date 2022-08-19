@@ -1335,6 +1335,35 @@ angular.module('oncokbApp')
                             }
                         });
                     }
+                    if ($scope.geneMeta.review[tumor.excludedCancerTypes_uuid] && _.isArray(tumor.excludedCancerTypes_review.lastReviewed) && tumor.excludedCancerTypes_review.lastReviewed.length > 0 && type !== 'TUMOR_NAME_CHANGE' && !tumor.excludedCancerTypes_review.added) {
+                        data.excludedCancerTypes = tumor.excludedCancerTypes_review.lastReviewed.map(function(tumorType) {
+                            if (tumorType.code) {
+                                return {
+                                    code: tumorType.code,
+                                    mainType: tumorType.mainType,
+                                    subtype: tumorType.subtype
+                                }
+                            } else {
+                                return {
+                                    mainType: tumorType.mainType
+                                }
+                            }
+                        });
+                    } else if (tumor.excludedCancerTypes) {
+                        data.excludedCancerTypes = tumor.excludedCancerTypes.map(function (tumorType) {
+                            if (tumorType.code) {
+                                return {
+                                    code: tumorType.code,
+                                    mainType: tumorType.mainType,
+                                    subtype: tumorType.subtype
+                                }
+                            } else {
+                                return {
+                                    mainType: tumorType.mainType
+                                }
+                            }
+                        });
+                    }
                 }
                 if (TI) {
                     dataUUID = treatment.name_uuid;
