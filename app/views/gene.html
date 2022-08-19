@@ -414,6 +414,10 @@
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
                                         <span ng-if="tumor.diagnostic.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes)}})</span>
+                                        <span ng-if="reviewMode && tumor.diagnostic.relevantCancerTypes && tumor.diagnostic.relevantCancerTypes_review && tumor.diagnostic.relevantCancerTypes_review.lastReviewed">
+                                            <br/>
+                                            <p class="margin-bottom-0">Old Content: (RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes_review.lastReviewed)}})</p>
+                                        </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
@@ -426,7 +430,7 @@
                                                       review-obj="tumor.diagnostic_review"
                                                       evidence-type="'DIAGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>
@@ -436,7 +440,7 @@
                                             <strong>Level of Evidence:</strong>
                                             <br/>
                                             <realtime-string key="'level'" path="diagnosticPath" t="'implication'"
-                                                             o="levels.diagnostic"
+                                                             o="levels.diagnostic" tumor="tumor"
                                                              uuid="getUUID({type: 'diagnostic', key: 'level', path: path})"></realtime-string>
                                             <br/>
                                         </div>
@@ -474,7 +478,7 @@
                                                       review-obj="tumor.prognostic_review"
                                                       evidence-type="'PROGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>

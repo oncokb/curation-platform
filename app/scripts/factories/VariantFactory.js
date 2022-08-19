@@ -612,6 +612,8 @@ angular.module('oncokbApp')
             this.prognostic = {
                 level: '',
                 level_uuid: getUUID(),
+                relevantCancerTypes: [],
+                relevantCancerTypes_uuid: getUUID(),
                 description: '',
                 description_uuid: getUUID(),
                 short: ''
@@ -620,6 +622,8 @@ angular.module('oncokbApp')
             this.diagnostic = {
                 level: '',
                 level_uuid: getUUID(),
+                relevantCancerTypes: [],
+                relevantCancerTypes_uuid: getUUID(),
                 description: '',
                 description_uuid: getUUID(),
                 short: ''

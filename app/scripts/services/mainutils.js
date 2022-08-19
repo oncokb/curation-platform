@@ -520,8 +520,8 @@ angular.module('oncokbApp')
                     }
                     // process tumor cancerTypes
                     processData(tumor, ['summary', 'diagnosticSummary', 'prognosticSummary'], excludeComments, onlyReviewedContent);
-                    processData(tumor.diagnostic, ['level', 'description'], excludeComments, onlyReviewedContent);
-                    processData(tumor.prognostic, ['level', 'description'], excludeComments, onlyReviewedContent);
+                    processData(tumor.diagnostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
+                    processData(tumor.prognostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
                     _.each(tumor.TIs, function(ti) {
                         processData(ti, ['description'], excludeComments, onlyReviewedContent);
                         tempTreatments = [];

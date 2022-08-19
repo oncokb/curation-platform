@@ -7,7 +7,7 @@
  * # driveRealtimeString
  */
 angular.module('oncokbApp')
-    .directive('realtimeString', function ($timeout, _, $rootScope, mainUtils, ReviewResource, $firebaseObject) {
+    .directive('realtimeString', function ($timeout, _, $rootScope, mainUtils, ReviewResource, $firebaseObject, DatabaseConnector) {
         return {
             templateUrl: 'views/realtimeString.html',
             restrict: 'AE',
@@ -96,9 +96,10 @@ angular.module('oncokbApp')
                                 mainUtils.setUUIDInReview(uuid);
                             }
                         }
+
                         // 1) we track the change in two conditions:
                         // 2) When editing happens not in review mode
-                        // 3) When editing happends in review mode but not from admin's "Reject" action
+                        // 3) When editing happens in review mode but not from admin's "Reject" action
                         if (_.isUndefined(scope.data[key + '_review'])) {
                             scope.data[key + '_review'] = {};
                         }
@@ -107,10 +108,23 @@ angular.module('oncokbApp')
                         // If the content is not approved before, do not store it into lastReviewed object.
                         if ((!$rootScope.reviewMeta[uuid] || _.isUndefined(scope.data[key + '_review'].lastReviewed)) && !_.isUndefined(o)) {
                             scope.data[key + '_review'].lastReviewed = o;
+                            if(key === 'level' &&  scope.data.relevantCancerTypes) {
+                                if(!scope.data.relevantCancerTypes_uuid) {
+                                    scope.data.relevantCancerTypes_uuid = UUIDjs.create(4).toString();
+                                }
+                                if (!scope.data['relevantCancerTypes_review']) {
+                                    scope.data['relevantCancerTypes_review'] = {};
+                                }
+                                scope.data['relevantCancerTypes_review'].lastReviewed = scope.data.relevantCancerTypes;
+                                mainUtils.setUUIDInReview(scope.data.relevantCancerTypes_uuid);
+                            }
                             mainUtils.setUUIDInReview(uuid);
                             ReviewResource.rollback = _.without(ReviewResource.rollback, uuid);
                         } else if (n === scope.data[key + '_review'].lastReviewed) {
                             delete scope.data[key + '_review'].lastReviewed;
+                            if(key === 'level' && scope.data['relevantCancerTypes_review']) {
+                                delete scope.data['relevantCancerTypes_review'].lastReviewed;
+                            }
                             mainUtils.deleteUUID(uuid);
                             // if this kind of change happens inside review mode, we track current section in rollback status to remove the review panel since there is nothing to be approved
                             if ($rootScope.reviewMode) {
@@ -120,6 +134,26 @@ angular.module('oncokbApp')
                         // Assign new value to scope.data[scope.key] to update content to gene page when multiple editing at the same time.
                         if (scope.data[key] !== n) {
                             scope.data[key] = n;
+
+                            // we should delete the relevant cancer types when level is changed
+                            if (key === 'level') {
+                                delete scope.data.relevantCancerTypes;
+
+                                // for diagnostic related info, we need to attach relevant cancer types for Dx1
+                                if(n === 'Dx1') {
+                                    DatabaseConnector.getRelevantCancerTypes(
+                                        'LEVEL_Dx1',
+                                        _.map(scope.tumor.cancerTypes, function (cancerType) {
+                                            return {
+                                                mainType: cancerType.mainType,
+                                                code: cancerType.code
+                                            };
+                                        })
+                                    ).then(function (data) {
+                                        scope.data.relevantCancerTypes = data.data;
+                                    });
+                                }
+                            }
                         }
                     };
                 }
@@ -372,10 +406,7 @@ angular.module('oncokbApp')
                         if ($scope.t === 'treatment-select' && $scope.key === 'level') {
                             $scope.changePropagation(false);
                         }
-                        // we should delete the relevant cancer types when level is changed
-                        if ($scope.key === 'level') {
-                            delete $scope.data.relevantCancerTypes;
-                        }
+
                         // 1) Do not trigger setReviewRelatedContent() when edit Additional Information (Optional).
                         // 2) Do not trigger setReviewRelatedContent() when move mutations.
                         if ($scope.key === 'short') {

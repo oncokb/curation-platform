@@ -579,15 +579,15 @@ angular.module('oncokbApp')
                                 mutationChanged: mutationChanged_
                             };
                         }
-                        if (isChangedSection([tumor.prognostic.level_uuid, tumor.prognostic.description_uuid])) {
-                            tempArr = [tumor.prognostic.description_review, tumor.prognostic.level_review];
+                        if (isChangedSection([tumor.prognostic.level_uuid, tumor.prognostic.description_uuid, tumor.prognostic.relevantCancerTypes_uuid])) {
+                            tempArr = [tumor.prognostic.description_review, tumor.prognostic.level_review, tumor.prognostic.relevantCancerTypes_review];
                             sectionUUIDs_.push(tumor.prognostic_uuid);
                             ReviewResource.updated.push(tumor.prognostic_uuid);
                             tumorChanged = true;
                             setUpdatedSignature(tempArr, tumor.prognostic_uuid);
                         }
-                        if (isChangedSection([tumor.diagnostic.level_uuid, tumor.diagnostic.description_uuid])) {
-                            tempArr = [tumor.diagnostic.description_review, tumor.diagnostic.level_review];
+                        if (isChangedSection([tumor.diagnostic.level_uuid, tumor.diagnostic.description_uuid, tumor.diagnostic.relevantCancerTypes_uuid])) {
+                            tempArr = [tumor.diagnostic.description_review, tumor.diagnostic.level_review, tumor.diagnostic.relevantCancerTypes_review];
                             sectionUUIDs_.push(tumor.diagnostic_uuid);
                             ReviewResource.updated.push(tumor.diagnostic_uuid);
                             tumorChanged = true;
@@ -750,7 +750,7 @@ angular.module('oncokbApp')
                 $scope.status[userName].savingAll = false;
                 numOfReviewItems.set(userName, 0);
                 evidencesAllUsers[userName] = {};
-            };
+            }
             $scope.acceptChangesByPerson = function (userName) {
                 if (!userName) {
                     dialogs.error('Error', 'Can not accept changes from invalid user name. Please contact the developer.');
@@ -900,9 +900,15 @@ angular.module('oncokbApp')
                         }
                         if (isChangedBy('section', tumor.prognostic_uuid, userName)) {
                             formEvidencesPerUser(userName, 'PROGNOSTIC_IMPLICATION', mutation, tumor, null, null);
+                            if (isChangedBy('precise', tumor.prognostic.relevantCancerTypes_uuid, userName, tumor.prognostic.relevantCancerTypes_uuid)) {
+                                formEvidencesPerUser(userName, 'PROGNOSTIC_SUMMARY', mutation, tumor, null, null);
+                            }
                         }
                         if (isChangedBy('section', tumor.diagnostic_uuid, userName)) {
                             formEvidencesPerUser(userName, 'DIAGNOSTIC_IMPLICATION', mutation, tumor, null, null);
+                            if (isChangedBy('precise', tumor.diagnostic.relevantCancerTypes_uuid, userName, tumor.diagnostic.relevantCancerTypes_uuid)) {
+                                formEvidencesPerUser(userName, 'DIAGNOSTIC_SUMMARY', mutation, tumor, null, null);
+                            }
                         }
                         _.each(tumor.TIs, function (ti) {
                             _.each(ti.treatments, function (treatment) {
@@ -994,7 +1000,11 @@ angular.module('oncokbApp')
                     return mutation.name + ', ' + $scope.getCancerTypesName(tumor);
                 }
             }
+
             $scope.getEvidence = function (type, mutation, tumor, TI, treatment) {
+                return $scope.getEvidence(type, mutation, tumor, TI, treatment, false);
+            };
+            $scope.getEvidence = function (type, mutation, tumor, TI, treatment, force) {
                 // The reason we are cheking again if a change has been made to a section is that, there might be many empty content in a newly added section.
                 // We need to identify the evidences having input
                 var historyData = { operation: 'update' };
@@ -1123,7 +1133,7 @@ angular.module('oncokbApp')
                         }
                         break;
                     case 'DIAGNOSTIC_SUMMARY':
-                        if ($scope.geneMeta.review[tumor.diagnosticSummary_uuid]) {
+                        if ($scope.geneMeta.review[tumor.diagnosticSummary_uuid] || force) {
                             data.description = tumor.diagnosticSummary;
                             dataUUID = tumor.diagnosticSummary_uuid;
                             data.lastEdit = tumor.diagnosticSummary_review.updateTime;
@@ -1140,7 +1150,7 @@ angular.module('oncokbApp')
                         }
                         break;
                     case 'PROGNOSTIC_SUMMARY':
-                        if ($scope.geneMeta.review[tumor.prognosticSummary_uuid]) {
+                        if ($scope.geneMeta.review[tumor.prognosticSummary_uuid] || force) {
                             data.description = tumor.prognosticSummary;
                             dataUUID = tumor.prognosticSummary_uuid;
                             data.lastEdit = tumor.prognosticSummary_review.updateTime;
@@ -1169,6 +1179,11 @@ angular.module('oncokbApp')
                             hasUpdate = true;
                             historyData.new.level = tumor.prognostic.level;
                             historyData.old.level = tumor.prognostic.level_review.lastReviewed;
+                        }
+                        if ($scope.geneMeta.review[tumor.prognostic.relevantCancerTypes_uuid]) {
+                            hasUpdate = true;
+                            historyData.new.relevantCancerTypes = tumor.prognostic.relevantCancerTypes;
+                            historyData.old.relevantCancerTypes = tumor.prognostic.relevantCancerTypes_review.lastReviewed;
                         }
                         if (hasUpdate) {
                             data.description = tumor.prognostic.description;
@@ -1199,6 +1214,11 @@ angular.module('oncokbApp')
                             hasUpdate = true;
                             historyData.new.level = tumor.diagnostic.level;
                             historyData.old.level = tumor.diagnostic.level_review.lastReviewed;
+                        }
+                        if ($scope.geneMeta.review[tumor.diagnostic.relevantCancerTypes_uuid]) {
+                            hasUpdate = true;
+                            historyData.new.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
+                            historyData.old.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes_review.lastReviewed;
                         }
                         if (hasUpdate) {
                             data.description = tumor.diagnostic.description;
@@ -1541,12 +1561,18 @@ angular.module('oncokbApp')
                         acceptItem([{ reviewObj: tumor.prognosticSummary_review, uuid: tumor.prognosticSummary_uuid }], tumor.prognosticSummary_uuid);
                         break;
                     case 'PROGNOSTIC_IMPLICATION':
-                        acceptItem([{ reviewObj: tumor.prognostic.description_review, uuid: tumor.prognostic.description_uuid },
-                        { reviewObj: tumor.prognostic.level_review, uuid: tumor.prognostic.level_uuid }], tumor.prognostic_uuid);
+                        acceptItem([
+                            {reviewObj: tumor.prognostic.description_review, uuid: tumor.prognostic.description_uuid},
+                            {reviewObj: tumor.prognostic.level_review, uuid: tumor.prognostic.level_uuid},
+                            {reviewObj: tumor.prognostic.relevantCancerTypes_review, uuid: tumor.prognostic.relevantCancerTypes_uuid},
+                        ], tumor.prognostic_uuid);
                         break;
                     case 'DIAGNOSTIC_IMPLICATION':
-                        acceptItem([{ reviewObj: tumor.diagnostic.description_review, uuid: tumor.diagnostic.description_uuid },
-                        { reviewObj: tumor.diagnostic.level_review, uuid: tumor.diagnostic.level_uuid }], tumor.diagnostic_uuid);
+                        acceptItem([
+                            {reviewObj: tumor.diagnostic.description_review, uuid: tumor.diagnostic.description_uuid},
+                            {reviewObj: tumor.diagnostic.level_review, uuid: tumor.diagnostic.level_uuid},
+                            {reviewObj: tumor.diagnostic.relevantCancerTypes_review, uuid: tumor.diagnostic.relevantCancerTypes_uuid},
+                        ], tumor.diagnostic_uuid);
                         break;
                     case 'Standard implications for sensitivity to therapy':
                     case 'Standard implications for resistance to therapy':
@@ -1640,9 +1666,19 @@ angular.module('oncokbApp')
                         formEvidencesByType([type], null, null, null, null, evidences, historyData);
                         break;
                     case 'MUTATION_EFFECT':
+                        formEvidencesByType([type], mutation, tumor, TI, treatment, evidences, historyData);
+                        break;
                     case 'PROGNOSTIC_IMPLICATION':
+                        formEvidencesByType([type], mutation, tumor, TI, treatment, evidences, historyData);
+                        if (isChangedBy('precise', tumor.prognostic.relevantCancerTypes_uuid, $rootScope.me.name, tumor.prognostic.relevantCancerTypes_uuid)) {
+                            formEvidencesPerUser(userName, 'PROGNOSTIC_SUMMARY', mutation, tumor, null, null);
+                        }
+                        break;
                     case 'DIAGNOSTIC_IMPLICATION':
                         formEvidencesByType([type], mutation, tumor, TI, treatment, evidences, historyData);
+                        if (isChangedBy('precise', tumor.diagnostic.relevantCancerTypes_uuid, $rootScope.me.name, tumor.diagnostic.relevantCancerTypes_uuid)) {
+                            formEvidencesPerUser(userName, 'DIAGNOSTIC_SUMMARY', mutation, tumor, null, null);
+                        }
                         break;
                 }
                 return { evidences: evidences, historyData: historyData };
@@ -1725,7 +1761,7 @@ angular.module('oncokbApp')
                         ReviewResource.accepted.push(tumor.excludedCancerTypes_uuid);
                         delete tumor.cancerTypes_review.added;
                         delete tumor.excludedCancerTypes_review.added;
-                        clearReview([tumor.cancerTypes_review, tumor.excludedCancerTypes_review, tumor.summary_review, tumor.prognostic.level_review, tumor.prognostic.description_review, tumor.diagnostic.level_review, tumor.diagnostic.description_review]);
+                        clearReview([tumor.cancerTypes_review, tumor.excludedCancerTypes_review, tumor.summary_review, tumor.prognostic.level_review, tumor.prognostic.description_review, tumor.prognostic.relevantCancerTypes_review, tumor.diagnostic.level_review, tumor.diagnostic.description_review, tumor.diagnostic.relevantCancerTypes_review]);
                         _.each(tumor.TIs, function (ti) {
                             _.each(ti.treatments, function (treatment) {
                                 acceptSectionItems('treatment', mutation, tumor, ti, treatment);
@@ -2303,12 +2339,15 @@ angular.module('oncokbApp')
                     if (_.isUndefined(objRef.relevantCancerTypes_review)) {
                         objRef.relevantCancerTypes_review = {};
                     }
+                    objRef.relevantCancerTypes_review.lastReviewed = previousCancerTypes;
                     objRef.relevantCancerTypes_review.updatedBy = $rootScope.me.name;
                     objRef.relevantCancerTypes_review.updateTime = new Date().getTime();
 
                     mainUtils.setUUIDInReview(objRef.relevantCancerTypes_uuid);
                     objRef.relevantCancerTypes = newCancerTypes;
-
+                    if (!objRef.relevantCancerTypes_uuid) {
+                        objRef.relevantCancerTypes_uuid = UUIDjs.create(4).toString();
+                    }
                     // if this is on tumor type level, we should remove all relevant cancer types underneth
                     if (isTumorTypeLevel) {
                         if (objRef.diagnostic) {
@@ -2799,8 +2838,10 @@ angular.module('oncokbApp')
                             uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
+                            uuids.push(obj.prognostic.relevantCancerTypes_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
                             uuids.push(obj.diagnostic.description_uuid);
+                            uuids.push(obj.diagnostic.relevantCancerTypes_uuid);
                             break;
                         case 'evidenceOnly':
                             uuids.push(obj.summary_uuid);
@@ -2825,8 +2866,10 @@ angular.module('oncokbApp')
                             uuids.push(obj.diagnosticSummary_uuid);
                             uuids.push(obj.prognostic.level_uuid);
                             uuids.push(obj.prognostic.description_uuid);
+                            uuids.push(obj.prognostic.relevantCancerTypes_uuid);
                             uuids.push(obj.diagnostic.level_uuid);
                             uuids.push(obj.diagnostic.description_uuid);
+                            uuids.push(obj.diagnostic.relevantCancerTypes_uuid);
                             break;
                     }
                     _.each(obj.TIs, function (ti) {
