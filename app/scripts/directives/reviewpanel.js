@@ -197,7 +197,7 @@ angular.module('oncokbApp')
                 };
                 $scope.getEvidence = function(type, mutation, tumor, therapyCategory, treatment) {
                     return $scope.getEvidenceInGene({
-                        type: type, mutation: mutation, tumor: tumor, therapyCategory: therapyCategory, treatment: treatment
+                        type: type, mutation: mutation, tumor: tumor, therapyCategory: therapyCategory, treatment: treatment, force: true
                     });
                 };
 
@@ -231,9 +231,28 @@ angular.module('oncokbApp')
                         });
                     } else {
                         ReviewResource.loading.push($scope.uuid);
-                        var getEvidenceResult = $scope.getEvidence($scope.adjustedEvidenceType, $scope.mutation, $scope.tumor, $scope.therapyCategory, $scope.treatment);
-                        var evidences = getEvidenceResult.evidences;
-                        var historyData = [getEvidenceResult.historyData];
+                        var types = [$scope.adjustedEvidenceType];
+                        var evidences = {};
+                        var historyData = {};
+                        if ($scope.adjustedEvidenceType === 'DIAGNOSTIC_IMPLICATION') {
+                            types.push('DIAGNOSTIC_SUMMARY');
+                        } else if ($scope.adjustedEvidenceType === 'PROGNOSTIC_IMPLICATION') {
+                            types.push('PROGNOSTIC_SUMMARY');
+                        }
+                        _.each(types, function (type) {
+                            var getEvidenceResult = $scope.getEvidence(type, $scope.mutation, $scope.tumor, $scope.therapyCategory, $scope.treatment);
+                            var tempEvidences = getEvidenceResult.evidences;
+                            var historyDataItem = getEvidenceResult.historyData;
+                            if (!_.isEmpty(tempEvidences)) {
+                                evidences = _.extend(evidences, tempEvidences);
+                                if (!historyData.uuids) {
+                                    historyData.uuids = historyDataItem.uuids;
+                                } else {
+                                    historyData.uuids += ',' + historyDataItem.uuids;
+                                }
+                            }
+
+                        });
                         historyData.hugoSymbol = $scope.hugoSymbol;
                         DatabaseConnector.updateEvidenceBatch(evidences, historyData, function(result) {
                             $scope.modelUpdate($scope.adjustedEvidenceType, $scope.mutation, $scope.tumor, $scope.therapyCategory, $scope.treatment);
@@ -263,7 +282,7 @@ angular.module('oncokbApp')
                         if ($rootScope.reviewMeta[item.uuid]) {
                             mainUtils.deleteUUID(item.uuid);
                             ReviewResource.rejected.push(item.uuid);
-                            if (item.obj && item.key && item.obj[item.key + '_review'] && !_.isUndefined(item.obj[item.key + '_review'].lastReviewed)) {
+                            if (item.obj && item.key && item.obj[item.key + '_review']) {
                                 item.obj[item.key] = item.obj[item.key + '_review'].lastReviewed;
                                 delete item.obj[item.key + '_review'].lastReviewed;
                             }
@@ -319,13 +338,13 @@ angular.module('oncokbApp')
                                 break;
                             case 'PROGNOSTIC_IMPLICATION':
                                 var tumor = $scope.getRefs($scope.mutation, $scope.tumor).tumor;
-                                _.each(['level', 'description'], function(key) {
+                                _.each(['level', 'relevantCancerTypes', 'description'], function(key) {
                                     rejectionItems.push({uuid: tumor.prognostic[key + '_uuid'], key: key, obj: tumor.prognostic});
                                 });
                                 break;
                             case 'DIAGNOSTIC_IMPLICATION':
                                 var tumor = $scope.getRefs($scope.mutation, $scope.tumor).tumor;
-                                _.each(['level', 'description'], function(key) {
+                                _.each(['level', 'relevantCancerTypes', 'description'], function(key) {
                                     rejectionItems.push({uuid: tumor.diagnostic[key + '_uuid'], key: key, obj: tumor.diagnostic});
                                 });
                                 break;
