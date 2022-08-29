@@ -445,9 +445,11 @@ angular.module('oncokbApp')
             });
         }
         function setUUIDInReview(uuid) {
-            var tempObj = {};
-            tempObj[uuid] = true;
-            firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            if (uuid) {
+                var tempObj = {};
+                tempObj[uuid] = true;
+                firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            }
         }
         function deleteUUID(uuid) {
             firebase.database().ref('Meta/' + $routeParams.geneName + '/review/' + uuid).remove();
@@ -518,8 +520,8 @@ angular.module('oncokbApp')
                     }
                     // process tumor cancerTypes
                     processData(tumor, ['summary', 'diagnosticSummary', 'prognosticSummary'], excludeComments, onlyReviewedContent);
-                    processData(tumor.diagnostic, ['level', 'description'], excludeComments, onlyReviewedContent);
-                    processData(tumor.prognostic, ['level', 'description'], excludeComments, onlyReviewedContent);
+                    processData(tumor.diagnostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
+                    processData(tumor.prognostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
                     _.each(tumor.TIs, function(ti) {
                         processData(ti, ['description'], excludeComments, onlyReviewedContent);
                         tempTreatments = [];

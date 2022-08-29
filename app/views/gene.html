@@ -301,18 +301,17 @@
                     </div>
                     <div ng-repeat="tumor in tumorsByMutation[mutation.name_uuid]" class="accordionMarginTop"
                          ng-init="path=getObservePath({path: path, type: 'tumor', index: $index});"
-                         ng-show="displayCheck(tumor.cancerTypes_uuid, tumor.cancerTypes_review)">
+                         ng-show="displayCheck(getTumorUuids(tumor), tumor.cancerTypes_review)">
                         <div class="sectionStyle">
                             <div ng-style="movingInfo[tumor.cancerTypes_uuid]" class="headerLevel2">
                                 <span ng-click="toggleSection(tumor.cancerTypes_uuid)">
                                     <i ng-class="getAngleClass(tumor.cancerTypes_uuid)"></i>
                                     <span>Tumor type: </span>
-                                    <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
+                                    <span ng-if="reviewContentDisplay(getTumorUuids(tumor), reviewMode)">
                                         <br/>
                                         <p class="margin-bottom-0">New Content: </p>
                                     </span>
-                                    <span>{{getCancerTypesNameInReview(tumor, tumor.cancerTypes_uuid, reviewMode)}}</span>
-                                    <span ng-if="tumor.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.relevantCancerTypes)}})</span>
+                                    <span>{{getCancerTypesName(tumor, reviewMode)}}</span>
                                 </span>
                                 <span ng-show="!reviewMode">
                                     <i class="fa fa-edit" ng-if="fileEditable" ng-click="modifyTumorType(mutation, tumor, path)"></i>
@@ -321,10 +320,6 @@
                                     </span>
                                     <span style="margin-left:5px" ng-bind-html="tumorContent[tumor.cancerTypes_uuid].result"></span>
                                     <span style="float:right" ng-if="fileEditable">
-                                        <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types for all evidences under this section." ng-if="fileEditable && !reviewMode" ng-click="modifyEvidenceRelevantCancerTypes(path)">
-                                            RCTs:
-                                            <i class="fa fa-edit"></i>
-                                        </span>
                                         <span ng-if="me.admin">
                                             <i class="fa fa-arrows" uib-tooltip-placement="top"
                                                uib-tooltip="{{movingInfo.message}}"
@@ -342,12 +337,12 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
+                                <div ng-if="reviewContentDisplay(getTumorUuids(tumor), reviewMode)">
                                     <p class="margin-bottom-0">Old Content: </p>
                                     <span>{{getLastReviewedCancerTypesName(tumor)}}</span>
-                                </span>
+                                </div>
                                 <div style="margin-top:-20px;margin-bottom:20px">
-                                    <review-panel hugo-symbol="gene.name" uuid="tumor.cancerTypes_uuid"
+                                    <review-panel hugo-symbol="gene.name" uuid="getTumorUuids(tumor)"
                                                   review-obj="tumor.cancerTypes_review" evidence-type="'tumor'"
                                                   mutation="mutation" tumor="tumor"
                                                   get-evidence="getEvidence(type, mutation, tumor)"
@@ -418,6 +413,11 @@
                                         <span ng-click="toggleSection(tumor.diagnostic_uuid)">
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
+                                        <span ng-if="tumor.diagnostic.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes)}})</span>
+                                        <span ng-if="reviewMode && tumor.diagnostic.relevantCancerTypes && tumor.diagnostic.relevantCancerTypes_review && tumor.diagnostic.relevantCancerTypes_review.lastReviewed">
+                                            <br/>
+                                            <p class="margin-bottom-0">Old Content: (RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes_review.lastReviewed)}})</p>
+                                        </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
@@ -430,7 +430,7 @@
                                                       review-obj="tumor.diagnostic_review"
                                                       evidence-type="'DIAGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>
@@ -440,7 +440,7 @@
                                             <strong>Level of Evidence:</strong>
                                             <br/>
                                             <realtime-string key="'level'" path="diagnosticPath" t="'implication'"
-                                                             o="levels.diagnostic"
+                                                             o="levels.diagnostic" tumor="tumor"
                                                              uuid="getUUID({type: 'diagnostic', key: 'level', path: path})"></realtime-string>
                                             <br/>
                                         </div>
@@ -465,6 +465,7 @@
                                     <div class="headerLevel3">
                                         <span ng-click="toggleSection(tumor.prognostic_uuid)"><i
                                                 ng-class="getAngleClass(tumor.prognostic_uuid)"></i> Prognostic implications: </span>
+                                        <span ng-if="tumor.prognostic.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.prognostic.relevantCancerTypes)}})</span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'prognostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'prognostic'" path="path"></comments-dict>
@@ -477,7 +478,7 @@
                                                       review-obj="tumor.prognostic_review"
                                                       evidence-type="'PROGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>

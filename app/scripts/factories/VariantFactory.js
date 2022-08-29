@@ -599,6 +599,10 @@ angular.module('oncokbApp')
         function Tumor(cancerTypes) {
             this.cancerTypes = cancerTypes;
             this.cancerTypes_uuid = getUUID();
+            this.excludedCancerTypes = [];
+            this.excludedCancerTypes_uuid = getUUID();
+            this.relevantCancerTypes = [];
+            this.relevantCancerTypes_uuid = getUUID();
             this.summary = '';
             this.summary_uuid = getUUID();
             this.diagnosticSummary = '';
@@ -608,6 +612,8 @@ angular.module('oncokbApp')
             this.prognostic = {
                 level: '',
                 level_uuid: getUUID(),
+                relevantCancerTypes: [],
+                relevantCancerTypes_uuid: getUUID(),
                 description: '',
                 description_uuid: getUUID(),
                 short: ''
@@ -616,6 +622,8 @@ angular.module('oncokbApp')
             this.diagnostic = {
                 level: '',
                 level_uuid: getUUID(),
+                relevantCancerTypes: [],
+                relevantCancerTypes_uuid: getUUID(),
                 description: '',
                 description_uuid: getUUID(),
                 short: ''
