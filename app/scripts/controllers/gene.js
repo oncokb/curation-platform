@@ -1167,17 +1167,17 @@ angular.module('oncokbApp')
                         if ($scope.geneMeta.review[tumor.prognostic.description_uuid]) {
                             hasUpdate = true;
                             historyData.new.description = tumor.prognostic.description;
-                            historyData.old.description = tumor.prognostic.description_review.lastReviewed;
+                            historyData.old.description = tumor.prognostic.description_review ? tumor.prognostic.description_review.lastReviewed : '';
                         }
                         if ($scope.geneMeta.review[tumor.prognostic.level_uuid]) {
                             hasUpdate = true;
                             historyData.new.level = tumor.prognostic.level;
-                            historyData.old.level = tumor.prognostic.level_review.lastReviewed;
+                            historyData.old.level = tumor.prognostic.level_review ? tumor.prognostic.level_review.lastReviewed : '';
                         }
                         if ($scope.geneMeta.review[tumor.prognostic.relevantCancerTypes_uuid]) {
                             hasUpdate = true;
                             historyData.new.relevantCancerTypes = tumor.prognostic.relevantCancerTypes;
-                            historyData.old.relevantCancerTypes = tumor.prognostic.relevantCancerTypes_review.lastReviewed;
+                            historyData.old.relevantCancerTypes = tumor.prognostic.relevantCancerTypes_review ? tumor.prognostic.relevantCancerTypes_review.lastReviewed : [];
                         }
                         if (hasUpdate) {
                             data.description = tumor.prognostic.description;
@@ -1202,17 +1202,17 @@ angular.module('oncokbApp')
                         if ($scope.geneMeta.review[tumor.diagnostic.description_uuid]) {
                             hasUpdate = true;
                             historyData.new.description = tumor.diagnostic.description;
-                            historyData.old.description = tumor.diagnostic.description_review.lastReviewed;
+                            historyData.old.description = tumor.diagnostic.description_review ? tumor.diagnostic.description_review.lastReviewed : '';
                         }
                         if ($scope.geneMeta.review[tumor.diagnostic.level_uuid]) {
                             hasUpdate = true;
                             historyData.new.level = tumor.diagnostic.level;
-                            historyData.old.level = tumor.diagnostic.level_review.lastReviewed;
+                            historyData.old.level = tumor.diagnostic.level_review ? tumor.diagnostic.level_review.lastReviewed : '';
                         }
                         if ($scope.geneMeta.review[tumor.diagnostic.relevantCancerTypes_uuid]) {
                             hasUpdate = true;
                             historyData.new.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes;
-                            historyData.old.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes_review.lastReviewed;
+                            historyData.old.relevantCancerTypes = tumor.diagnostic.relevantCancerTypes_review ? tumor.diagnostic.relevantCancerTypes_review.lastReviewed : [];
                         }
                         if (hasUpdate) {
                             data.description = tumor.diagnostic.description;
@@ -3935,7 +3935,7 @@ angular.module('oncokbApp')
             $scope.treatmentRef.name = newTreatmentName;
             var mutationUuid = $scope.mutationRef.name_uuid;
             var mutationName = $scope.mutationRef.name;
-            var cancerTypeUuid = $scope.getTumorUuids($scope.tumorRef);
+            var cancerTypeUuid = mainUtils.getTumorUuids($scope.tumorRef);
             drugMapUtils.changeMapByCurator('name', 'treatment', geneName, mutationUuid, mutationName, cancerTypeUuid, name_uuid, newTreatmentName, oldContent);
         }
 
