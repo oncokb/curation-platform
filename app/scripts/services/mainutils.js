@@ -432,6 +432,17 @@ angular.module('oncokbApp')
                     return false;
             }
         }
+
+        function getTumorUuids(tumor) {
+            var uuids = [];
+            if (tumor.cancerTypes_uuid) {
+                uuids.push(tumor.cancerTypes_uuid);
+            }
+            if (tumor.excludedCancerTypes_uuid) {
+                uuids.push(tumor.excludedCancerTypes_uuid);
+            }
+            return uuids.join(',');
+        }
         function updateLastModified() {
             firebase.database().ref('Meta/' + $routeParams.geneName).update({
                 lastModifiedBy: $rootScope.me.name,
@@ -774,6 +785,7 @@ angular.module('oncokbApp')
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities,
             getTimestampClass: getTimestampClass,
+            getTumorUuids: getTumorUuids,
             getTumorFormsByCancerTypes: getTumorFormsByCancerTypes
         };
     });
