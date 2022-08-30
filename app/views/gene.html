@@ -146,7 +146,7 @@
                 <span ng-show="!reviewMode">
                     <comments-dict key="'summary'" path="getObservePath({type: 'gene'})"></comments-dict>
                 </span>
-                <review-panel hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)"
+                <review-panel ng-if="reviewMode" hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)"
                               model-update="modelUpdate(type)" uuid="getUUID({type: 'gene', key: 'summary'})"
                               review-obj="gene.summary_review"></review-panel>
             </h3>
@@ -178,7 +178,7 @@
                 <span ng-show="!reviewMode">
                     <comments-dict key="'background'" path="getObservePath({type: 'gene'})"></comments-dict>
                 </span>
-                <review-panel hugo-symbol="gene.name" uuid="gene.background_uuid" review-obj="gene.background_review"
+                <review-panel ng-if="reviewMode" hugo-symbol="gene.name" uuid="gene.background_uuid" review-obj="gene.background_review"
                               evidence-type="'GENE_BACKGROUND'" obj="gene" get-evidence="getEvidence(type)"
                               model-update="modelUpdate(type)"></review-panel>
             </h3>
@@ -238,7 +238,7 @@
                             <i ng-click="remove('mutation', path)" class="fa fa-trash-o"></i>
                         </span>
                     </div>
-                    <div style="margin-top:-20px;margin-bottom:20px">
+                    <div style="margin-top:-20px;margin-bottom:20px" ng-if="reviewMode">
                         <review-panel hugo-symbol="gene.name" key="'name'" obj="mutation" uuid="mutation.name_uuid"
                                       review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation"
                                       get-evidence="getEvidence(type, mutation)"
@@ -262,7 +262,7 @@
                             <span style="float:right" ng-show="!reviewMode">
                                 <comments-dict key="'mutation_effect'" path="path"></comments-dict>
                             </span>
-                            <review-panel hugo-symbol="gene.name" uuid="mutation.mutation_effect_uuid"
+                            <review-panel ng-if="reviewMode" hugo-symbol="gene.name" uuid="mutation.mutation_effect_uuid"
                                           review-obj="mutation.oncogenic_review" evidence-type="'MUTATION_EFFECT'"
                                           mutation="mutation" get-evidence="getEvidence(type, mutation)"
                                           model-update="modelUpdate(type, mutation)"
@@ -341,7 +341,7 @@
                                     <p class="margin-bottom-0">Old Content: </p>
                                     <span>{{getLastReviewedCancerTypesName(tumor)}}</span>
                                 </div>
-                                <div style="margin-top:-20px;margin-bottom:20px">
+                                <div style="margin-top:-20px;margin-bottom:20px" ng-if="reviewMode">
                                     <review-panel hugo-symbol="gene.name" uuid="getTumorUuids(tumor)"
                                                   review-obj="tumor.cancerTypes_review" evidence-type="'tumor'"
                                                   mutation="mutation" tumor="tumor"
@@ -359,7 +359,9 @@
                                  ng-init="bindTIs({uuid: tumor.cancerTypes_uuid, path: path})">
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.summary_uuid)">
                                     <h5><b>Therapeutic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.summary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name"
+                                                      uuid="tumor.summary_uuid"
                                                       review-obj="tumor.summary_review"
                                                       evidence-type="'TUMOR_TYPE_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -375,7 +377,8 @@
                                 </div>
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.diagnosticSummary_uuid)">
                                     <h5><b>Diagnostic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.diagnosticSummary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.diagnosticSummary_uuid"
                                                       review-obj="tumor.diagnosticSummary_review"
                                                       evidence-type="'DIAGNOSTIC_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -391,7 +394,8 @@
                                 </div>
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.prognosticSummary_uuid)">
                                     <h5><b>Prognostic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.prognosticSummary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.prognosticSummary_uuid"
                                                       review-obj="tumor.prognosticSummary_review"
                                                       evidence-type="'PROGNOSTIC_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -426,7 +430,8 @@
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.diagnostic_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.diagnostic_uuid"
                                                       review-obj="tumor.diagnostic_review"
                                                       evidence-type="'DIAGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
@@ -474,7 +479,8 @@
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.prognostic_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.prognostic_uuid"
                                                       review-obj="tumor.prognostic_review"
                                                       evidence-type="'PROGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
@@ -564,7 +570,7 @@
                                                                 <span>{{::treatmentUuidsToName(treatment.name_review.lastReviewed)}}</span>
                                                             </span>
                                                         </div>
-                                                        <div style="margin-top:-45px;margin-bottom:45px;">
+                                                        <div style="margin-top:-45px;margin-bottom:45px;" ng-if="reviewMode">
                                                             <review-panel hugo-symbol="gene.name"
                                                                           uuid="treatment.name_uuid"
                                                                           review-obj="treatment.name_review"
