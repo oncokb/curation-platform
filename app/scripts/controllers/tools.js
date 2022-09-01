@@ -896,7 +896,7 @@ angular.module('oncokbApp')
             }];
             function initDataValidation() {
                 var initialData = {};
-                _.reduce(initialData, (acc, next) => {
+                _.reduce($scope.dataValidationTypes, (acc, next) => {
                     acc[next.key] = [];
                     return acc;
                 }, initialData);
@@ -956,10 +956,10 @@ angular.module('oncokbApp')
             };
 
             var VUS_TEST_CHECK_NAME = 'The VUS number are match';
-            function failedToValidateVUS() {
+            function failedToValidateVUS(error) {
                 $scope.dataValidation.status = $scope.IS_ERROR;
                 $scope.dataValidation.data.TEST.push({
-                    test: VUS_TEST_CHECK_NAME,
+                    key: VUS_TEST_CHECK_NAME + '. Error: ' + (error ? (error.data || error) : 'NA'),
                     status: $scope.IS_ERROR,
                     data: []
                 });
