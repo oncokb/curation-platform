@@ -2041,7 +2041,7 @@ angular.module('oncokbApp')
                     acceptSection(type, mutation, tumor, ti, treatment);
                     numOfReviewItems.minus(updatedBy);
                     // Add history record for newly added empty mutation.
-                    DatabaseConnector.addHisotryRecord(historyData);
+                    DatabaseConnector.addHistoryRecord(historyData);
                     return;
                 }
                 if (loadingUUID) {

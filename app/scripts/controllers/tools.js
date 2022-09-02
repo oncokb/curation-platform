@@ -336,23 +336,29 @@ angular.module('oncokbApp')
             }
             $scope.downloadHistoryDiff = function() {
                 var result = {
-                    gene : [],
+                    gene: [],
                     alteration: [],
                     evidence: []
                 };
-                $scope.historySearchResults.forEach(function(recordByTime){
-                    recordByTime.records.forEach(function (record) {
-                        if (record.location) {
-                            var locationTarget = getLocationTarget(record.location);
-                            result[locationTarget].push({
-                                gene: recordByTime.gene,
-                                timeStamp: recordByTime.timeStamp,
-                                record: record
-                            });
-                        } else {
-                            console.log('no location', record);
-                        }
-                    });
+                $scope.historySearchResults.forEach(function (recordByTime) {
+                    var records = recordByTime.records;
+                    if (!_.isArray(records) && _.isObject(records)) {
+                        records = [records];
+                    }
+                    if (records) {
+                        records.forEach(function (record) {
+                            if (record.location) {
+                                var locationTarget = getLocationTarget(record.location);
+                                result[locationTarget].push({
+                                    gene: recordByTime.gene,
+                                    timeStamp: recordByTime.timeStamp,
+                                    record: record
+                                });
+                            } else {
+                                console.log('no location', record);
+                            }
+                        });
+                    }
                 });
 
                 var content = [];

@@ -249,25 +249,19 @@ angular.module('oncokbApp')
                         ReviewResource.loading.push($scope.uuid);
                         var types = [$scope.adjustedEvidenceType];
                         var evidences = {};
-                        var historyData = {};
                         if ($scope.adjustedEvidenceType === 'DIAGNOSTIC_IMPLICATION') {
                             types.push('DIAGNOSTIC_SUMMARY');
                         } else if ($scope.adjustedEvidenceType === 'PROGNOSTIC_IMPLICATION') {
                             types.push('PROGNOSTIC_SUMMARY');
                         }
+                        var historyData = [];
                         _.each(types, function (type) {
                             var getEvidenceResult = $scope.getEvidence(type, $scope.mutation, $scope.tumor, $scope.therapyCategory, $scope.treatment);
                             var tempEvidences = getEvidenceResult.evidences;
-                            var historyDataItem = getEvidenceResult.historyData;
+                            historyData.push(getEvidenceResult.historyData);
                             if (!_.isEmpty(tempEvidences)) {
                                 evidences = _.extend(evidences, tempEvidences);
-                                if (!historyData.uuids) {
-                                    historyData.uuids = historyDataItem.uuids;
-                                } else {
-                                    historyData.uuids += ',' + historyDataItem.uuids;
-                                }
                             }
-
                         });
                         historyData.hugoSymbol = $scope.hugoSymbol;
                         DatabaseConnector.updateEvidenceBatch(evidences, historyData, function(result) {
