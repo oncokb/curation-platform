@@ -1755,7 +1755,9 @@ angular.module('oncokbApp')
                     case 'tumor':
                         ReviewResource.accepted.push($scope.getTumorUuids(tumor));
                         delete tumor.cancerTypes_review.added;
-                        delete tumor.excludedCancerTypes_review.added;
+                        if (tumor.excludedCancerTypes_review && tumor.excludedCancerTypes_review.added) {
+                            delete tumor.excludedCancerTypes_review.added;
+                        }
                         clearReview([tumor.cancerTypes_review, tumor.excludedCancerTypes_review, tumor.summary_review, tumor.prognostic.level_review, tumor.prognostic.description_review, tumor.prognostic.relevantCancerTypes_review, tumor.diagnostic.level_review, tumor.diagnostic.description_review, tumor.diagnostic.relevantCancerTypes_review]);
                         _.each(tumor.TIs, function (ti) {
                             _.each(ti.treatments, function (treatment) {
