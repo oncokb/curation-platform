@@ -336,23 +336,29 @@ angular.module('oncokbApp')
             }
             $scope.downloadHistoryDiff = function() {
                 var result = {
-                    gene : [],
+                    gene: [],
                     alteration: [],
                     evidence: []
                 };
-                $scope.historySearchResults.forEach(function(recordByTime){
-                    recordByTime.records.forEach(function (record) {
-                        if (record.location) {
-                            var locationTarget = getLocationTarget(record.location);
-                            result[locationTarget].push({
-                                gene: recordByTime.gene,
-                                timeStamp: recordByTime.timeStamp,
-                                record: record
-                            });
-                        } else {
-                            console.log('no location', record);
-                        }
-                    });
+                $scope.historySearchResults.forEach(function (recordByTime) {
+                    var records = recordByTime.records;
+                    if (!_.isArray(records) && _.isObject(records)) {
+                        records = [records];
+                    }
+                    if (records) {
+                        records.forEach(function (record) {
+                            if (record.location) {
+                                var locationTarget = getLocationTarget(record.location);
+                                result[locationTarget].push({
+                                    gene: recordByTime.gene,
+                                    timeStamp: recordByTime.timeStamp,
+                                    record: record
+                                });
+                            } else {
+                                console.log('no location', record);
+                            }
+                        });
+                    }
                 });
 
                 var content = [];
@@ -896,7 +902,7 @@ angular.module('oncokbApp')
             }];
             function initDataValidation() {
                 var initialData = {};
-                _.reduce(initialData, (acc, next) => {
+                _.reduce($scope.dataValidationTypes, (acc, next) => {
                     acc[next.key] = [];
                     return acc;
                 }, initialData);
@@ -956,10 +962,10 @@ angular.module('oncokbApp')
             };
 
             var VUS_TEST_CHECK_NAME = 'The VUS number are match';
-            function failedToValidateVUS() {
+            function failedToValidateVUS(error) {
                 $scope.dataValidation.status = $scope.IS_ERROR;
                 $scope.dataValidation.data.TEST.push({
-                    test: VUS_TEST_CHECK_NAME,
+                    key: VUS_TEST_CHECK_NAME + '. Error: ' + (error ? (error.data || error) : 'NA'),
                     status: $scope.IS_ERROR,
                     data: []
                 });

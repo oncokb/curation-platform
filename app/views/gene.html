@@ -146,7 +146,7 @@
                 <span ng-show="!reviewMode">
                     <comments-dict key="'summary'" path="getObservePath({type: 'gene'})"></comments-dict>
                 </span>
-                <review-panel hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)"
+                <review-panel ng-if="reviewMode" hugo-symbol="gene.name" evidence-type="'GENE_SUMMARY'" obj="gene" get-evidence="getEvidence(type)"
                               model-update="modelUpdate(type)" uuid="getUUID({type: 'gene', key: 'summary'})"
                               review-obj="gene.summary_review"></review-panel>
             </h3>
@@ -178,7 +178,7 @@
                 <span ng-show="!reviewMode">
                     <comments-dict key="'background'" path="getObservePath({type: 'gene'})"></comments-dict>
                 </span>
-                <review-panel hugo-symbol="gene.name" uuid="gene.background_uuid" review-obj="gene.background_review"
+                <review-panel ng-if="reviewMode" hugo-symbol="gene.name" uuid="gene.background_uuid" review-obj="gene.background_review"
                               evidence-type="'GENE_BACKGROUND'" obj="gene" get-evidence="getEvidence(type)"
                               model-update="modelUpdate(type)"></review-panel>
             </h3>
@@ -238,7 +238,7 @@
                             <i ng-click="remove('mutation', path)" class="fa fa-trash-o"></i>
                         </span>
                     </div>
-                    <div style="margin-top:-20px;margin-bottom:20px">
+                    <div style="margin-top:-20px;margin-bottom:20px" ng-if="reviewMode">
                         <review-panel hugo-symbol="gene.name" key="'name'" obj="mutation" uuid="mutation.name_uuid"
                                       review-obj="mutation.name_review" evidence-type="'mutation'" mutation="mutation"
                                       get-evidence="getEvidence(type, mutation)"
@@ -262,7 +262,7 @@
                             <span style="float:right" ng-show="!reviewMode">
                                 <comments-dict key="'mutation_effect'" path="path"></comments-dict>
                             </span>
-                            <review-panel hugo-symbol="gene.name" uuid="mutation.mutation_effect_uuid"
+                            <review-panel ng-if="reviewMode" hugo-symbol="gene.name" uuid="mutation.mutation_effect_uuid"
                                           review-obj="mutation.oncogenic_review" evidence-type="'MUTATION_EFFECT'"
                                           mutation="mutation" get-evidence="getEvidence(type, mutation)"
                                           model-update="modelUpdate(type, mutation)"
@@ -301,18 +301,17 @@
                     </div>
                     <div ng-repeat="tumor in tumorsByMutation[mutation.name_uuid]" class="accordionMarginTop"
                          ng-init="path=getObservePath({path: path, type: 'tumor', index: $index});"
-                         ng-show="displayCheck(tumor.cancerTypes_uuid, tumor.cancerTypes_review)">
+                         ng-show="displayCheck(getTumorUuids(tumor), tumor.cancerTypes_review)">
                         <div class="sectionStyle">
                             <div ng-style="movingInfo[tumor.cancerTypes_uuid]" class="headerLevel2">
                                 <span ng-click="toggleSection(tumor.cancerTypes_uuid)">
                                     <i ng-class="getAngleClass(tumor.cancerTypes_uuid)"></i>
                                     <span>Tumor type: </span>
-                                    <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
+                                    <span ng-if="reviewContentDisplay(getTumorUuids(tumor), reviewMode)">
                                         <br/>
                                         <p class="margin-bottom-0">New Content: </p>
                                     </span>
-                                    <span>{{getCancerTypesNameInReview(tumor, tumor.cancerTypes_uuid, reviewMode)}}</span>
-                                    <span ng-if="tumor.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.relevantCancerTypes)}})</span>
+                                    <span>{{getCancerTypesName(tumor, reviewMode)}}</span>
                                 </span>
                                 <span ng-show="!reviewMode">
                                     <i class="fa fa-edit" ng-if="fileEditable" ng-click="modifyTumorType(mutation, tumor, path)"></i>
@@ -321,10 +320,6 @@
                                     </span>
                                     <span style="margin-left:5px" ng-bind-html="tumorContent[tumor.cancerTypes_uuid].result"></span>
                                     <span style="float:right" ng-if="fileEditable">
-                                        <span class="change-relevant-cancer-types" qtip qtip-content="Click to see/update the relevant cancer types for all evidences under this section." ng-if="fileEditable && !reviewMode" ng-click="modifyEvidenceRelevantCancerTypes(path)">
-                                            RCTs:
-                                            <i class="fa fa-edit"></i>
-                                        </span>
                                         <span ng-if="me.admin">
                                             <i class="fa fa-arrows" uib-tooltip-placement="top"
                                                uib-tooltip="{{movingInfo.message}}"
@@ -342,12 +337,12 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span ng-if="reviewContentDisplay(tumor.cancerTypes_uuid, true)">
+                                <div ng-if="reviewContentDisplay(getTumorUuids(tumor), reviewMode)">
                                     <p class="margin-bottom-0">Old Content: </p>
                                     <span>{{getLastReviewedCancerTypesName(tumor)}}</span>
-                                </span>
-                                <div style="margin-top:-20px;margin-bottom:20px">
-                                    <review-panel hugo-symbol="gene.name" uuid="tumor.cancerTypes_uuid"
+                                </div>
+                                <div style="margin-top:-20px;margin-bottom:20px" ng-if="reviewMode">
+                                    <review-panel hugo-symbol="gene.name" uuid="getTumorUuids(tumor)"
                                                   review-obj="tumor.cancerTypes_review" evidence-type="'tumor'"
                                                   mutation="mutation" tumor="tumor"
                                                   get-evidence="getEvidence(type, mutation, tumor)"
@@ -364,7 +359,9 @@
                                  ng-init="bindTIs({uuid: tumor.cancerTypes_uuid, path: path})">
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.summary_uuid)">
                                     <h5><b>Therapeutic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.summary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name"
+                                                      uuid="tumor.summary_uuid"
                                                       review-obj="tumor.summary_review"
                                                       evidence-type="'TUMOR_TYPE_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -380,7 +377,8 @@
                                 </div>
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.diagnosticSummary_uuid)">
                                     <h5><b>Diagnostic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.diagnosticSummary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.diagnosticSummary_uuid"
                                                       review-obj="tumor.diagnosticSummary_review"
                                                       evidence-type="'DIAGNOSTIC_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -396,7 +394,8 @@
                                 </div>
                                 <div class="flex-column" ng-show="displayPrecisely(tumor.prognosticSummary_uuid)">
                                     <h5><b>Prognostic Summary (Optional): </b>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.prognosticSummary_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.prognosticSummary_uuid"
                                                       review-obj="tumor.prognosticSummary_review"
                                                       evidence-type="'PROGNOSTIC_SUMMARY'" mutation="mutation"
                                                       tumor="tumor"
@@ -418,6 +417,11 @@
                                         <span ng-click="toggleSection(tumor.diagnostic_uuid)">
                                             <i ng-class="getAngleClass(tumor.diagnostic_uuid)"></i> Diagnostic implications:
                                         </span>
+                                        <span ng-if="tumor.diagnostic.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes)}})</span>
+                                        <span ng-if="reviewMode && tumor.diagnostic.relevantCancerTypes && tumor.diagnostic.relevantCancerTypes_review && tumor.diagnostic.relevantCancerTypes_review.lastReviewed">
+                                            <br/>
+                                            <p class="margin-bottom-0">Old Content: (RCTs: {{getRelevantCancerTypesName(tumor.diagnostic.relevantCancerTypes_review.lastReviewed)}})</p>
+                                        </span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'diagnostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'diagnostic'" path="path"></comments-dict>
@@ -426,11 +430,12 @@
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.diagnostic_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.diagnostic_uuid"
                                                       review-obj="tumor.diagnostic_review"
                                                       evidence-type="'DIAGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>
@@ -440,7 +445,7 @@
                                             <strong>Level of Evidence:</strong>
                                             <br/>
                                             <realtime-string key="'level'" path="diagnosticPath" t="'implication'"
-                                                             o="levels.diagnostic"
+                                                             o="levels.diagnostic" tumor="tumor"
                                                              uuid="getUUID({type: 'diagnostic', key: 'level', path: path})"></realtime-string>
                                             <br/>
                                         </div>
@@ -465,6 +470,7 @@
                                     <div class="headerLevel3">
                                         <span ng-click="toggleSection(tumor.prognostic_uuid)"><i
                                                 ng-class="getAngleClass(tumor.prognostic_uuid)"></i> Prognostic implications: </span>
+                                        <span ng-if="tumor.prognostic.relevantCancerTypes">(RCTs: {{getRelevantCancerTypesName(tumor.prognostic.relevantCancerTypes)}})</span>
                                         <span class="curationNoEntry" ng-if="isEmptySection(tumor, 'prognostic')">No Entry</span>
                                         <span ng-show="!reviewMode">
                                             <comments-dict key="'prognostic'" path="path"></comments-dict>
@@ -473,11 +479,12 @@
                                             RCTs:
                                             <i class="fa fa-edit"></i>
                                         </span>
-                                        <review-panel hugo-symbol="gene.name" uuid="tumor.prognostic_uuid"
+                                        <review-panel ng-if="reviewMode"
+                                                      hugo-symbol="gene.name" uuid="tumor.prognostic_uuid"
                                                       review-obj="tumor.prognostic_review"
                                                       evidence-type="'PROGNOSTIC_IMPLICATION'" mutation="mutation"
                                                       tumor="tumor"
-                                                      get-evidence="getEvidence(type, mutation, tumor)"
+                                                      get-evidence="getEvidence(type, mutation, tumor, therapyCategory, treatment, force)"
                                                       model-update="modelUpdate(type, mutation, tumor)"
                                                       get-refs="getRefs(mutation, tumor)"></review-panel>
                                     </div>
@@ -563,7 +570,7 @@
                                                                 <span>{{::treatmentUuidsToName(treatment.name_review.lastReviewed)}}</span>
                                                             </span>
                                                         </div>
-                                                        <div style="margin-top:-45px;margin-bottom:45px;">
+                                                        <div style="margin-top:-45px;margin-bottom:45px;" ng-if="reviewMode">
                                                             <review-panel hugo-symbol="gene.name"
                                                                           uuid="treatment.name_uuid"
                                                                           review-obj="treatment.name_review"
@@ -585,7 +592,7 @@
                                                     <div class="panelContent"
                                                          ng-if="initialOpen[treatment.name_uuid]"
                                                          id="{{treatment.name_uuid}}">
-                                                        <div ng-show="displayPrecisely(treatment.level_uuid) || displayPrecisely(treatment.propagation_uuid) || displayPrecisely(treatment.propagationLiquid_uuid) ">
+                                                        <div ng-show="displayPrecisely(treatment.level_uuid) || displayPrecisely(treatment.propagation_uuid) || displayPrecisely(treatment.propagationLiquid_uuid)  || displayPrecisely(treatment.fdaLevel_uuid) ">
                                                             <strong>Highest level of evidence:</strong>
                                                             <div ng-switch on="ti.type">
                                                                 <div ng-switch-when="SS">

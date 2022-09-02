@@ -432,6 +432,17 @@ angular.module('oncokbApp')
                     return false;
             }
         }
+
+        function getTumorUuids(tumor) {
+            var uuids = [];
+            if (tumor.cancerTypes_uuid) {
+                uuids.push(tumor.cancerTypes_uuid);
+            }
+            if (tumor.excludedCancerTypes_uuid) {
+                uuids.push(tumor.excludedCancerTypes_uuid);
+            }
+            return uuids.join(',');
+        }
         function updateLastModified() {
             firebase.database().ref('Meta/' + $routeParams.geneName).update({
                 lastModifiedBy: $rootScope.me.name,
@@ -445,9 +456,11 @@ angular.module('oncokbApp')
             });
         }
         function setUUIDInReview(uuid) {
-            var tempObj = {};
-            tempObj[uuid] = true;
-            firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            if (uuid) {
+                var tempObj = {};
+                tempObj[uuid] = true;
+                firebase.database().ref('Meta/' + $routeParams.geneName + '/review').update(tempObj);
+            }
         }
         function deleteUUID(uuid) {
             firebase.database().ref('Meta/' + $routeParams.geneName + '/review/' + uuid).remove();
@@ -518,8 +531,8 @@ angular.module('oncokbApp')
                     }
                     // process tumor cancerTypes
                     processData(tumor, ['summary', 'diagnosticSummary', 'prognosticSummary'], excludeComments, onlyReviewedContent);
-                    processData(tumor.diagnostic, ['level', 'description'], excludeComments, onlyReviewedContent);
-                    processData(tumor.prognostic, ['level', 'description'], excludeComments, onlyReviewedContent);
+                    processData(tumor.diagnostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
+                    processData(tumor.prognostic, ['level', 'description', 'relevantCancerTypes'], excludeComments, onlyReviewedContent);
                     _.each(tumor.TIs, function(ti) {
                         processData(ti, ['description'], excludeComments, onlyReviewedContent);
                         tempTreatments = [];
@@ -772,6 +785,7 @@ angular.module('oncokbApp')
             getNumOfRefsClinicalAlteration: getNumOfRefsClinicalAlteration,
             decodeHTMLEntities: decodeHTMLEntities,
             getTimestampClass: getTimestampClass,
+            getTumorUuids: getTumorUuids,
             getTumorFormsByCancerTypes: getTumorFormsByCancerTypes
         };
     });

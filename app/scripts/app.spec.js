@@ -89,6 +89,11 @@ var OncoKB = {
                             "updateTime": 1493325255069
                         },
                         "level_uuid": "49fd8572-55aa-4b12-afe4-6672e4ac9399",
+                        "fdaLevel": "Fda2",
+                        "fdaLevel_review": {
+                            "updateTime": 1493325255069
+                        },
+                        "fdaLevel_uuid": "ad61ee62-a655-4d3c-b278-b3c6e9e9120c",
                         "name": "AZD5363",
                         "name_comments": [{
                             "content": "Add the PMID for level 3 evidence: 26351323; Hyman et al, Abstract#B109, Nov 7 2015 AACR-NCI-EORTC International Conference on Molecular Targets and Cancer Therapeutic",
