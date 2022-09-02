@@ -171,13 +171,13 @@ angular.module('oncokbApp')
             function updateGeneType(hugoSymbol, data, historyData, success, fail) {
                 if (testing) {
                     success('');
-                    addHisotryRecord(historyData);
+                    addHistoryRecord(historyData);
                 } else {
                     DriveAnnotation
                         .updateGeneType(hugoSymbol, data)
                         .then(function(data) {
                             success(data);
-                            addHisotryRecord(historyData);
+                            addHistoryRecord(historyData);
                         }, function() {
                             fail();
                         });
@@ -223,13 +223,13 @@ angular.module('oncokbApp')
             function deleteEvidences(data, historyData, success, fail) {
                 if (testing) {
                     success('');
-                    addHisotryRecord(historyData);
+                    addHistoryRecord(historyData);
                 } else {
                     DriveAnnotation
                         .deleteEvidences(data)
                         .then(function(data) {
                             success(data);
-                            addHisotryRecord(historyData);
+                            addHistoryRecord(historyData);
                         }, function() {
                             fail();
                         });
@@ -281,13 +281,13 @@ angular.module('oncokbApp')
             function updateEvidenceBatch(data, historyData, success, fail) {
                 if (testing) {
                     success('');
-                    addHisotryRecord(historyData);
+                    addHistoryRecord(historyData);
                 } else {
                     DriveAnnotation
                         .updateEvidenceBatch(data)
                         .then(function(data) {
                             success(data);
-                            addHisotryRecord(historyData);
+                            addHistoryRecord(historyData);
                         }, function() {
                             fail();
                         });
@@ -478,7 +478,7 @@ angular.module('oncokbApp')
                 return deferred.promise;
             }
 
-            function addHisotryRecord(historyData) {
+            function addHistoryRecord(historyData) {
                 var hugoSymbol = historyData.hugoSymbol;
                 delete historyData.hugoSymbol;
 
@@ -584,7 +584,7 @@ angular.module('oncokbApp')
                 updateEvidenceBatch: updateEvidenceBatch,
                 updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
                 updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
-                addHisotryRecord: addHisotryRecord,
+                addHistoryRecord: addHistoryRecord,
                 sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
                 updateGeneCache: function(hugoSymbol) {
