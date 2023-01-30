@@ -28,22 +28,26 @@ angular.module('oncokbApp')
                         var isoform = result[0];
                         var geneType = result[1];
                         if (isoform && isoform.error) {
-                            note = 'Error when getting isoform: ' + hugoSymbol;
+                            note += 'Error when getting isoform: ' + hugoSymbol + '<br/>';
                         } else if (isoform) {
                             if (isoform.grch37Transcript) {
                                 gene.isoform_override = isoform.grch37Transcript.transcriptId;
                                 gene.dmp_refseq_id = isoform.grch37Transcript.refseqMrnaId;
+                            } else {
+                                note += 'No grch37 isoform info:' + hugoSymbol + '<br/>';
                             }
                             if (isoform.grch38Transcript) {
                                 gene.isoform_override_grch38 = isoform.grch38Transcript.transcriptId;
                                 gene.dmp_refseq_id_grch38 = isoform.grch38Transcript.refseqMrnaId;
+                            } else {
+                                note += 'No grch38 isoform info: ' + hugoSymbol + '<br/>';
                             }
                         } else {
-                            note = 'No isoform found for: ' + hugoSymbol;
+                            note += 'No isoform found for: ' + hugoSymbol + '<br/>';
                         }
 
                         if (geneType && geneType.error) {
-                            note = 'Error when getting gene type: ' + hugoSymbol;
+                            note += 'Error when getting gene type: ' + hugoSymbol + '<br/>';
                         } else if (geneType && geneType.classification) {
                             switch (geneType.classification) {
                                 case 'TSG':
@@ -56,7 +60,7 @@ angular.module('oncokbApp')
                                     break;
                             }
                         } else {
-                            note = 'No gene type found: ' + hugoSymbol;
+                            note += 'No gene type found: ' + hugoSymbol + '<br/>';
                         }
 
                     }
