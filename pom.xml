@@ -5,7 +5,7 @@
 
     <groupId>org.mskcc.oncokb</groupId>
     <artifactId>oncokb-curation-platform</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <packaging>jar</packaging>
 
     <build>
