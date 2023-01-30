@@ -10,69 +10,69 @@
         </span>
         <div ng-if="createdGenes.length > 0" class="success-info">Gene(s) {{ createdGenes.join(', ') }} have been successfully added to OncoKB.</div>
         <div ng-if="createdGenesErrorMessages.length > 0" class="error-info"
-              ng-repeat="message in createdGenesErrorMessages">{{message}}</div>
+             ng-repeat="message in createdGenesErrorMessages"><span ng-bind-html="message"></span></div>
     </div>
     <hr/>
 
     <div ng-if="internal">
-    <h3>Update Gene Transcript</h3>
-    <div>
-        <div class="row">
-            <div class="col-sm-2">Select Gene:</div>
-            <div class="col-sm-6"  style="max-width: 400px;">
-                <select chosen
-                        data-placeholder="Enter A Gene"
-                        ng-model="ugtData.gene"
-                        ng-options="m for m in hugoSymbols.concat([''])"
-                        class="chosen-select">
-                </select>
+        <h3>Update Gene Transcript</h3>
+        <div>
+            <div class="row">
+                <div class="col-sm-2">Select Gene:</div>
+                <div class="col-sm-6"  style="max-width: 400px;">
+                    <select chosen
+                            data-placeholder="Enter A Gene"
+                            ng-model="ugtData.gene"
+                            ng-options="m for m in hugoSymbols.concat([''])"
+                            class="chosen-select">
+                    </select>
+                </div>
+            </div>
+            <div ng-if="ugtData.gene">
+                <br/>
+                <div class="row">
+                    <div class="col-sm-3 col-md-2">
+                        <input type="text" class="form-control input-sm" placeholder="GRCh37 Isoform"
+                               ng-model="ugtData.grch37Isoform"
+                        >
+                    </div>
+                    <div class="col-sm-3 col-md-2">
+                        <input type="text" class="form-control input-sm" placeholder="GRCh37 RefSeq"
+                               ng-model="ugtData.grch37RefSeq"
+                        >
+                    </div>
+                    <div class="col-sm-3 col-md-2">
+                        <input type="text" class="form-control input-sm" placeholder="GRCh38 Isoform"
+                               ng-model="ugtData.grch38Isoform"
+                        >
+                    </div>
+                    <div class="col-sm-3 col-md-2">
+                        <input type="text" class="form-control input-sm" placeholder="GRCh38 RefSeq"
+                               ng-model="ugtData.grch38RefSeq"
+                        >
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button ng-disabled="!ugtData.grch37Isoform || geneForUpdatingTranscript" type="button"
+                                class="btn btn-default" ng-click="validateGeneTranscriptUpdate()">
+                            <span ng-show="ugtData.validating"><i class="fa fa-spinner fa-spin"></i></span>
+                            <span ng-show="!ugtData.validating">Validate</span>
+                        </button>
+                        <button ng-disabled="!ugtData.grch37Isoform || geneForUpdatingTranscript || !ugtData.validated" type="button"
+                                class="btn btn-default" ng-click="updateGeneTranscript()">
+                            <span ng-show="ugtData.updating"><i class="fa fa-spinner fa-spin"></i></span>
+                            <span ng-show="!ugtData.updating">Update</span>
+                        </button>
+                    </div>
+                    <div class="col-sm-12" ng-if="!!ugtData.validationResult">
+                        <div>Validation Result:</div>
+                        <div style="font-family: monospace; overflow: auto">{{ugtData.validationResult}}</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div ng-if="ugtData.gene">
-            <br/>
-            <div class="row">
-                <div class="col-sm-3 col-md-2">
-                    <input type="text" class="form-control input-sm" placeholder="GRCh37 Isoform"
-                           ng-model="ugtData.grch37Isoform"
-                    >
-                </div>
-                <div class="col-sm-3 col-md-2">
-                    <input type="text" class="form-control input-sm" placeholder="GRCh37 RefSeq"
-                           ng-model="ugtData.grch37RefSeq"
-                    >
-                </div>
-                <div class="col-sm-3 col-md-2">
-                    <input type="text" class="form-control input-sm" placeholder="GRCh38 Isoform"
-                           ng-model="ugtData.grch38Isoform"
-                    >
-                </div>
-                <div class="col-sm-3 col-md-2">
-                    <input type="text" class="form-control input-sm" placeholder="GRCh38 RefSeq"
-                           ng-model="ugtData.grch38RefSeq"
-                    >
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="col-sm-12">
-                    <button ng-disabled="!ugtData.grch37Isoform || geneForUpdatingTranscript" type="button"
-                            class="btn btn-default" ng-click="validateGeneTranscriptUpdate()">
-                        <span ng-show="ugtData.validating"><i class="fa fa-spinner fa-spin"></i></span>
-                        <span ng-show="!ugtData.validating">Validate</span>
-                    </button>
-                    <button ng-disabled="!ugtData.grch37Isoform || geneForUpdatingTranscript || !ugtData.validated" type="button"
-                            class="btn btn-default" ng-click="updateGeneTranscript()">
-                        <span ng-show="ugtData.updating"><i class="fa fa-spinner fa-spin"></i></span>
-                        <span ng-show="!ugtData.updating">Update</span>
-                    </button>
-                </div>
-                <div class="col-sm-12" ng-if="!!ugtData.validationResult">
-                    <div>Validation Result:</div>
-                    <div style="font-family: monospace; overflow: auto">{{ugtData.validationResult}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
     </div>
     <hr/>
 
@@ -219,15 +219,15 @@
             {{ tsgValidation.result }}
         </h4>
         <hr/>
-       <h3>
-           <span>Data Validation</span>
-           <button type="button" class="btn btn-default"
-                   ng-disabled="dataValidation.status !== '' && dataValidation.status !== IS_COMPLETE"
-                   ng-click="onClickDataValidation()">
-               <span ng-show="dataValidation.status === IS_PENDING"><i class="fa fa-spinner fa-spin"></i></span>
-               <span ng-show="dataValidation.status === '' || dataValidation.status === IS_COMPLETE">Click here to check whether all data look ok</span>
-           </button>
-       </h3>
+        <h3>
+            <span>Data Validation</span>
+            <button type="button" class="btn btn-default"
+                    ng-disabled="dataValidation.status !== '' && dataValidation.status !== IS_COMPLETE"
+                    ng-click="onClickDataValidation()">
+                <span ng-show="dataValidation.status === IS_PENDING"><i class="fa fa-spinner fa-spin"></i></span>
+                <span ng-show="dataValidation.status === '' || dataValidation.status === IS_COMPLETE">Click here to check whether all data look ok</span>
+            </button>
+        </h3>
         <div>
             <div style="margin: 5px; font-size: large">
                 <div ng-show="dataValidation.status === IS_COMPLETE">Validation is finished</div>
