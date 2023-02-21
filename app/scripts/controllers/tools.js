@@ -154,7 +154,7 @@ angular.module('oncokbApp')
             $scope.searchHistory = function(genesForHistory) {
                 $scope.errorMessage = '';
                 $scope.historySearchResults = [];
-                if ((!$scope.dateRangeStartDateStr || !$scope.dateRange.dateRangeEndDateStr) &&
+                if ((!$scope.dateRangeStartDateStr || !$scope.dateRangeEndDateStr) &&
                     (!_.isArray($scope.genesForHistory) || $scope.genesForHistory.length === 0) &&
                     $scope.selectedTypeCheckboxes.length === 0) {
                     $scope.errorMessage = 'Please choose conditions from Gene, Date or Type.';
@@ -374,19 +374,25 @@ angular.module('oncokbApp')
 
                 var content = [];
                 if (result.gene.length > 0) {
-                    content.push('Gene:');
-                    content = addRecordToFile(content, result.gene);
-                    content.push('');
+                    var segments = [];
+                    segments.push('### Gene\n```');
+                    segments = addRecordToFile(segments, result.gene);
+                    segments.push('```\n');
+                    content.push(segments.join('\n'));
                 }
                 if (result.alteration.length > 0) {
-                    content.push('Alteration:');
-                    content = addRecordToFile(content, result.alteration);
-                    content.push('');
+                    var segments = [];
+                    segments.push('### Alteration\n```');
+                    segments = addRecordToFile(segments, result.alteration);
+                    segments.push('```\n');
+                    content.push(segments.join('\n'));
                 }
                 if (result.evidence.length > 0) {
-                    content.push('Evidence:');
-                    content = addRecordToFile(content, result.evidence);
-                    content.push('');
+                    var segments = [];
+                    segments.push('### Evidence\n```');
+                    segments = addRecordToFile(segments, result.evidence);
+                    segments.push('```\n');
+                    content.push(segments.join('\n'));
                 }
                 var blob = new Blob([content.join('\n')], {
                     type: 'text/plain;charset=utf-8;'
