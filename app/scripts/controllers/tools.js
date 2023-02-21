@@ -14,6 +14,8 @@ angular.module('oncokbApp')
                 $scope.typeCheckboxes = ['update', 'name change', 'add', 'delete'];
                 $scope.selectedTypeCheckboxes = [];
                 $scope.dateRange = {startDate: null, endDate: null};
+                $scope.dateRangeStartDateStr = null;
+                $scope.dateRangeEndDateStr = null;
                 $scope.dateRangeOptions = {
                     ranges: {
                         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
@@ -33,6 +35,7 @@ angular.module('oncokbApp')
                 });
             };
             var sorting = [[2, 'desc'], [1, 'asc'], [0, 'asc']];
+            var dateRangeFormat = 'YYYY-MM-DD HH:mm:ss ZZ';
 
             $scope.dtOptions = DTOptionsBuilder
                 .newOptions()
@@ -46,6 +49,15 @@ angular.module('oncokbApp')
                 DTColumnDefBuilder.newColumnDef(2).withOption('sType', 'date'),
                 DTColumnDefBuilder.newColumnDef(3)
             ];
+
+            $scope.$watch('dateRange', function (n) {
+                if(n.startDate){
+                    $scope.dateRangeStartDateStr = n.startDate.format(dateRangeFormat);
+                }
+                if(n.endDate){
+                    $scope.dateRangeEndDateStr = n.endDate.format(dateRangeFormat);
+                }
+            });
             $scope.$watch('ugtData.gene', function (n) {
                 if($scope.ugtData.firebaseGeneUnbind) {
                     $scope.ugtData.firebaseGeneUnbind();
@@ -142,7 +154,7 @@ angular.module('oncokbApp')
             $scope.searchHistory = function(genesForHistory) {
                 $scope.errorMessage = '';
                 $scope.historySearchResults = [];
-                if ((!$scope.dateRange.startDate || !$scope.dateRange.endDate) &&
+                if ((!$scope.dateRangeStartDateStr || !$scope.dateRange.dateRangeEndDateStr) &&
                     (!_.isArray($scope.genesForHistory) || $scope.genesForHistory.length === 0) &&
                     $scope.selectedTypeCheckboxes.length === 0) {
                     $scope.errorMessage = 'Please choose conditions from Gene, Date or Type.';
@@ -152,11 +164,10 @@ angular.module('oncokbApp')
                 var startTimestamp = 0;
                 var endTimestamp = 0;
                 var hasDateRange = false;
-                if ($scope.dateRange.startDate && $scope.dateRange.endDate) {
+                if ($scope.dateRangeStartDateStr && $scope.dateRangeEndDateStr) {
                     hasDateRange = true;
-                    startTimestamp = new Date($scope.dateRange.startDate.format('YYYY-MM-DD')).getTime();
-                    var endDate = moment($scope.dateRange.endDate).add(1, 'days');
-                    endTimestamp = new Date(endDate.format('YYYY-MM-DD')).getTime();
+                    startTimestamp = new Date($scope.dateRangeStartDateStr).getTime();
+                    endTimestamp = new Date($scope.dateRangeEndDateStr).getTime();
                 }
                 loadFiles.load('history').then(function(success) {
                     var historyResults = [];

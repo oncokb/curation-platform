@@ -106,6 +106,16 @@
             <span id='close' class="cancel-icon" ng-click="clearDateRange()">x</span>
         </div>
     </div>
+    <div class="row row-margin">
+        <div class="col-sm-1" style="white-space: nowrap">Start Date:</div>
+        <div class="col-sm-3">
+            <input id="reviewHistoryStartDate" type="text" class="form-control" ng-model="dateRangeStartDateStr"/>
+        </div>
+        <div class="col-sm-1" style="white-space: nowrap">End Date:</div>
+        <div class="col-sm-3">
+            <input id="reviewHistoryEndDate" type="text" class="form-control" ng-model="dateRangeEndDateStr"/>
+        </div>
+    </div>
     <div class="row last-row-margin">
         <div class="col-sm-1">Type:</div>
         <div class="col-sm-6">
@@ -137,7 +147,7 @@
             <tr ng-repeat="x in historySearchResults">
                 <td><strong><a href="#!/gene/{{x.gene}}">{{ x.gene }}</a></strong></td>
                 <td>{{x.admin}}</td>
-                <td>{{x.timeStamp | date : 'MMM d, h:mm a yyyy'}}</td>
+                <td>{{x.timeStamp | date : 'yyyy-MM-dd HH:mm:ss Z'}}</td>
                 <td class="records-width">
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="y in x.records track by $index">
