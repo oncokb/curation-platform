@@ -313,6 +313,8 @@ angular.module('oncokbApp')
                 saveAs(blob, $scope.gene.name + '_all_variants_of_unknown_significance.tsv');
             };
             function parseMutationString(mutationStr) {
+                // remove all comments in the string
+                mutationStr = (mutationStr || "").replaceAll(/\([\s\S]*?\)/g, '');
                 var parts = _.map(mutationStr.split(','), function(item) {
                     return item.trim();
                 });
