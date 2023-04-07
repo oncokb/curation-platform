@@ -70,7 +70,7 @@ angular.module('oncokbApp')
                 ];
                 if (mutationNameBlackList.indexOf(variantName) !== -1) {
                     validMutation = false;
-                    message += 'is a not allowed to be added. Forbidden name. Please use Oncogenic Mutations instead.';
+                    message += 'is not allowed to be added. Forbidden name. Please use Oncogenic Mutations instead.';
                 }
                 if (validMutation) {
                     _.some($scope.gene.mutations, function (mutation) {
