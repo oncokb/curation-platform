@@ -58,10 +58,10 @@ angular.module('oncokbApp')
                     console.log(error);
                 });
             }
-            function isValidVariant(originalVariantName) {
+            function isValidVariant(originalVariantName, addToVusList) {
                 var variantName = originalVariantName.trim().toLowerCase();
                 var validMutation = true;
-                var message = originalVariantName + ' ';
+                var message = '';
                 var mutationNameBlackList = [
                     'activating mutations',
                     'activating mutation',
@@ -70,18 +70,30 @@ angular.module('oncokbApp')
                 ];
                 if (mutationNameBlackList.indexOf(variantName) !== -1) {
                     validMutation = false;
-                    message += 'is a not allowed name!';
+                    message += 'is a not allowed to be added. Forbidden name. Please use Oncogenic Mutations instead.';
                 }
                 if (validMutation) {
                     _.some($scope.gene.mutations, function (mutation) {
-                        if (mutation.name.toLowerCase() === variantName) {
+                        var mutations = parseMutationString(mutation.name).map(function (alt) {
+                            return alt.alteration.toLowerCase();
+                        });
+                        if (mutations.includes(variantName)) {
                             validMutation = false;
-                            if (mutation.name_review && mutation.name_review.removed === true) {
-                                message += 'just got removed, we will reuse the old one';
-                                delete mutation.name_review.removed;
-                                mainUtils.deleteUUID(mutation.name_uuid);
+                            if (addToVusList) {
+                                if (mutation.name_review && mutation.name_review.removed === true) {
+                                    message += 'was previously removed from mutation list but hasn\'t been reviewed. We will continue adding it to the VUS list. However, if the deletion is rejected, it will also be deleted from the VUS list.';
+                                    validMutation = true;
+                                } else {
+                                    message += 'is in the mutation list. You cannot add to VUS list.';
+                                }
                             } else {
-                                message += 'has already been added in the mutation section!';
+                                if (mutation.name_review && mutation.name_review.removed === true) {
+                                    message += 'was removed but hasn\'t been reviewed. We will revert the deletion.';
+                                    delete mutation.name_review.removed;
+                                    mainUtils.deleteUUID(mutation.name_uuid);
+                                } else {
+                                    message += 'is already in the mutation list.';
+                                }
                             }
                             return true;
                         }
@@ -91,18 +103,18 @@ angular.module('oncokbApp')
                     _.some($scope.vusItems, function (vusItem) {
                         if (vusItem.name.toLowerCase() === variantName) {
                             validMutation = false;
-                            message += 'has already been added in the VUS section!';
+                            message += 'is already in the VUS list.';
                             return true;
                         }
                     });
                 }
-                if (!validMutation) {
-                    dialogs.notify('Warning', message);
+                if (message) {
+                    dialogs.error('Error', originalVariantName + ' ' + message);
                 }
                 return validMutation;
             }
             $scope.addMutation = function (newMutationName) {
-                if (isValidVariant(newMutationName)) {
+                if (isValidVariant(newMutationName, false)) {
                     var mutation = new FirebaseModel.Mutation(newMutationName);
                     mutation.name_review = {
                         updatedBy: $rootScope.me.name,
@@ -319,7 +331,6 @@ angular.module('oncokbApp')
                     return item.trim();
                 });
                 var altResults = [];
-                var proteinChange = '';
 
                 for (var i = 0; i < parts.length; i++) {
                     if (!parts[i]) {
@@ -2595,7 +2606,7 @@ angular.module('oncokbApp')
 
             $scope.addVUSItem = function (newVUSName) {
                 if (newVUSName) {
-                    if (isValidVariant(newVUSName)) {
+                    if (isValidVariant(newVUSName, true)) {
                         var vusItem = new FirebaseModel.VUSItem(newVUSName, $rootScope.me.name, $rootScope.me.email);
                         $scope.vusItems.$add(vusItem).then(function(variant) {
                             $scope.vusUpdate();
@@ -2607,7 +2618,7 @@ angular.module('oncokbApp')
             $scope.editVUSItem = function(vusItem, newVUSName) {
                 var deferred = $q.defer();
                 if (newVUSName) {
-                    if (isValidVariant(newVUSName)) {
+                    if (isValidVariant(newVUSName,true)) {
                         var obj = $firebaseObject(firebase.database().ref('VUS/' + $routeParams.geneName + '/' + vusItem.$id));
                         obj.name = newVUSName;
                         obj.$save().then(function(ref) {
@@ -3010,6 +3021,17 @@ angular.module('oncokbApp')
                                 (tumor.excludedCancerTypes_review && tumor.excludedCancerTypes_review.removed)
                             ) {
                                 cancelDeleteSection('tumor', mutation, tumor, ti, treatment);
+                            }
+                        });
+
+                        // delete the same mutation from the VUS list
+                        // (we allow the same mutation in the VUS list after deleting it from mutation list before reviewing)
+                        var mutations = parseMutationString(mutation.name).map(function (alt) {
+                            return alt.alteration.toLowerCase();
+                        });
+                        _.forEach($scope.vusItems, function (vusItem) {
+                            if (mutations.includes(vusItem.name.toLowerCase())) {
+                                $scope.removeVUS(vusItem);
                             }
                         });
                         break;
