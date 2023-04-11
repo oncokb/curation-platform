@@ -2638,14 +2638,22 @@ angular.module('oncokbApp')
                 return deferred.promise;
             };
 
-            $scope.removeVUS = function(variant) {
-                var dlg = dialogs.confirm('Confirmation', 'Are you sure you want to delete this entry?');
-                dlg.result.then(function() {
-                    $scope.vusItems.$remove(variant).then(function() {
-                        $scope.vusUpdate();
-                    });
-                }, function() {
+            function removeVUSAfterConfirm(variant) {
+                $scope.vusItems.$remove(variant).then(function () {
+                    $scope.vusUpdate();
                 });
+            }
+
+            $scope.removeVUS = function (variant, skipConfirm) {
+                if (skipConfirm) {
+                    removeVUSAfterConfirm(variant);
+                } else {
+                    var dlg = dialogs.confirm('Confirmation', 'Are you sure you want to delete this entry?');
+                    dlg.result.then(function () {
+                        removeVUSAfterConfirm(variant);
+                    }, function () {
+                    });
+                }
             };
             $scope.refreshVUS = function(variant) {
                 var deferred = $q.defer();
@@ -3031,7 +3039,7 @@ angular.module('oncokbApp')
                         });
                         _.forEach($scope.vusItems, function (vusItem) {
                             if (mutations.includes(vusItem.name.toLowerCase())) {
-                                $scope.removeVUS(vusItem);
+                                $scope.removeVUS(vusItem, true);
                             }
                         });
                         break;
