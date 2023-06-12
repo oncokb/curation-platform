@@ -7,12 +7,6 @@ describe('Mainutils', function() {
     it('trimMutationName should trim p. from mutation name', function() {
         expect(mainUtilsFactory.trimMutationName('p.120V')).toEqual('120V');
     });
-    it('They should be in the developers list', function() {
-        expect(mainUtilsFactory.developerCheck('jianjiong gao')).toEqual(true);
-        expect(mainUtilsFactory.developerCheck('hongxin zhang')).toEqual(true);
-        expect(mainUtilsFactory.developerCheck('jing su')).toEqual(true);
-        expect(mainUtilsFactory.developerCheck('jiaojiao wang')).toEqual(true);
-    });
     it('Current time stamp should not be listed as expired', function() {
         expect(mainUtilsFactory.isExpiredCuration(new Date().getTime())).toEqual(false);
     });

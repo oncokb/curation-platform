@@ -145,9 +145,5 @@ angular.module('oncokbApp')
                 mainTypes: {}
             };
             $scope.mappedTumorTypes = {};
-
-            $scope.developerCheck = function() {
-                return mainUtils.developerCheck($rootScope.me.name);
-            };
         }]
     );

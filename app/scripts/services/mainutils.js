@@ -322,25 +322,6 @@ angular.module('oncokbApp')
         function notifyDeveloper(subject, content) {
             sendEmail('dev.oncokb@gmail.com', subject, content);
         }
-        /**
-         * Check whether user is developer
-         * @param {string} userName The user name
-         * @return {boolean} whether user is developer
-         */
-        function developerCheck(userName) {
-            var result = false;
-            if (!userName) {
-                return result;
-            }
-            var developers = ['Hongxin Zhang', 'Jianjiong Gao', 'Jiaojiao Wang', 'Jing Su'];
-            _.some(developers, function(item) {
-                if (item.toLowerCase() === userName.toLowerCase()) {
-                    result = true;
-                    return true;
-                }
-            });
-            return result;
-        }
 
         /**
          * Get Oncotree main types and sub tumor types.
@@ -760,7 +741,6 @@ angular.module('oncokbApp')
             getLastReviewedCancerTypesName: getLastReviewedCancerTypesName,
             sendEmail: sendEmail,
             sendEmailtoMultipulUsers: sendEmailtoMultipulUsers,
-            developerCheck: developerCheck,
             getTumorTypes: getTumorTypes,
             isExpiredCuration: isExpiredCuration,
             processedInReview: processedInReview,
