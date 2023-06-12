@@ -70,15 +70,15 @@ describe('Mainutils', function() {
             summary_comments: [ {
                 "content" : "Needs additional curation",
                 "date" : "1445975597693",
-                "email" : "s.m.phillips2@gmail.com",
+                "email" : "test3@gmail.com",
                 "resolved" : "false",
-                "userName" : "Sarah Phillips"
+                "userName" : "Test3"
               }],
               summary: 'This is the gene summay content',
               summary_review: {
                 lastReviewed: 'This is the previsoud gene summary content',
                 updateTime: 1531828464480,
-                updatedBy: 'Jiaojiao wang'
+                updatedBy: 'Developer1'
               }
         };
         var keys = ['summary'];
@@ -87,7 +87,7 @@ describe('Mainutils', function() {
             summary_review: {
                 lastReviewed: 'This is the previsoud gene summary content',
                 updateTime: 1531828464480,
-                updatedBy: 'Jiaojiao wang'
+                updatedBy: 'Developer1'
             }
         };
         // this should be the json data that will be passed into database
@@ -96,7 +96,7 @@ describe('Mainutils', function() {
             summary_review: {
                 lastReviewed: 'This is the previsoud gene summary content',
                 updateTime: 1531828464480,
-                updatedBy: 'Jiaojiao wang'
+                updatedBy: 'Developer1'
             }
         };
         var data = angular.copy(originalData);
@@ -124,8 +124,8 @@ describe('Mainutils', function() {
               "name" : "T104P",
               "time" : {
                 "by" : {
-                  "email" : "kpgala15@gmail.com",
-                  "name" : "Kinisha Gala"
+                  "email" : "test1@gmail.com",
+                  "name" : "Test1"
                 },
                 "value" : 1514944647037
               }
@@ -135,14 +135,14 @@ describe('Mainutils', function() {
               "name_comments" : [ {
                 "content" : "PMID: 23009571",
                 "date" : "1515703300669",
-                "email" : "moriah.heller@gmail.com",
+                "email" : "test2@gmail.com",
                 "resolved" : "false",
-                "userName" : "Moriah Nissan"
+                "userName" : "Test2"
               } ],
               "time" : {
                 "by" : {
-                  "email" : "moriah.heller@gmail.com",
-                  "name" : "Moriah Nissan"
+                  "email" : "test2@gmail.com",
+                  "name" : "Test2"
                 },
                 "value" : 1515703295003
               }
@@ -152,8 +152,8 @@ describe('Mainutils', function() {
             "name" : "T104P",
             "time" : {
               "by" : {
-                "email" : "kpgala15@gmail.com",
-                "name" : "Kinisha Gala"
+                "email" : "test1@gmail.com",
+                "name" : "Test1"
               },
               "value" : 1514944647037
             }
@@ -161,8 +161,8 @@ describe('Mainutils', function() {
             "name" : "Y326H",
             "time" : {
               "by" : {
-                "email" : "moriah.heller@gmail.com",
-                "name" : "Moriah Nissan"
+                "email" : "test2@gmail.com",
+                "name" : "Test2"
               },
               "value" : 1515703295003
             }
@@ -171,8 +171,8 @@ describe('Mainutils', function() {
             "name" : "T104P",
             "time" : {
               "by" : {
-                "email" : "kpgala15@gmail.com",
-                "name" : "Kinisha Gala"
+                "email" : "test1@gmail.com",
+                "name" : "Test1"
               },
               "value" : 1514944647037
             }
@@ -181,14 +181,14 @@ describe('Mainutils', function() {
             "name_comments" : [ {
               "content" : "PMID: 23009571",
               "date" : "1515703300669",
-              "email" : "moriah.heller@gmail.com",
+              "email" : "test2@gmail.com",
               "resolved" : "false",
-              "userName" : "Moriah Nissan"
+              "userName" : "Test2"
             } ],
             "time" : {
               "by" : {
-                "email" : "moriah.heller@gmail.com",
-                "name" : "Moriah Nissan"
+                "email" : "test2@gmail.com",
+                "name" : "Test2"
               },
               "value" : 1515703295003
             }
@@ -201,12 +201,12 @@ describe('Mainutils', function() {
         var newlyAddedReviewObj = {
             added: true,
             updateTime: 1515703295003,
-            updatedBy: 'Jiaojiao wang'
+            updatedBy: 'Developer1'
         };
         var newlyRemovedReviewObj = {
             removed: true,
             updateTime: 1515703295003,
-            updatedBy: 'Jiaojiao wang'
+            updatedBy: 'Developer1'
         };
         expect(mainUtilsFactory.shouldExclude(true, newlyAddedReviewObj)).toEqual(true);
         expect(mainUtilsFactory.shouldExclude(true, newlyRemovedReviewObj)).toEqual(false);
@@ -227,11 +227,11 @@ describe('Mainutils', function() {
             updateTime: yesterday.getTime(),
             lastReviewed: 'Previous effect value'
         }, {
-            updatedBy: 'Jiaojiao wang',
+            updatedBy: 'Developer1',
             updateTime: now.getTime(),
             lastReviewed: 'Previous oncogenic value'
         }, {
-            updatedBy: 'Jiaojiao wang',
+            updatedBy: 'Developer1',
             updateTime: twoDaysAgo.getTime(),
             lastReviewed: 'Previous description content'
         }];

@@ -34,13 +34,11 @@ angular.module('oncokbApp')
                         formExpanded: false,
                         editing: false,
                         hugoVariantMapping: {},
-                        resendEmail: false,
                         queueItemInEditing: '',
                         invalidData: false,
                         hugoSymbols: [],
                         loading: true
                     };
-                    scope.resendEmail = false;
                     scope.input = {
                         article: '',
                         link: '',
@@ -83,7 +81,6 @@ angular.module('oncokbApp')
                             });
                         }
                         scope.data.loading = false;
-                        scope.secondTimeAutoNotify();
                     });
                     // The column difference in terms of curation queue location in queues page or gene page it that,
                     // gene page has an unique column 'Previously curated in', and queues page has an unique column 'Gene'
@@ -206,9 +203,6 @@ angular.module('oncokbApp')
                     currentQueues.push(item);
                     $scope.updateQueueInDB(hugoSymbol, currentQueues).then(function(result) {
                         $scope.queue.push(item);
-                        if (item.curator) {
-                            $scope.sendEmail(item);
-                        }
                     });
                 }
                 $scope.initialProcess = function(x, type) {
@@ -239,7 +233,6 @@ angular.module('oncokbApp')
                 };
 
                 function editCuration(queueItem) {
-                    $scope.data.resendEmail = false;
                     $scope.data.editing = true;
                     $scope.data.queueItemInEditing = queueItem;
                     $scope.data.modifiedCurator = {};
@@ -334,9 +327,6 @@ angular.module('oncokbApp')
                         _.each(_.keys(item), function(key) {
                             $scope.data.queueItemInEditing[key] = item[key];
                         });
-                        if ($scope.resendEmail) {
-                            $scope.sendEmail(queueItem);
-                        }
                     });
                 }
                 function completeCuration(queueItem) {
@@ -417,60 +407,6 @@ angular.module('oncokbApp')
                         console.log('error');
                     });
                 };
-                $scope.sendEmail = function(queueItem) {
-                    var expiredCuration = false;
-                    if ($scope.isExpiredCuration(queueItem.dueDay)) {
-                        expiredCuration = true;
-                    }
-                    var email = '';
-                    for (var i = 0; i < $scope.data.curators.length; i++) {
-                        if (queueItem.curator === $scope.data.curators[i].name) {
-                            email = $scope.data.curators[i].email;
-                            break;
-                        }
-                    }
-                    if (!email) return;
-                    var content = 'Dear ' + queueItem.curator.split(' ')[0] + ',\n\n';
-                    if (expiredCuration) {
-                        content += 'You have not completed curation of the assigned publication: ' + queueItem.article;
-                        if (queueItem.link) {
-                            content += '(' + queueItem.link + ')';
-                        }
-                        content += ' which was due on ' + $scope.getFormattedDate(queueItem.dueDay) + '. Please complete this assignment as soon as possible and let us know when you have done this. \n\nIf you have already completed this task, please remember to CLICK THE GREEN CHECK BOX BUTTON at the Curation Queue page or the bottom of the gene page (this will let us know the task is complete). If you have any questions or concerns please email or slack us as needed.';
-                        content += 'Thank you, \nOncoKB Admin';
-                    } else {
-                        content += queueItem.addedBy + ' of OncoKB would like you curate the following publications in the indicated alteration, tumor type and section:\n\n';
-                        var tempArr = [queueItem.article];
-                        if (queueItem.link) {
-                            tempArr = tempArr.concat(['(', queueItem.link, ')']);
-                        }
-                        if (queueItem.variant) {
-                            tempArr = tempArr.concat(['Alteration:', queueItem.variant + ',']);
-                        }
-                        if (queueItem.subType) {
-                            tempArr = tempArr.concat(['Tumor type:', queueItem.subType + ',']);
-                        }
-                        if (queueItem.section) {
-                            tempArr = tempArr.concat(['Section:', queueItem.section]);
-                        }
-                        content += tempArr.join(' ') + '\n';
-                        if (queueItem.comment) {
-                            content += queueItem.comment + '\n';
-                        }
-                        content += '\nPlease try to curate this literature before ' + $scope.getFormattedDate(queueItem.dueDay) + ' and remember to log your hours for curating this data.\n\n';
-                        content += 'IMPORTANT: Please remember to CLICK THE GREEN CHECK BOX BUTTON at the Curation Queue page or the bottom of the gene page (this will let us know the task is complete).\n\n';
-                        content += 'If you have any questions or concerns please email or slack ' + queueItem.addedBy + '.\n\n';
-                        content += 'Thank you, \nOncoKB Admin';
-                    }
-                    var subject = 'OncoKB Curation Assignment';
-                    mainUtils.sendEmail(email, subject, content).then(function() {
-                        if (expiredCuration) {
-                            setCurationNotified(queueItem);
-                        }
-                    }, function(error) {
-                        dialogs.error('Error', 'Failed to notify curator automatically. Please send curator email manually.');
-                    });
-                };
 
                 var annotationLocation = $scope.specifyAnnotationInGene();
                 $scope.getAnnotationLocation = function(x) {
@@ -513,7 +449,6 @@ angular.module('oncokbApp')
                     $scope.data.editing = false;
                     $scope.predictedArticle = '';
                     $scope.validPMID = false;
-                    $scope.data.resendEmail = false;
                 };
                 $scope.isExpiredCuration = mainUtils.isExpiredCuration;
                 $scope.checkInput = function() {
@@ -526,20 +461,8 @@ angular.module('oncokbApp')
                     if ($scope.data.editing && !$scope.data.invalidData) {
                         if ($scope.input.curator && queueItem.curator !== $scope.input.curator.name ||
                             $scope.input.dueDay && queueItem.dueDay !== new Date($scope.input.dueDay).getTime()) {
-                            $scope.data.resendEmail = true;
-                        } else {
-                            $scope.data.resendEmail = false;
                         }
                     }
-                    $scope.resendEmail = $scope.data.resendEmail;
-                };
-                $scope.secondTimeAutoNotify = function() {
-                    _.each($scope.queue, function (queueItem) {
-                        var hugoSymbol = queueItem.hugoSymbol;
-                        if (hugoSymbol && queueItem.curator && !queueItem.curated && mainUtils.isExpiredCuration(queueItem.dueDay) && !queueItem.notified) {
-                            $scope.sendEmail(queueItem);
-                        }
-                    });
                 };
                 $scope.getQueuesByGene = function(hugoSymbol) {
                     return $rootScope.firebaseQueues[hugoSymbol] ? angular.copy($rootScope.firebaseQueues[hugoSymbol].queue) : [];

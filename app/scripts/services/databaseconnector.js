@@ -10,7 +10,7 @@ angular.module('oncokbApp')
         'Evidence',
         'SearchVariant',
         'DriveAnnotation',
-        'SendEmail',
+        'Sentry',
         'onLocalhost',
         'DataSummary',
         'Drugs',
@@ -29,7 +29,7 @@ angular.module('oncokbApp')
                  Evidence,
                  SearchVariant,
                  DriveAnnotation,
-                 SendEmail,
+                 Sentry,
                  onLocalhost,
                  DataSummary,
                  Drugs,
@@ -51,16 +51,7 @@ angular.module('oncokbApp')
                     .then(function(data) {
                         deferred.resolve(data.data);
                     }, function(error) {
-                        var subject = 'searchDrugs Error';
-                        var content = 'The system error returned is ' + JSON.stringify(error);
-                        sendEmail({sendTo: 'dev.oncokb@gmail.com', subject: subject, content: content},
-                            function(result) {
-                                console.log('sent searchDrugs Error to oncokb dev account');
-                            },
-                            function(error) {
-                                console.log('fail to send searchDrugs Error to oncokb dev account', error);
-                            }
-                        );
+                        Sentry.captureException(new Exception('Failed to add a new history record for ' + hugoSymbol + '. \n\n Content: ' + JSON.stringify(historyData) + '\n\nError: \n' + JSON.stringify(error)));
                         deferred.reject(error);
                     });
                 return deferred.promise;
@@ -246,16 +237,9 @@ angular.module('oncokbApp')
                             .then(function(data) {
                                 success(data);
                             }, function(error) {
-                                var subject = 'VUS update Error for ' + hugoSymbol;
-                                var content = 'The system error returned is ' + JSON.stringify(error);
-                                sendEmail({sendTo: 'dev.oncokb@gmail.com', subject: subject, content: content},
-                                    function(result) {
-                                        console.log('sent old history to oncokb dev account');
-                                    },
-                                    function(error) {
-                                        console.log('fail to send old history to oncokb dev account', error);
-                                    }
-                                );
+                                var content = 'VUS update Error for ' + hugoSymbol;
+                                content = content + '\nThe system error returned is ' + JSON.stringify(error);
+                                Sentry.captureException(new Exception(content));
                                 fail(error);
                                 setAPIData('vus', hugoSymbol, data);
                             });
@@ -310,20 +294,6 @@ angular.module('oncokbApp')
 
             function updateEvidenceRelevantCancerTypesBatch(data) {
                 return DriveAnnotation.updateEvidenceRelevantCancerTypesBatch(data);
-            }
-
-            function sendEmail(params, success, fail) {
-                if (testing || !inProduction) {
-                    success(true);
-                } else {
-                    SendEmail
-                        .init(params)
-                        .then(function(data) {
-                            success(data);
-                        }, function() {
-                            fail();
-                        });
-                }
             }
 
             function timeout(callback, timestamp) {
@@ -490,15 +460,7 @@ angular.module('oncokbApp')
                 }).then(function(ref) {
                     console.log('Added a new history record.');
                 }, function (error) {
-                    sendEmail({sendTo: 'dev.oncokb@gmail.com', subject: 'Failed to add a new history record for ' + hugoSymbol
-                        + '.', content: JSON.stringify(historyData) + '\n\nError: \n' + JSON.stringify(error)},
-                        function(result) {
-                            console.log('sent history error to oncokb dev account');
-                        },
-                        function(error) {
-                            console.log('fail to send history error to oncokb dev account', error);
-                        }
-                    );
+                    Sentry.captureException(new Exception('Failed to add a new history record for ' + hugoSymbol + '. \n\n Content: ' + JSON.stringify(historyData) + '\n\nError: \n' + JSON.stringify(error)));
                 });
             }
 
@@ -585,7 +547,6 @@ angular.module('oncokbApp')
                 updateEvidenceTreatmentPriorityBatch: updateEvidenceTreatmentPriorityBatch,
                 updateEvidenceRelevantCancerTypesBatch: updateEvidenceRelevantCancerTypesBatch,
                 addHistoryRecord: addHistoryRecord,
-                sendEmail: sendEmail,
                 getCacheStatus: getCacheStatus,
                 updateGeneCache: function(hugoSymbol) {
                     return updateGeneCache(hugoSymbol);
