@@ -75,12 +75,16 @@ angular.module('oncokbApp')
                 };
 
                 $scope.processSearchDrugs = function (keyword) {
+                    $scope.findingDrug = true;
                     $scope.addDrugMessage = '';
                     $scope.addDrugErrorMessage = '';
                     return DatabaseConnector.searchNCITDrugs(keyword)
                         .then(
                             function (result) {
                                 $scope.searchDrugsError = false;
+                                if (result && result.length === 0) {
+                                    $scope.addDrugErrorMessage = 'No drug found matching the keyword.';
+                                }
                                 return result;
                             })
                         .catch(
@@ -89,6 +93,11 @@ angular.module('oncokbApp')
                                 return [];
                             }
                         )
+                        .finally(
+                            function () {
+                                $scope.findingDrug = false;
+                            }
+                        );
                 };
 
             }
