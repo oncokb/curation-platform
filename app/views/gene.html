@@ -8,7 +8,7 @@
                     <span ng-show="!status.releasingGene">Release Gene</span>
                 </button>
                 <button type="button" class="btn btn-default" ng-click="removeGeneFromDB()"
-                        ng-if="developerCheck() && internal && status.geneReleased === 'yes'">
+                        ng-if="me.developer && internal && status.geneReleased === 'yes'">
                     <span ng-show="status.removingGene"><i class="fa fa-spinner fa-spin"></i></span>
                     <span ng-show="!status.removingGene">Remove Gene From DB</span>
                 </button>
@@ -54,12 +54,12 @@
                 <span><b>GRCh37</b></span>
                 <span> Isoform:
                     <input
-                        ng-show="developerCheck()"
+                        ng-show="me.developer"
                         type="text"
                         ng-model="gene.isoform_override"
                     />
                     <span
-                        ng-show="!developerCheck()"
+                        ng-show="!me.developer"
                     >
                         {{gene.isoform_override ? gene.isoform_override : '???'}}
                         <a
@@ -72,12 +72,12 @@
                 </span>
                 <span> RefSeq:
                     <input
-                        ng-show="developerCheck()"
+                        ng-show="me.developer"
                         type="text"
                         ng-model="gene.dmp_refseq_id"
                     />
                     <span
-                        ng-show="!developerCheck()"
+                        ng-show="!me.developer"
                     >
                         {{gene.dmp_refseq_id ? gene.dmp_refseq_id : '???'}}
                         <a
@@ -93,12 +93,12 @@
                 <span><b>GRCh38</b></span>
                 <span> Isoform:
                     <input
-                        ng-show="developerCheck()"
+                        ng-show="me.developer"
                         type="text"
                         ng-model="gene.isoform_override_grch38"
                     />
                     <span
-                        ng-show="!developerCheck()"
+                        ng-show="!me.developer"
                     >
                         {{gene.isoform_override_grch38 ? gene.isoform_override_grch38 : '???'}}
                         <a
@@ -111,12 +111,12 @@
                 </span>
                 <span> RefSeq:
                     <input
-                        ng-show="developerCheck()"
+                        ng-show="me.developer"
                         type="text"
                         ng-model="gene.dmp_refseq_id_grch38"
                     />
                     <span
-                        ng-show="!developerCheck()"
+                        ng-show="!me.developer"
                     >
                         {{gene.dmp_refseq_id_grch38 ? gene.dmp_refseq_id_grch38 : '???'}}
                         <a
@@ -770,7 +770,7 @@
     <div ng-hide="status.rendering" class="floatToolBox btn-group btn-group-sm" role="group">
         <span class="btn btn-default" style="opacity: 1" disabled>{{ ::gene.name}}</span>
         <button type="button" class="btn btn-default" ng-click="generatePDF()">Download PDF</button>
-        <button type="button" class="btn btn-default" ng-if="developerCheck() && internal" ng-click="updateGene()">
+        <button type="button" class="btn btn-default" ng-if="me.developer && internal" ng-click="updateGene()">
             <span ng-show="!status.savedGene"><i class="fa fa-spinner fa-spin"></i></span>
             <span ng-show="status.savedGene">Update gene</span>
         </button>

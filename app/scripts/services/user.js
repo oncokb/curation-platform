@@ -76,6 +76,10 @@ angular.module('oncokbApp')
                 } else if (!_.isUndefined(allUsers[me.key].genes)) {
                     me.genes = allUsers[me.key].genes;
                 }
+
+                if (!_.isUndefined(allUsers[me.key].developer)) {
+                    me.developer = allUsers[me.key].developer;
+                }
                 // $rootScope.me is used to store the user who passed both authtication and authorization process. It is used accross the whole project to access current user info.
                 $rootScope.me = me;
                 defer.resolve();

@@ -440,9 +440,6 @@ angular.module('oncokbApp')
                 ReviewResource.precise = [];
                 ReviewResource.openInReviewMode = []; // Store uuids for updated and added evidences
             }
-            $scope.developerCheck = function () {
-                return mainUtils.developerCheck($rootScope.me.name);
-            };
             $scope.getNameStyle = function(type) {
                 if (!$scope.reviewMode) {
                     return {float: 'left'};

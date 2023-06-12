@@ -23,13 +23,6 @@ describe('Gene Controller', function () {
 		expect($scope.getNameStyle()).toEqual(null);
 		expect($scope.getNameStyle('mutation')).toEqual({ 'margin-top': '20px' });
 	});
-	it('Developer check is not working', function () {
-		$rootScope.me = { name: 'Jiaojiao wang' };
-		expect($scope.developerCheck()).toEqual(true);
-
-		$rootScope.me = { name: 'cBioPortal' };
-		expect($scope.developerCheck()).toEqual(false);
-	});
 	it('Check if a removed section should be displayed is not working', function () {
 		$rootScope.reviewMode = false;
 		expect($scope.displayCheck()).toEqual(true);
