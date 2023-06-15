@@ -49,12 +49,6 @@ For example, if concokb-core runs at `http://localhost:8888/oncokb`, you should 
     ...
 ```
 
-## Testing
-For front-end, we use Karma and Jasmin to run unit test cases.
-1. Install karma-cli (globally).
-2. Copy /app/data/config.json to **OncoKB.config** in /app/scripts/app.spec.js.
-3. Run **karma start** at root folder.
-
 ## FAQs      
 #### Can’t getAllUsers() because of the different rules set in Firebase. It still shows 'don’t have access...' after logging in successfully.         
    Add rules to the database.     
