@@ -6,12 +6,15 @@
         </div>
         <input type="text" class="form-control search-box" ng-model="suggestedDrug"
                uib-typeahead="drug as drug.name for drug in processSearchDrugs($viewValue)" typeahead-min-length="2"
-               typeahead-template-url="drugsDropdown.html" typeahead-wait-ms="500"/>
-        <button class="btn btn-success" ng-click="addDrug(suggestedDrug, preferName)"
-                ng-show="suggestedDrug && suggestedDrug.code">Add Drug
+               typeahead-template-url="drugsDropdown.html" typeahead-wait-ms="1000"/>
+        <span ng-if="findingDrug" style="margin: 5px">
+            <i class="fa fa-spinner fa-spin"></i>
+        </span>
+        <button class="btn btn-success" ng-click="addDrug(suggestedDrug, preferName)" style="margin-left: 5px; height: 34px"
+                ng-show="suggestedDrug && suggestedDrug.name">Add Drug
         </button>
     </div>
-    <div class="flexRow" ng-show="suggestedDrug && suggestedDrug.code">
+    <div class="flexRow" ng-show="suggestedDrug && suggestedDrug.synonyms">
         <h5 class="nameLabel">Change preferred drug name to: </h5>
         <select chosen
                 ng-model="preferName"
