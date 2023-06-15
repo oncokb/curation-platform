@@ -62,8 +62,7 @@ angular.module('oncokbApp')
                         $location.url('/genes');
                     }
                 }, function(error) {
-                    mainUtils.sendEmail('dev.oncokb@gmail.com', 'Failed to set user role.',
-                        'Content: \n' + JSON.stringify(firebaseUser) + '\n\nError: \n' + JSON.stringify(error));
+                    Sentry.captureException(new Exception('Failed to set user role. Content: \n' + JSON.stringify(firebaseUser) + '\n\nError: \n' + JSON.stringify(error)));
                 });
             } else {
                 console.log('not logged in yet');

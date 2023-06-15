@@ -36,7 +36,6 @@ angular.module('oncokbApp')
                             $scope.addDrugErrorMessage = 'Failed to create the drug ' + drugName + '! Please contact developers.';
                             deferred.reject(error);
                         });
-                        mainUtils.sendEmailtoMultipulUsers(['kundrar@mskcc.org', 'chakravd@mskcc.org', 'nissanm@mskcc.org'], 'Reminder: A therapy has been added.', content);
                     }
                     else {
                         $scope.addDrugErrorMessage = "Sorry, same drug exists.";

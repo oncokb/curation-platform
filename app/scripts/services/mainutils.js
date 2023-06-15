@@ -279,49 +279,6 @@ angular.module('oncokbApp')
             return deferred.promise;
         }
 
-        /**
-         * Util to send email systematically
-         * @param {string} sendTo The recipient
-         * @param {string} subject The email subject
-         * @param {string} content The email content
-         * @return {*|h.promise|promise|r.promise|d.promise} Promise
-         * */
-        function sendEmail(sendTo, subject, content) {
-            var deferred = $q.defer();
-            if(sendTo && content){
-                var param = {sendTo: sendTo, subject: subject, content: content};
-                DatabaseConnector.sendEmail(
-                    param,
-                    function(result) {
-                        deferred.resolve(result);
-                    },
-                    function(result) {
-                        deferred.reject(result);
-                    }
-                );
-                return deferred.promise;
-            } else {
-                return deferred.reject('Undefined sendTo or content');
-            }
-        }
-        /**
-         * Util to send email to multipul users systematically
-         * sendToArray is a String array which contains users' email address
-         * */
-        function sendEmailtoMultipulUsers(sendToArray, subject, content) {
-            _.forEach(sendToArray, function (sendTo) {
-                sendEmail(sendTo, subject, content);
-            })
-        }
-        /**
-         * Util to send email to developer account
-         * @param {string} subject The email subject
-         * @param {string} content The email content
-         * @return Promise
-         * */
-        function notifyDeveloper(subject, content) {
-            sendEmail('dev.oncokb@gmail.com', subject, content);
-        }
 
         /**
          * Get Oncotree main types and sub tumor types.
@@ -739,12 +696,9 @@ angular.module('oncokbApp')
             getIsoform: getIsoform,
             getOncogeneTSG: getOncogeneTSG,
             getLastReviewedCancerTypesName: getLastReviewedCancerTypesName,
-            sendEmail: sendEmail,
-            sendEmailtoMultipulUsers: sendEmailtoMultipulUsers,
             getTumorTypes: getTumorTypes,
             isExpiredCuration: isExpiredCuration,
             processedInReview: processedInReview,
-            notifyDeveloper: notifyDeveloper,
             updateLastModified: updateLastModified,
             updateLastSavedToDB: updateLastSavedToDB,
             trimMutationName: trimMutationName,

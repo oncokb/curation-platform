@@ -114,7 +114,6 @@ angular.module('oncokbApp')
                         }, function(reason) {
                             // something goes wrong then the data in database should not be updated.
                         });
-                        mainUtils.sendEmailtoMultipulUsers(['kundrar@mskcc.org', 'chakravd@mskcc.org', 'nissanm@mskcc.org'], 'Reminder: A therapy preferred name changed.', content);
                     }
                 }
             };

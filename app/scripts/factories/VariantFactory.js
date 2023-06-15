@@ -154,27 +154,6 @@ angular.module('oncokbApp').config(function($httpProvider) {
     };
 }]);
 
-angular.module('oncokbApp').factory('SendEmail', ['$http', 'OncoKB', function($http, OncoKB) {
-    'use strict';
-    var transform = function(data) {
-        return $.param(data);
-    };
-
-    function init(params) {
-        return $http.post(
-            OncoKB.config.curationLink + 'sendEmail',
-            params,
-            {
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: transform
-            });
-    }
-
-    return {
-        init: init
-    };
-}]);
-
 angular.module('oncokbApp').factory('DriveAnnotation', ['$http', 'OncoKB', '_', function($http, OncoKB, _) {
     'use strict';
     var transform = function(data) {

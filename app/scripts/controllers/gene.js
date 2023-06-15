@@ -3387,18 +3387,7 @@ angular.module('oncokbApp')
                             }, function (error) {
                                 // Something goes wrong, this needs to be stored into meta file for future update.
                                 console.log('Failed to update priority.');
-                                DatabaseConnector.sendEmail({
-                                        sendTo: 'dev.oncokb@gmail.com',
-                                        subject: 'Error when updating treatments\' priority',
-                                        content: JSON.stringify(postData)
-                                    },
-                                    function (result) {
-                                        deferred.rejected(error);
-                                    },
-                                    function (error) {
-                                        deferred.rejected(error);
-                                    }
-                                );
+                                Sentry.captureException(new Exception('Error when updating treatments\' priority. Data: ' + JSON.stringify(postData)));
                             });
                 } else {
                     deferred.resolve();

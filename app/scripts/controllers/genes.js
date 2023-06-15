@@ -140,7 +140,6 @@ angular.module('oncokbApp')
                 rendering: true,
                 queueRendering: true
             };
-            $scope.adminEmails = [];
             $scope.oncoTree = {
                 mainTypes: {}
             };

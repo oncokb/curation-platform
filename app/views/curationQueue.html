@@ -88,9 +88,6 @@
                 <label for="comments" class="labelAlign">Comment:</label>
                 <textarea rows="2" cols="100" id="comments" placeholder="Comment" ng-model="input.comment"></textarea>
             </div>
-            <div ng-if="data.resendEmail" class="inputMargin">
-                <p class="attention">Email will be resent after saving modified curation because of changes in Curator or Due date.</p>
-            </div>
             <div class="inputMargin">
                 <button class="btn btn-success" ng-disabled="!input.article || data.invalidData || (location === 'queues' && (!input.hugoSymbols || input.hugoSymbols.length === 0))" ng-bind-html="getButtonHtml('add')" ng-click="processCuration()"></button>
                 <button class="btn btn-default" ng-click="clearInput()">Cancel</button>
