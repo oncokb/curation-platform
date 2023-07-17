@@ -391,7 +391,7 @@ angular.module('oncokbApp').factory('DataValidation', function(OncoKB) {
     'use strict';
     return {
         getWebSocket: function () {
-            return new WebSocket('ws://' + OncoKB.config.websocketApiLink + 'curation/validation');
+            return new WebSocket(OncoKB.config.websocketApiLink + 'curation/validation');
         }
     };
 });
